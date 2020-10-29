@@ -39,7 +39,8 @@ for path, directories, files in os.walk(dic_results_dir):
                 y_idx = 0
 
             true_strain_x = true_strain[0, x_idx, x_idx, :, :, :]
-            plot_frame = int(0.8 * experiment.img_count)
+            experiment.muDIC_image_count = true_strain.shape[-1]
+            plot_frame = int(0.8 * experiment.muDIC_image_count)
 
             mask = gauge_funcs.RectangleCoordinates(
                 input_image=true_strain_x[:, :, plot_frame].T
@@ -50,11 +51,15 @@ for path, directories, files in os.walk(dic_results_dir):
 
             # image coordinates assume x-axis horizontal (i.e. columns)
             # and y-axis vertical (i.e. rows)
-            true_strain_gauge = true_strain[0, x_min:x_max, y_min:y_max, :]
+            true_strain_gauge = true_strain[0, :, :, x_min:x_max, y_min:y_max, :]
 
             true_strain_mean = np.nanmean(true_strain_gauge, axis=(2, 3))
-            displacement_in_mm = experiment.traverse_displ
-            reaction_force_in_kN = experiment.reaction_force
+            displacement_in_mm = experiment.traverse_displ[
+                :, : experiment.muDIC_image_count
+            ]
+            reaction_force_in_kN = experiment.reaction_force[
+                :, : experiment.muDIC_image_count
+            ]
 
             specimen_width = 12.0  # mm
             specimen_thickness = 3.0  # mm
@@ -62,7 +67,7 @@ for path, directories, files in os.walk(dic_results_dir):
             true_stress_in_MPa = gauge_funcs.get_true_stress(
                 force_in_N=reaction_force_in_kN * 1000.0,
                 log_strain_perpendicular=true_strain_mean[y_idx, y_idx, :].reshape(
-                    (experiment.img_count, 1)
+                    (experiment.muDIC_image_count, 1)
                 ),
                 specimen_cross_section_in_mm2=specimen_width * specimen_thickness,
             )
@@ -73,14 +78,14 @@ for path, directories, files in os.walk(dic_results_dir):
                     (
                         -true_strain_mean[y_idx, y_idx, 1:]
                         / true_strain_mean[x_idx, x_idx, 1:]
-                    ).reshape(experiment.img_count - 1, 1),
+                    ).reshape(experiment.muDIC_image_count - 1, 1),
                 ]
             )
 
             volume_strain = (
                 true_strain_mean[x_idx, x_idx, :]
                 + 2.0 * true_strain_mean[y_idx, y_idx, :]
-            ).reshape(experiment.img_count, 1)
+            ).reshape(experiment.muDIC_image_count, 1)
 
             experiment.gauge_results = pd.DataFrame(
                 data=np.concatenate(
@@ -88,10 +93,10 @@ for path, directories, files in os.walk(dic_results_dir):
                         displacement_in_mm,
                         reaction_force_in_kN,
                         true_strain_mean[x_idx, x_idx, :].reshape(
-                            (experiment.img_count, 1)
+                            (experiment.muDIC_image_count, 1)
                         ),
                         true_strain_mean[y_idx, y_idx, :].reshape(
-                            (experiment.img_count, 1)
+                            (experiment.muDIC_image_count, 1)
                         ),
                         true_stress_in_MPa,
                         poissons_ratio,
