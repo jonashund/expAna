@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 import gauge_funcs
 import plot_funcs
-import matplotlib
 
 
 filepath = os.path.abspath(os.path.dirname(__file__))
@@ -137,5 +136,3 @@ for path, directories, files in os.walk(dic_results_dir):
                 experiment=experiment, out_dir=vis_export_dir
             )
             plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
-
-            matplotlib.use("TkAgg")
