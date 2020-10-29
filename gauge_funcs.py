@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 
 def set_gui_backend():
     if platform.system() == "Darwin":
-        matplolib.use("macosx")
+        matplotlib.use("macosx")
     elif platform.system() == "Linux":
-        matplolib.use("TkAgg")
+        matplotlib.use("TkAgg")
     else:
         print(
             f"""
