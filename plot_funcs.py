@@ -11,8 +11,6 @@ def plot_true_stress_strain(
     ),
 ):
 
-    out_dir = os.path.join(os.path.dirname(__file__), "visualisation")
-
     os.makedirs(out_dir, exist_ok=True)
 
     experiment.gauge_results = doc_funcs.remove_row_offset(

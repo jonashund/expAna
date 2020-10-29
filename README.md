@@ -10,7 +10,7 @@ present as Istra4D hdf5 files.
   - `data_instron` *instron project directory*
      - `Test1`
      - `Test2`
- - `data_istra_acquisition` *Istra4D acquisition directories*
+  - `data_istra_acquisition` *Istra4D acquisition directories*
      - `Test1`
      - `Test2`
   - `data_istra_evaluation` *Istra4D evaluation directories*

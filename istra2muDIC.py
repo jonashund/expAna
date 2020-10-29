@@ -33,14 +33,11 @@ import istra2muDIC_functions as funcs
 
 filepath = os.path.abspath(os.path.dirname(__file__))
 
-# export2tif_dir = os.path.join(filepath, "..", "data_export2tif")
-export2tif_dir = os.path.join(filepath, "data", "export2tif")
+export2tif_dir = os.path.join(filepath, "..", "data_export2tif")
 
-# dic_results_dir = os.path.join(filepath, "..", "data_muDIC")
-dic_results_dir = os.path.join(filepath, "data", "muDIC")
+dic_results_dir = os.path.join(filepath, "..", "data_muDIC")
 
-# istra_acquisition_dir = os.path.join(filepath, "..", "data_istra_acquisition")
-istra_acquisition_dir = os.path.join(filepath, "data", "acquisition")
+istra_acquisition_dir = os.path.join(filepath, "..", "data_istra_acquisition")
 
 os.makedirs(export2tif_dir, exist_ok=True)
 os.makedirs(dic_results_dir, exist_ok=True)

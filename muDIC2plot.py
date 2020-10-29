@@ -8,8 +8,7 @@ import plot_funcs
 
 filepath = os.path.abspath(os.path.dirname(__file__))
 
-# dic_results_dir = os.path.join(filepath, "..", "data_muDIC")
-dic_results_dir = os.path.join(filepath, "data", "muDIC")
+dic_results_dir = os.path.join(filepath, "..", "data_muDIC")
 
 try:
     project_name = str(sys.argv[1])

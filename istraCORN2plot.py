@@ -4,7 +4,7 @@ import pandas as pd
 import istra2py
 import gauge_funcs as funcs
 
-export2tif_path = os.path.join("data", "export2tif")
+export2tif_dir = os.path.join(filepath, "..", "data_export2tif")
 
 istra_reader = istra2py.Reader(
     path_dir_acquisition=os.path.join("data", "acquisition"),
