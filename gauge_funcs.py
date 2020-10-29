@@ -16,6 +16,9 @@ def set_gui_backend():
         Could you please add it in gauge_funcs.set_gui_backend()?
         """
         )
+        exit()
+
+    plt.style.use("classic")
 
 
 class TensileDirection(object):
