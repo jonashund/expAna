@@ -25,8 +25,8 @@ present as Istra4D hdf5 files.
   - `istra2true_stress`
 
 ### usage
-- istra2muDIC: `istra2muDIC <project_name>`
-- muDIC2plot: `muDIC2plot <project_name>`
+- istra2muDIC: `python3 istra2muDIC.py`
+- muDIC2plot: `python3 muDIC2plot.py`
 
 ## TO DO:
 - Istra4D version?

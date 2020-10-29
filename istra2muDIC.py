@@ -42,16 +42,10 @@ istra_acquisition_dir = os.path.join(filepath, "..", "data_istra_acquisition")
 os.makedirs(export2tif_dir, exist_ok=True)
 os.makedirs(dic_results_dir, exist_ok=True)
 
-try:
-    project_name = str(sys.argv[1])
-except:
-    print(f"Missing or wrong input parameter for script {str(sys.argv[0])}")
-    exit()
-
 project_mesher = dic.Mesher()
 
 current_project = funcs.Project(
-    project_name, istra_acquisition_dir, export2tif_dir, dic_results_dir
+    "project_name", istra_acquisition_dir, export2tif_dir, dic_results_dir
 )
 
 funcs.print_remarks()

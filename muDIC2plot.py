@@ -9,11 +9,7 @@ import plot_funcs
 filepath = os.path.abspath(os.path.dirname(__file__))
 
 dic_results_dir = os.path.join(filepath, "..", "data_muDIC")
-
-try:
-    project_name = str(sys.argv[1])
-except:
-    print(f"Missing or wrong input parameter for script {str(sys.argv[0])}")
+vis_export_dir = os.path.join(filepath, "..", "visualisation_muDIC")
 
 for path, directories, files in os.walk(dic_results_dir):
     for test_dir in directories:
@@ -130,5 +126,7 @@ for path, directories, files in os.walk(dic_results_dir):
                 dill.dump(experiment, myfile)
 
             # plot results to file
-            plot_funcs.plot_true_stress_strain(experiment)
-            plot_funcs.plot_volume_strain(experiment)
+            plot_funcs.plot_true_stress_strain(
+                experiment=experiment, out_dir=vis_export_dir
+            )
+            plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
