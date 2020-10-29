@@ -56,9 +56,7 @@ for path, directories, files in os.walk(current_project.istra_acquisition_dir):
         if str(test_dir[:5] == "Test"):
             current_test = funcs.Experiment(name=test_dir)
             current_test.read_and_convert_istra_images(
-                current_project.istra_acquisition_dir,
-                current_project.export2tif_dir,
-                img_export=True,
+                current_project.istra_acquisition_dir, current_project.export2tif_dir,
             )
             current_project.add_experiment(current_test)
 

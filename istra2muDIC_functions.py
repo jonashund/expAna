@@ -17,9 +17,7 @@ class Experiment(object):
     def __init__(self, name):
         self.name = name
 
-    def read_and_convert_istra_images(
-        self, istra_acquisition_dir, export2tif_dir, img_export=True
-    ):
+    def read_and_convert_istra_images(self, istra_acquisition_dir, export2tif_dir):
         import istra2py
         import os
 
@@ -44,13 +42,10 @@ class Experiment(object):
             filename = f"{self.name}_img_{img}.tif"
             current_image = Image.fromarray(image_reader.acquisition.images[img])
 
-            if img_export:
-                current_image.save(os.path.join(current_export_dir, filename))
+            current_image.save(os.path.join(current_export_dir, filename))
 
             if img == 0:
                 self.ref_image = image_reader.acquisition.images[img]
-                if ~img_export:
-                    break
 
 
 def print_remarks():
