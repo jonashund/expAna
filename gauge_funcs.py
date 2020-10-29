@@ -18,7 +18,7 @@ def set_gui_backend():
         )
         exit()
 
-    plt.style.use("classic")
+    plt.style.use("seaborn")
 
 
 class TensileDirection(object):
@@ -51,6 +51,8 @@ class TensileDirection(object):
                 Skip with enter to accept default direction: `horizontal`.
                 """
             )
+
+        set_gui_backend()
 
         plt.ioff()
         fig_1 = plt.figure()
@@ -97,6 +99,8 @@ class RectangleCoordinates(object):
                 Confirm with `enter`.
                 """
             )
+
+        set_gui_backend()
 
         plt.ioff()
         fig_1 = plt.figure()

@@ -131,10 +131,24 @@ for path, directories, files in os.walk(dic_results_dir):
             ) as myfile:
                 dill.dump(experiment, myfile)
 
+for path, directories, files in os.walk(dic_results_dir):
+    for test_dir in directories:
+        if str("Test" in test_dir):
+            with open(
+                os.path.join(dic_results_dir, test_dir, test_dir + "_true_strain.npy"),
+                "rb",
+            ) as myfile:
+                true_strain = np.load(myfile)
+            with open(
+                os.path.join(
+                    dic_results_dir, test_dir, test_dir + "_experiment_data.p"
+                ),
+                "rb",
+            ) as myfile:
+                experiment = dill.load(myfile)
+
             # plot results to file
             plot_funcs.plot_true_stress_strain(
                 experiment=experiment, out_dir=vis_export_dir
             )
             plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
-
-            gauge_funcs.set_gui_backend()
