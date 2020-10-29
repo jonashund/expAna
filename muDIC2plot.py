@@ -39,10 +39,10 @@ for path, directories, files in os.walk(dic_results_dir):
                 y_idx = 0
 
             true_strain_x = true_strain[0, x_idx, x_idx, :, :, :]
-            plot_frame = int(0.9 * experiment.img_count)
+            plot_frame = int(0.8 * experiment.img_count)
 
             mask = gauge_funcs.RectangleCoordinates(
-                input_image=true_strain_x[:, :, plot_frame]
+                input_image=true_strain_x[:, :, plot_frame].T
             )
             mask.__gui__()
 
@@ -50,7 +50,7 @@ for path, directories, files in os.walk(dic_results_dir):
 
             # image coordinates assume x-axis horizontal (i.e. columns)
             # and y-axis vertical (i.e. rows)
-            true_strain_gauge = true_strain[0, y_min:y_max, x_min:x_max, :]
+            true_strain_gauge = true_strain[0, x_min:x_max, y_min:y_max, :]
 
             true_strain_mean = np.nanmean(true_strain_gauge, axis=(2, 3))
             displacement_in_mm = experiment.traverse_displ

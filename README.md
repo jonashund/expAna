@@ -31,3 +31,4 @@ present as Istra4D hdf5 files.
 ## TO DO:
 - Istra4D version?
 - finish implementation istraCORN2plot
+- add option to pass arguments to only re-evaluate specific `TestX` experiments
