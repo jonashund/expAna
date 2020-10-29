@@ -55,10 +55,10 @@ for path, directories, files in os.walk(dic_results_dir):
 
             true_strain_mean = np.nanmean(true_strain_gauge, axis=(2, 3))
             displacement_in_mm = experiment.traverse_displ[
-                :, : experiment.muDIC_image_count
+                : experiment.muDIC_image_count, :
             ]
             reaction_force_in_kN = experiment.reaction_force[
-                :, : experiment.muDIC_image_count
+                : experiment.muDIC_image_count, :
             ]
 
             specimen_width = 12.0  # mm
