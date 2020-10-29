@@ -18,7 +18,7 @@ def set_gui_backend():
         )
         exit()
 
-    plt.style.use("seaborn")
+    plt.style.use("default")
 
 
 class TensileDirection(object):
