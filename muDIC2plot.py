@@ -136,3 +136,5 @@ for path, directories, files in os.walk(dic_results_dir):
                 experiment=experiment, out_dir=vis_export_dir
             )
             plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
+
+            gauge_funcs.set_gui_backend()
