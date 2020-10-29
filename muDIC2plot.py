@@ -138,4 +138,4 @@ for path, directories, files in os.walk(dic_results_dir):
             )
             plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
 
-            matplotlib.use("agg")
+            matplotlib.use("TkAgg")
