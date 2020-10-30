@@ -106,6 +106,7 @@ def slice_at_local_max(dataframe, column_name):
     # find first local maximum value in column
     # skip first few entries
     recorded_value_count = dataframe[column_name].shape[0]
+    print(f"{recorded_value_count}")
     # ignore bad data with less than twenty entries
     if recorded_value_count > 20:
         for i in range(20, recorded_value_count):
