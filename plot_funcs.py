@@ -106,14 +106,14 @@ def slice_at_local_max(dataframe, column_name, ignore_idx):
     # find first local maximum value in column
     # ignore data with idx < ignore idx
     recorded_value_count = dataframe[column_name].shape[0]
-    print(f"{recorded_value_count}")
 
     if recorded_value_count > ignore_idx:
+        print("here1")
         for i in range(ignore_idx, recorded_value_count):
             ref_value_1 = dataframe[column_name][i - 2]
             ref_value_2 = dataframe[column_name][i - 1]
             current_value = dataframe[column_name][i]
-
+            print("here2")
             if (current_value < ref_value_1) and (current_value < ref_value_2):
                 print("slicing dataframe")
                 dataframe = dataframe[: (i - 2)]
