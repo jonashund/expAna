@@ -9,19 +9,6 @@ from natsort import natsorted
 
 import istra2muDIC_functions as funcs
 
-arg_parser = argparse.ArgumentParser(
-    description="istra2true_stress offers `gauge` element functionality based on Python."
-)
-arg_parser.add_argument(
-    "-e",
-    "--experiments",
-    nargs="*",
-    default=None,
-    help="experiment folder name(s) located in ../data_istra_acquisition/",
-)
-
-passed_args = arg_parser.parse_args()
-
 funcs.print_remarks()
 
 filepath = os.path.abspath(os.path.dirname(__file__))
@@ -35,12 +22,18 @@ istra_acquisition_dir = os.path.join(filepath, "..", "data_istra_acquisition")
 os.makedirs(export2tif_dir, exist_ok=True)
 os.makedirs(dic_results_dir, exist_ok=True)
 
-project_mesher = dic.Mesher()
-
-current_project = funcs.Project(
-    "project_name", istra_acquisition_dir, export2tif_dir, dic_results_dir
+arg_parser = argparse.ArgumentParser(
+    description="istra2true_stress offers `gauge` element functionality based on Python."
+)
+arg_parser.add_argument(
+    "-e",
+    "--experiments",
+    nargs="*",
+    default=None,
+    help="experiment folder name(s) located in ../data_istra_acquisition/",
 )
 
+passed_args = arg_parser.parse_args()
 
 if passed_args.experiments == None:
     experiment_list = list()
@@ -51,10 +44,16 @@ if passed_args.experiments == None:
         for test_dir in directories:
             if str(test_dir[:5] == "Test"):
                 experiment_list.append(test_dir)
-else:
-    experiment_list = passed_args.experiments
+            else:
+                experiment_list = passed_args.experiments
 
-experiment_list = natsorted(experiment_list)
+                experiment_list = natsorted(experiment_list)
+
+project_mesher = dic.Mesher()
+
+current_project = funcs.Project(
+    "project_name", istra_acquisition_dir, export2tif_dir, dic_results_dir
+)
 
 # find all folders named `TestX` in data_istra_acquisition
 for test_dir in experiment_list:
