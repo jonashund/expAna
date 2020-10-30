@@ -47,7 +47,7 @@ class Experiment(object):
             if img == 0:
                 self.ref_image = image_reader.acquisition.images[img]
 
-    def read__istra_images_and_export(self, istra_acquisition_dir, istra_results_dir):
+    def read_istra_data(self, istra_acquisition_dir, istra_results_dir):
         import istra2py
         import os
 
@@ -59,14 +59,20 @@ class Experiment(object):
             verbose=False,
         )
 
-        image_reader.read()
+        image_reader.read(identify_images_export=True)
 
-        self.image_count = len(image_reader.acquisition.images)
-        # save force and displacement
-        self.reaction_force = image_reader.acquisition.traverse_force
-        self.traverse_displ = image_reader.acquisition.traverse_displ * 10.0
+        self.ref_image = image_reader.acquisition.images[0]
+
+        self.img_count = np.shape(image_reader.export.mask)[0]
+
+        # save exported force and displacement
+        self.reaction_force = image_reader.export.traverse_force
+        self.traverse_displ = image_reader.export.traverse_displ * 10.0
+        # save exported fields from evaluation
+        self.coords = image_reader.x
         self.u = image_reader.export.u
         self.eps = image_reader.export.eps
+        self.mask = image_reader.export.mask
 
 
 def print_remarks():
