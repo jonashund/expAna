@@ -1,18 +1,72 @@
 import os
+import sys
+import argparse
+import dill
 import numpy as np
 import pandas as pd
-import istra2py
-import gauge_funcs as funcs
+import gauge_funcs
+import plot_funcs
+import istra2muDIC_functions as funcs
 
-export2tif_dir = os.path.join(filepath, "..", "data_export2tif")
+from natsort import natsorted
 
-istra_reader = istra2py.Reader(
-    path_dir_acquisition=os.path.join("data", "acquisition"),
-    path_dir_export=os.path.join("data", "export"),
-    verbose=True,
+filepath = os.path.abspath(os.path.dirname(__file__))
+
+istra_acquisition_dir = os.path.join(filepath, "..", "data_istra_acquisition")
+dic_results_dir = os.path.join(filepath, "..", "data_istra_evaluation")
+vis_export_dir = os.path.join(filepath, "..", "visualisation_istra")
+
+arg_parser = argparse.ArgumentParser(
+    description="istra2true_stress offers `gauge` element functionality based on Python."
+)
+arg_parser.add_argument(
+    "-e",
+    "--experiments",
+    nargs="*",
+    default=None,
+    help="experiment folder name(s) located in ../data_istra_acquisition/",
 )
 
-istra_reader.read(identify_images_export=True)
+passed_args = arg_parser.parse_args()
+
+if passed_args.experiments is None:
+    experiment_list = list()
+    print(
+        f"No experiments passed. Will search for folders named `Test*` in {current_project.istra_acquisition_dir}."
+    )
+    for path, directories, files in os.walk(current_project.istra_acquisition_dir):
+        for test_dir in directories:
+            if str(test_dir[:5] == "Test"):
+                experiment_list.append(test_dir)
+else:
+    experiment_list = passed_args.experiments
+
+experiment_list = natsorted(experiment_list)
+
+test_dict = {}
+
+for test_dir in experiment_list:
+    # create experiment object
+    current_test = funcs.Experiment(name=test_dir)
+    istra_reader = istra2py.Reader(
+        path_dir_acquisition=istra_acquisition_dir,
+        path_dir_export=dic_results_dir,
+        verbose=True,
+    )
+
+    istra_reader.read(identify_images_export=True)
+    # save the ref.image object to it
+
+    direction_selector = gauge_funcs.TensileDirection(experiment.ref_image)
+    direction_selector.__gui__()
+    experiment.tensile_direction = direction_selector.direction
+
+    if experiment.tensile_direction == "x":
+        x_idx = 0
+        y_idx = 1
+    else:
+        x_idx = 1
+        y_idx = 0
 
 # get array with strains in y and y directions for all frames
 # istra_strains[frame_id, x_id, y_id, strain_id]

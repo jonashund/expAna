@@ -47,6 +47,27 @@ class Experiment(object):
             if img == 0:
                 self.ref_image = image_reader.acquisition.images[img]
 
+    def read__istra_images_and_export(self, istra_acquisition_dir, istra_results_dir):
+        import istra2py
+        import os
+
+        from PIL import Image
+
+        image_reader = istra2py.Reader(
+            path_dir_acquisition=os.path.join(istra_acquisition_dir, self.name),
+            path_dir_export=os.path.join(istra_results_dir, self.name + "CORN1"),
+            verbose=False,
+        )
+
+        image_reader.read()
+
+        self.img_count = len(image_reader.acquisition.images)
+        # save force and displacement
+        self.reaction_force = image_reader.acquisition.traverse_force
+        self.traverse_displ = image_reader.acquisition.traverse_displ * 10.0
+        self.u = image_reader.export.u
+        self.eps = image_reader.export.eps
+
 
 def print_remarks():
     print(

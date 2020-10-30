@@ -27,7 +27,7 @@ arg_parser.add_argument(
 
 passed_args = arg_parser.parse_args()
 
-if passed_args.experiments == None:
+if passed_args.experiments is None:
     experiment_list = list()
     print(
         f"No experiments passed. Will search for folders named `Test*` in {dic_results_dir}."
@@ -39,9 +39,7 @@ if passed_args.experiments == None:
 else:
     experiment_list = passed_args.experiments
 
-    experiment_list = natsorted(experiment_list)
-
-passed_args = arg_parser.parse_args()
+experiment_list = natsorted(experiment_list)
 
 for test_dir in experiment_list:
     with open(

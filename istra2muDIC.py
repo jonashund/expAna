@@ -47,7 +47,7 @@ if passed_args.experiments == None:
 else:
     experiment_list = passed_args.experiments
 
-    experiment_list = natsorted(experiment_list)
+experiment_list = natsorted(experiment_list)
 
 project_mesher = dic.Mesher()
 
