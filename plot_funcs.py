@@ -107,14 +107,15 @@ def slice_at_local_max(dataframe, column_name, ignore_idx):
     # ignore data with idx < ignore idx
     recorded_value_count = dataframe[column_name].shape[0]
     print(f"{recorded_value_count}")
-    # ignore bad data with less than twenty entries
-    if recorded_value_count > 20:
+
+    if recorded_value_count > ignore_idx:
         for i in range(ignore_idx, recorded_value_count):
             ref_value_1 = dataframe[column_name][i - 2]
             ref_value_2 = dataframe[column_name][i - 1]
             current_value = dataframe[column_name][i]
 
-            if current_value < ref_value_1 and current_value < ref_value_2:
+            if (current_value < ref_value_1) and (current_value < ref_value_2):
+                print("slicing dataframe")
                 dataframe = dataframe[: (i - 2)]
 
     return dataframe
