@@ -114,6 +114,9 @@ def slice_at_local_max(dataframe, column_name, ignore_idx):
             ref_value_2 = dataframe[column_name][i - 1]
             current_value = dataframe[column_name][i]
             print("here2")
+            print(current_value < ref_value_1)
+            print(current_value < ref_value_2)
+            print("-------------------------")
             if (current_value < ref_value_1) and (current_value < ref_value_2):
                 print("slicing dataframe")
                 dataframe = dataframe[: (i - 2)]
