@@ -22,7 +22,7 @@ def plot_true_stress_strain(
     )
 
     experiment.gauge_results = slice_at_local_max(
-        experiment.gauge_results, "true_stress_in_MPa", 100
+        experiment.gauge_results, "true_stress_in_MPa", 50
     )
 
     doc_funcs.plot_style()
