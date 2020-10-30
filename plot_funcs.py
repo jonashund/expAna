@@ -22,7 +22,7 @@ def plot_true_stress_strain(
     )
 
     experiment.gauge_results = slice_at_local_max(
-        experiment.gauge_results, "log_strain_image_x"
+        experiment.gauge_results, "true_stress_in_MPa", 100
     )
 
     doc_funcs.plot_style()
@@ -62,17 +62,17 @@ def plot_volume_strain(
 
     os.makedirs(out_dir, exist_ok=True)
 
-    experiment.gauge_results = doc_funcs.remove_row_offset(
-        experiment.gauge_results, "reaction_force_in_kN", 0.015
-    )
-
-    experiment.gauge_results = doc_funcs.remove_column_offset(
-        experiment.gauge_results, "displacement_in_mm"
-    )
-
-    experiment.gauge_results = slice_at_local_max(
-        experiment.gauge_results, "log_strain_image_x"
-    )
+    # experiment.gauge_results = doc_funcs.remove_row_offset(
+    #     experiment.gauge_results, "reaction_force_in_kN", 0.015
+    # )
+    #
+    # experiment.gauge_results = doc_funcs.remove_column_offset(
+    #     experiment.gauge_results, "displacement_in_mm"
+    # )
+    #
+    # experiment.gauge_results = slice_at_local_max(
+    #     experiment.gauge_results, "true_stress_in_MPa", 100
+    # )
 
     doc_funcs.plot_style()
 
@@ -102,14 +102,14 @@ def plot_volume_strain(
     plt.close()
 
 
-def slice_at_local_max(dataframe, column_name):
+def slice_at_local_max(dataframe, column_name, ignore_idx):
     # find first local maximum value in column
-    # skip first few entries
+    # ignore data with idx < ignore idx
     recorded_value_count = dataframe[column_name].shape[0]
     print(f"{recorded_value_count}")
     # ignore bad data with less than twenty entries
     if recorded_value_count > 20:
-        for i in range(20, recorded_value_count):
+        for i in range(ignore_idx, recorded_value_count):
             ref_value_1 = dataframe[column_name][i - 2]
             ref_value_2 = dataframe[column_name][i - 1]
             current_value = dataframe[column_name][i]
