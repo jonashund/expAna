@@ -56,8 +56,6 @@ else:
 
 experiment_list = natsorted(experiment_list)
 
-exit()
-
 # find all folders named `TestX` in data_istra_acquisition
 for test_dir in experiment_list:
     current_test = funcs.Experiment(name=test_dir)
