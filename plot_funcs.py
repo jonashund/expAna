@@ -21,6 +21,10 @@ def plot_true_stress_strain(
         experiment.gauge_results, "displacement_in_mm"
     )
 
+    experiment.gauge_results = slice_at_local_max(
+        experiment.gauge_results, "log_strain_image_x"
+    )
+
     doc_funcs.plot_style()
 
     fig_1, axes_1 = plt.subplots(figsize=[4, 3])
@@ -65,6 +69,11 @@ def plot_volume_strain(
     experiment.gauge_results = doc_funcs.remove_column_offset(
         experiment.gauge_results, "displacement_in_mm"
     )
+
+    experiment.gauge_results = slice_at_local_max(
+        experiment.gauge_results, "log_strain_image_x"
+    )
+
     doc_funcs.plot_style()
 
     fig_1, axes_1 = plt.subplots(figsize=[4, 3])
@@ -91,3 +100,20 @@ def plot_volume_strain(
     plt.savefig(os.path.join(out_dir, experiment.name + "_vol_strain.png",))
 
     plt.close()
+
+
+def slice_at_local_max(dataframe, column_name):
+    # find first local maximum value in column
+    # skip first few entries
+    recorded_value_count = dataframe[column_name].shape[0]
+    # ignore bad data with less than twenty entries
+    if recorded_value_count > 20:
+        for i in range(20, recorded_value_count):
+            ref_value_1 = dataframe[column_name][i - 2]
+            ref_value_2 = dataframe[column_name][i - 1]
+            current_value = dataframe[column_name][i]
+
+            if current_value < ref_value_1 and current_value < ref_value_2:
+                dataframe = dataframe[: (i - 2)]
+
+    return dataframe
