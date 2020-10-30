@@ -55,7 +55,6 @@ def plot_volume_strain(
         os.path.abspath(os.path.dirname(__file__)), "..", "visualisation"
     ),
 ):
-    out_dir = os.path.join(os.path.dirname(__file__), "visualisation")
 
     os.makedirs(out_dir, exist_ok=True)
 
