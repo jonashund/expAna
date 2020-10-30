@@ -32,13 +32,13 @@ class Experiment(object):
         current_export_dir = os.path.join(export2tif_dir, self.name)
         os.makedirs(current_export_dir, exist_ok=True)
 
-        self.img_count = len(image_reader.acquisition.images)
+        self.image_count = len(image_reader.acquisition.images)
         # save force and displacement
         self.reaction_force = image_reader.acquisition.traverse_force
         self.traverse_displ = image_reader.acquisition.traverse_displ * 10.0
 
         # export images
-        for img in range(self.img_count):
+        for img in range(self.image_count):
             filename = f"{self.name}_img_{img}.tif"
             current_image = Image.fromarray(image_reader.acquisition.images[img])
 
@@ -47,7 +47,7 @@ class Experiment(object):
             if img == 0:
                 self.ref_image = image_reader.acquisition.images[img]
 
-    def read_istra_data(self, istra_acquisition_dir, istra_results_dir):
+    def read__istra_images_and_export(self, istra_acquisition_dir, istra_results_dir):
         import istra2py
         import os
 
@@ -56,23 +56,17 @@ class Experiment(object):
         image_reader = istra2py.Reader(
             path_dir_acquisition=os.path.join(istra_acquisition_dir, self.name),
             path_dir_export=os.path.join(istra_results_dir, self.name + "CORN1"),
-            verbose=True,
+            verbose=False,
         )
 
-        image_reader.read(identify_images_export=True)
+        image_reader.read()
 
-        self.ref_image = image_reader.acquisition.images[img]
-
-        self.img_count = np.shape(image_reader.export.mask)[0]
-
-        # save exported force and displacement
-        self.reaction_force = image_reader.export.traverse_force
-        self.traverse_displ = image_reader.export.traverse_displ * 10.0
-        # save exported fields from evaluation
-        self.coords = image_reader.x
+        self.image_count = len(image_reader.acquisition.images)
+        # save force and displacement
+        self.reaction_force = image_reader.acquisition.traverse_force
+        self.traverse_displ = image_reader.acquisition.traverse_displ * 10.0
         self.u = image_reader.export.u
         self.eps = image_reader.export.eps
-        self.mask = image_reader.export.mask
 
 
 def print_remarks():
