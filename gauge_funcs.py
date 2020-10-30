@@ -102,16 +102,15 @@ class RectangleCoordinates(object):
         # set_gui_backend()
         plt.style.use("classic")
         plt.ioff()
-        plt.grid(True)
-        plt.colorbar()
         fig_1 = plt.figure()
 
-        fig_1.subplots_adjust(0.05, 0.05, 0.98, 0.98, 0.1)
-        overview = plt.subplot2grid((12, 4), (0, 0), rowspan=12, colspan=4)
-        overview.imshow(self.image, interpolation="none")
+        # fig_1.subplots_adjust(0.05, 0.05, 0.98, 0.98, 0.1)
+        axes_1 = plt.subplot2grid((12, 4), (0, 0), rowspan=12, colspan=4)
+        image_1 = axes_1.imshow(self.image, cmap="PiYG_r", interpolation="none")
+        fig_1.colorbar(image_1, ax=axes_1, fraction=0.046, pad=0.04)
 
         selector = RectangleSelector(
-            overview,
+            axes_1,
             line_select_callback,
             drawtype="box",
             useblit=True,
