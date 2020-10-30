@@ -18,8 +18,6 @@ def set_gui_backend():
         )
         exit()
 
-    plt.style.use("default")
-
 
 class TensileDirection(object):
     def __init__(self, input_image):
@@ -52,7 +50,8 @@ class TensileDirection(object):
                 """
             )
 
-        set_gui_backend()
+        # set_gui_backend()
+        plt.style.use("default")
 
         plt.ioff()
         fig_1 = plt.figure()
@@ -100,7 +99,8 @@ class RectangleCoordinates(object):
                 """
             )
 
-        set_gui_backend()
+        # set_gui_backend()
+        plt.style.use("default")
 
         plt.ioff()
         fig_1 = plt.figure()
