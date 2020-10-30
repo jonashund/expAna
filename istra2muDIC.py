@@ -44,10 +44,10 @@ if passed_args.experiments == None:
         for test_dir in directories:
             if str(test_dir[:5] == "Test"):
                 experiment_list.append(test_dir)
-            else:
-                experiment_list = passed_args.experiments
+else:
+    experiment_list = passed_args.experiments
 
-                experiment_list = natsorted(experiment_list)
+    experiment_list = natsorted(experiment_list)
 
 project_mesher = dic.Mesher()
 
@@ -55,7 +55,6 @@ current_project = funcs.Project(
     "project_name", istra_acquisition_dir, export2tif_dir, dic_results_dir
 )
 
-# find all folders named `TestX` in data_istra_acquisition
 for test_dir in experiment_list:
     current_test = funcs.Experiment(name=test_dir)
     current_test.read_and_convert_istra_images(

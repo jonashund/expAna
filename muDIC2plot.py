@@ -30,16 +30,16 @@ passed_args = arg_parser.parse_args()
 if passed_args.experiments == None:
     experiment_list = list()
     print(
-        f"No experiments passed. Will search for folders named `Test*` in {current_project.istra_acquisition_dir}."
+        f"No experiments passed. Will search for folders named `Test*` in {dic_results_dir}."
     )
     for path, directories, files in os.walk(dic_results_dir):
         for test_dir in directories:
             if str("Test" in test_dir):
                 experiment_list.append(test_dir)
-            else:
-                experiment_list = passed_args.experiments
+else:
+    experiment_list = passed_args.experiments
 
-                experiment_list = natsorted(experiment_list)
+    experiment_list = natsorted(experiment_list)
 
 passed_args = arg_parser.parse_args()
 
@@ -150,24 +150,21 @@ for test_dir in experiment_list:
     ) as myfile:
         dill.dump(experiment, myfile)
 
-for path, directories, files in os.walk(dic_results_dir):
-    for test_dir in directories:
-        if str("Test" in test_dir):
-            with open(
-                os.path.join(dic_results_dir, test_dir, test_dir + "_true_strain.npy"),
-                "rb",
-            ) as myfile:
-                true_strain = np.load(myfile)
-            with open(
-                os.path.join(
-                    dic_results_dir, test_dir, test_dir + "_experiment_data.p"
-                ),
-                "rb",
-            ) as myfile:
-                experiment = dill.load(myfile)
+for test_dir in experiment_list:
+    if str("Test" in test_dir):
+        with open(
+            os.path.join(dic_results_dir, test_dir, test_dir + "_true_strain.npy"),
+            "rb",
+        ) as myfile:
+            true_strain = np.load(myfile)
+        with open(
+            os.path.join(dic_results_dir, test_dir, test_dir + "_experiment_data.p"),
+            "rb",
+        ) as myfile:
+            experiment = dill.load(myfile)
 
-            # plot results to file
-            plot_funcs.plot_true_stress_strain(
-                experiment=experiment, out_dir=vis_export_dir
-            )
-            plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
+        # plot results to file
+        plot_funcs.plot_true_stress_strain(
+            experiment=experiment, out_dir=vis_export_dir
+        )
+        plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
