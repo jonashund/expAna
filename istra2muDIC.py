@@ -5,6 +5,8 @@ import dill
 import numpy as np
 import muDIC as dic
 
+from natsort import natsorted
+
 import istra2muDIC_functions as funcs
 
 arg_parser = argparse.ArgumentParser(
@@ -51,6 +53,8 @@ if passed_args.experiments == None:
                 experiment_list.append(test_dir)
 else:
     experiment_list = passed_args.experiments
+
+experiment_list = natsorted(experiment_list)
 
 exit()
 
