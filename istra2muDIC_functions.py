@@ -50,13 +50,14 @@ class Experiment(object):
     def read_istra_data(self, istra_acquisition_dir, istra_results_dir):
         import istra2py
         import os
+        import numpy as np
 
         from PIL import Image
 
         image_reader = istra2py.Reader(
             path_dir_acquisition=os.path.join(istra_acquisition_dir, self.name),
             path_dir_export=os.path.join(istra_results_dir, self.name + "CORN1"),
-            verbose=False,
+            verbose=True,
         )
 
         image_reader.read(identify_images_export=True)
