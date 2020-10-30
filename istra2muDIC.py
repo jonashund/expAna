@@ -1,35 +1,26 @@
 import os
 import sys
+import argparse
 import dill
 import numpy as np
 import muDIC as dic
 
 import istra2muDIC_functions as funcs
 
-# folder structure:
-#   - data_instron
-#       |
-#       - Test1
-#       - Test2
-#   - data_istra_acquisition
-#       |
-#       - Test1
-#       - Test2
-#   - data_istra_evaluation
-#       |
-#       - Test1
-#       - Test2
-#   - data_export2tif
-#       |
-#       - Test1
-#       - Test2
-#   - data_muDIC
-#       |
-#       - Test1
-#       - Test2
-#   - scripts_dic
-#       |
-#       - *this_script*
+arg_parser = argparse.ArgumentParser(
+    description="istra2true_stress offers `gauge` element functionality based on Python."
+)
+arg_parser.add_argument(
+    "-e",
+    "--experiments",
+    nargs="*",
+    default=None,
+    help="experiment folder name(s) located in ../data_istra_acquisition/",
+)
+
+passed_args = arg_parser.parse_args()
+
+funcs.print_remarks()
 
 filepath = os.path.abspath(os.path.dirname(__file__))
 
@@ -48,17 +39,28 @@ current_project = funcs.Project(
     "project_name", istra_acquisition_dir, export2tif_dir, dic_results_dir
 )
 
-funcs.print_remarks()
+
+if passed_args.experiments == None:
+    experiment_list = list()
+    print(
+        f"No experiments passed. Will search for folders named `Test*` in {current_project.istra_acquisition_dir}."
+    )
+    for path, directories, files in os.walk(current_project.istra_acquisition_dir):
+        for test_dir in directories:
+            if str(test_dir[:5] == "Test"):
+                experiment_list.append(test_dir)
+else:
+    experiment_list = passed_args.experiments
+
+exit()
 
 # find all folders named `TestX` in data_istra_acquisition
-for path, directories, files in os.walk(current_project.istra_acquisition_dir):
-    for test_dir in directories:
-        if str(test_dir[:5] == "Test"):
-            current_test = funcs.Experiment(name=test_dir)
-            current_test.read_and_convert_istra_images(
-                current_project.istra_acquisition_dir, current_project.export2tif_dir,
-            )
-            current_project.add_experiment(current_test)
+for test_dir in experiment_list:
+    current_test = funcs.Experiment(name=test_dir)
+    current_test.read_and_convert_istra_images(
+        current_project.istra_acquisition_dir, current_project.export2tif_dir,
+    )
+    current_project.add_experiment(current_test)
 
 # muDIC
 # read only first image in each test folder to create the mesh with GUI
