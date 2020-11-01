@@ -50,6 +50,7 @@ class Experiment(object):
     def read_istra_evaluation(self, istra_acquisition_dir, istra_evaluation_dir):
         import istra2py
         import os
+        import numpy as np
 
         from PIL import Image
 
