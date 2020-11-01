@@ -48,9 +48,9 @@ for test_dir in experiment_list:
     current_test = funcs.Experiment(name=test_dir)
     current_test.read_istra_evaluation(istra_acquisition_dir, istra_evaluation_dir)
 
-    direction_selector = gauge_funcs.TensileDirection(experiment.ref_image)
+    direction_selector = gauge_funcs.TensileDirection(current_test.ref_image)
     direction_selector.__gui__()
-    experiment.tensile_direction = direction_selector.direction
+    current_test.tensile_direction = direction_selector.direction
 
     test_dict.update({current_test.name: current_test})
     if current_test.tensile_direction == "x":
