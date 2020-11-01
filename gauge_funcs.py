@@ -55,7 +55,7 @@ class TensileDirection(object):
 
         plt.ioff()
         fig_1 = plt.figure()
-        plt.imshow(self.image, cmap="Grey")
+        plt.imshow(self.image, cmap="Greys")
         print_instructions()
         fig_1.canvas.mpl_connect("key_press_event", direction_selector)
         plt.show(block=True)
