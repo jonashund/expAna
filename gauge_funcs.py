@@ -104,6 +104,9 @@ class RectangleCoordinates(object):
         plt.ioff()
         fig_1 = plt.figure(figsize=(10, 8))
 
+        current_cmap = matplotlib.cm.get_cmap()
+        current_cmap.set_bad(color="grey")
+
         # fig_1.subplots_adjust(0.05, 0.05, 0.98, 0.98, 0.1)
         axes_1 = plt.subplot2grid((12, 4), (0, 0), rowspan=12, colspan=4)
         image_1 = axes_1.imshow(self.image, cmap="RdYlBu_r", interpolation="none")
