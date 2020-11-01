@@ -46,7 +46,7 @@ experiment_list = natsorted(experiment_list)
 for test_dir in experiment_list:
     # create experiment object
     current_test = funcs.Experiment(name=test_dir)
-    current_test.read_istra_data(istra_acquisition_dir, istra_evaluation_dir)
+    current_test.read_istra_evaluation(istra_acquisition_dir, istra_evaluation_dir)
 
     direction_selector = gauge_funcs.TensileDirection(experiment.ref_image)
     direction_selector.__gui__()
