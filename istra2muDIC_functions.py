@@ -74,6 +74,38 @@ class Experiment(object):
         self.def_grad = image_reader.evaluation.def_grad
         self.mask = image_reader.evaluation.mask
 
+    def set_documentation_data(experiment_data):
+
+        if experiment_data[r"\dic"] == 1:
+            experiment_data[r"\dic"] = "yes"
+        else:
+            experiment_data[r"\dic"] = "no"
+
+        self.documentation_data = {
+            "tester": experiment_data[r"\tester"],
+            "test_number": experiment_data[r"\testNumber"],
+            "test_time": experiment_data[r"\testTime"].strftime("%H:%M"),
+            "test_date": experiment_data[r"\testDate"].strftime("%d.%m.%Y"),
+            "dic": experiment_data[r"\dic"],
+            "crosshead_speed": experiment_data[r"\crossheadSpeed"],
+            "testing_method": r"\_".join(
+                experiment_data[r"\waveMatrixMethod"].split(r"_")
+            ),
+            "clamping_length": experiment_data[r"\clampingLength"],
+            "clamping_torque": experiment_data[r"\clampingTorque"],
+            "testing_machine": experiment_data[r"\testingMachine"],
+            "specimen_type": experiment_data[r"\specimenType"],
+            "material": experiment_data[r"\material"],
+            "specimen_thickness": experiment_data[r"\specimenThickness"],
+            "specimen_length": experiment_data[r"\specimenLength"],
+            "specimen_width": experiment_data[r"\specimenWidth"],
+            "specimen_orientation": experiment_data[r"\specimenOrientation"],
+            "specimen_position": experiment_data[r"\specimenPosition"],
+            "notch_width": experiment_data[r"\notchWidth"],
+            "notch_depth": experiment_data[r"\notchDepth"],
+            "load_cell": experiment_data[r"\loadCell"],
+        }
+
 
 def print_remarks():
     print(

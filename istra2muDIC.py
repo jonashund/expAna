@@ -13,6 +13,8 @@ funcs.print_remarks()
 
 filepath = os.path.abspath(os.path.dirname(__file__))
 
+test_reports_dir_python = os.path.join(filepath, "..", "test_reports", "python")
+
 export2tif_dir = os.path.join(filepath, "..", "data_export2tif")
 
 dic_results_dir = os.path.join(filepath, "..", "data_muDIC")
@@ -56,11 +58,26 @@ current_project = funcs.Project(
 )
 
 for test_dir in experiment_list:
-    current_test = funcs.Experiment(name=test_dir)
-    current_test.read_and_convert_istra_images(
+    try:
+        with open(
+            os.path.join(test_reports_dir_python, test_dir + "_experiment_data.p"),
+            "rb",
+        ) as myfile:
+            experiment = dill.load(myfile)
+    except:
+        experiment = funcs.Experiment(name=test_dir)
+        print(
+            f"""
+        Warning:
+        No documentation data found for {test_dir}!
+        Document your experiments properly using instron2doc.
+        """
+        )
+
+    experiment.read_and_convert_istra_images(
         current_project.istra_acquisition_dir, current_project.export2tif_dir,
     )
-    current_project.add_experiment(current_test)
+    current_project.add_experiment(experiment)
 
 # muDIC
 # read only first image in each test folder to create the mesh with GUI
