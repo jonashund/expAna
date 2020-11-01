@@ -48,6 +48,14 @@ def remove_row_offset(dataframe, column_name, threshold):
     return dataframe
 
 
+def remove_fail_rows(dataframe, column_name, threshold):
+
+    dataframe = dataframe[dataframe[column_name] > threshold]
+    dataframe = dataframe[:-1]
+
+    return dataframe
+
+
 def plot_style():
     """
         Set custom style parameters for plots.

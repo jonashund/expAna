@@ -52,7 +52,6 @@ for test_dir in experiment_list:
     direction_selector.__gui__()
     current_test.tensile_direction = direction_selector.direction
 
-    test_dict.update({current_test.name: current_test})
     if current_test.tensile_direction == "x":
         x_idx = 0
         y_idx = 1
@@ -63,12 +62,12 @@ for test_dir in experiment_list:
     # get strains from evaluation
     # pixel gradients are treated as elements of the deformation gradient
     true_strain = gauge_funcs.get_true_strain(current_test.def_grad)
-    true_strain[:, :, :, :][istra_reader.evaluation.mask[:, :, :, 0] is False] = np.nan
+    true_strain[:, :, :, :][current_test.mask[:, :, :, 0] == 0] = np.nan
 
     gauge = gauge_funcs.RectangleCoordinates(
-        input_image=true_strain[int(0.75 * current_test.img_count), :, :, x_idx]
+        input_image=true_strain[int(0.75 * current_test.image_count), :, :, x_idx]
     )
-    mask.__gui__()
+    gauge.__gui__()
 
     [x_min, y_min, x_max, y_max] = [int(i) for i in gauge.coordinates]
 
@@ -82,8 +81,8 @@ for test_dir in experiment_list:
     specimen_thickness = 3.0  # mm
 
     true_stress_in_MPa = gauge_funcs.get_true_stress(
-        force_in_N=reaction_force_in_kN * 1000.0,
-        true_strain_perpendicular=true_strain_mean[y_idx, y_idx, :].reshape(
+        force_in_N=current_test.reaction_force * 1000.0,
+        true_strain_perpendicular=true_strain_mean[:, y_idx].reshape(
             (current_test.image_count, 1)
         ),
         specimen_cross_section_in_mm2=specimen_width * specimen_thickness,
@@ -92,14 +91,14 @@ for test_dir in experiment_list:
     poissons_ratio = np.vstack(
         [
             np.array([0.0]),
-            (
-                -true_strain_mean[y_idx, y_idx, 1:] / true_strain_mean[x_idx, x_idx, 1:]
-            ).reshape(current_test.image_count, 1),
+            (-true_strain_mean[1:, y_idx] / true_strain_mean[1:, x_idx]).reshape(
+                current_test.image_count - 1, 1
+            ),
         ]
     )
 
     volume_strain = (
-        true_strain_mean[x_idx, x_idx, :] + 2.0 * true_strain_mean[y_idx, y_idx, :]
+        true_strain_mean[:, x_idx] + 2.0 * true_strain_mean[:, y_idx]
     ).reshape(current_test.image_count, 1)
 
     current_test.gauge_results = pd.DataFrame(
@@ -107,12 +106,8 @@ for test_dir in experiment_list:
             (
                 current_test.traverse_displ,
                 current_test.reaction_force,
-                true_strain_mean[x_idx, x_idx, :].reshape(
-                    (current_test.image_count, 1)
-                ),
-                true_strain_mean[y_idx, y_idx, :].reshape(
-                    (current_test.image_count, 1)
-                ),
+                true_strain_mean[:, x_idx].reshape((current_test.image_count, 1)),
+                true_strain_mean[:, y_idx].reshape((current_test.image_count, 1)),
                 true_stress_in_MPa,
                 poissons_ratio,
                 volume_strain,
@@ -135,14 +130,14 @@ for test_dir in experiment_list:
     )
     current_test.gauge_results.to_csv(
         os.path.join(
-            current_test.test_results_dir, current_test.name + "_gauge_results.csv"
+            current_test.test_results_dir, current_test.name + "CORN1_gauge_results.csv"
         )
     )
 
     # export experiment data
     with open(
         os.path.join(
-            current_test.test_results_dir, current_test.name + "_experiment_data.p"
+            current_test.test_results_dir, current_test.name + "CORN1_experiment_data.p"
         ),
         "wb",
     ) as myfile:
@@ -150,7 +145,11 @@ for test_dir in experiment_list:
 
 for test_dir in experiment_list:
     with open(
-        os.path.join(istra_evaluation_dir, test_dir, test_dir + "_experiment_data.p"),
+        os.path.join(
+            istra_evaluation_dir,
+            current_test.name + "CORN1",
+            current_test.name + "CORN1_experiment_data.p",
+        ),
         "rb",
     ) as myfile:
         current_test = dill.load(myfile)

@@ -102,12 +102,14 @@ class RectangleCoordinates(object):
         # set_gui_backend()
         plt.style.use("classic")
         plt.ioff()
-        fig_1 = plt.figure()
+        fig_1 = plt.figure(figsize=(10, 8))
 
         # fig_1.subplots_adjust(0.05, 0.05, 0.98, 0.98, 0.1)
         axes_1 = plt.subplot2grid((12, 4), (0, 0), rowspan=12, colspan=4)
         image_1 = axes_1.imshow(self.image, cmap="PiYG_r", interpolation="none")
-        fig_1.colorbar(image_1, ax=axes_1, fraction=0.046, pad=0.04)
+        fig_1.colorbar(
+            image_1, ax=axes_1, fraction=0.046, pad=0.04, orientation="horizontal"
+        )
 
         selector = RectangleSelector(
             axes_1,
@@ -166,6 +168,6 @@ def get_true_strain(def_grad):
 
     true_strain[:, :, :, 0] = true_strain_xx
     true_strain[:, :, :, 1] = true_strain_yy
-    true_strain[:, :, :, 3] = true_strain_xy
+    true_strain[:, :, :, 2] = true_strain_xy
 
     return true_strain

@@ -64,7 +64,7 @@ class Experiment(object):
 
         self.ref_image = image_reader.acquisition.images[0]
 
-        self.img_count = np.shape(image_reader.evaluation.mask)[0]
+        self.image_count = np.shape(image_reader.evaluation.mask)[0]
 
         # save exported force and displacement
         self.reaction_force = image_reader.evaluation.traverse_force
