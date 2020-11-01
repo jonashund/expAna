@@ -53,7 +53,7 @@ for test_dir in experiment_list:
     experiment.tensile_direction = direction_selector.direction
 
     test_dict.update({current_test.name: current_test})
-    if experiment.tensile_direction == "x":
+    if current_test.tensile_direction == "x":
         x_idx = 0
         y_idx = 1
     else:
@@ -62,11 +62,11 @@ for test_dir in experiment_list:
 
     # get strains from evaluation
     # pixel gradients are treated as elements of the deformation gradient
-    true_strain = gauge_funcs.get_true_strain(experiment.def_grad)
+    true_strain = gauge_funcs.get_true_strain(current_test.def_grad)
     true_strain[:, :, :, :][istra_reader.evaluation.mask[:, :, :, 0] is False] = np.nan
 
     gauge = gauge_funcs.RectangleCoordinates(
-        input_image=true_strain[int(0.75 * experiment.img_count), :, :, x_idx]
+        input_image=true_strain[int(0.75 * current_test.img_count), :, :, x_idx]
     )
     mask.__gui__()
 
@@ -84,7 +84,7 @@ for test_dir in experiment_list:
     true_stress_in_MPa = gauge_funcs.get_true_stress(
         force_in_N=reaction_force_in_kN * 1000.0,
         true_strain_perpendicular=true_strain_mean[y_idx, y_idx, :].reshape(
-            (experiment.image_count, 1)
+            (current_test.image_count, 1)
         ),
         specimen_cross_section_in_mm2=specimen_width * specimen_thickness,
     )
@@ -94,21 +94,25 @@ for test_dir in experiment_list:
             np.array([0.0]),
             (
                 -true_strain_mean[y_idx, y_idx, 1:] / true_strain_mean[x_idx, x_idx, 1:]
-            ).reshape(experiment.image_count, 1),
+            ).reshape(current_test.image_count, 1),
         ]
     )
 
     volume_strain = (
         true_strain_mean[x_idx, x_idx, :] + 2.0 * true_strain_mean[y_idx, y_idx, :]
-    ).reshape(experiment.image_count, 1)
+    ).reshape(current_test.image_count, 1)
 
-    experiment.gauge_results = pd.DataFrame(
+    current_test.gauge_results = pd.DataFrame(
         data=np.concatenate(
             (
-                experiment.traverse_displ,
-                experiment.reaction_force,
-                true_strain_mean[x_idx, x_idx, :].reshape((experiment.image_count, 1)),
-                true_strain_mean[y_idx, y_idx, :].reshape((experiment.image_count, 1)),
+                current_test.traverse_displ,
+                current_test.reaction_force,
+                true_strain_mean[x_idx, x_idx, :].reshape(
+                    (current_test.image_count, 1)
+                ),
+                true_strain_mean[y_idx, y_idx, :].reshape(
+                    (current_test.image_count, 1)
+                ),
                 true_stress_in_MPa,
                 poissons_ratio,
                 volume_strain,
@@ -126,31 +130,31 @@ for test_dir in experiment_list:
         ],
     )
     # export dataframe with results as .csv
-    experiment.test_results_dir = os.path.join(
-        istra_evaluation_dir, experiment.name + "CORN1"
+    current_test.test_results_dir = os.path.join(
+        istra_evaluation_dir, current_test.name + "CORN1"
     )
-    experiment.gauge_results.to_csv(
+    current_test.gauge_results.to_csv(
         os.path.join(
-            experiment.test_results_dir, experiment.name + "_gauge_results.csv"
+            current_test.test_results_dir, current_test.name + "_gauge_results.csv"
         )
     )
 
     # export experiment data
     with open(
         os.path.join(
-            experiment.test_results_dir, experiment.name + "_experiment_data.p"
+            current_test.test_results_dir, current_test.name + "_experiment_data.p"
         ),
         "wb",
     ) as myfile:
-        dill.dump(experiment, myfile)
+        dill.dump(current_test, myfile)
 
 for test_dir in experiment_list:
     with open(
         os.path.join(istra_evaluation_dir, test_dir, test_dir + "_experiment_data.p"),
         "rb",
     ) as myfile:
-        experiment = dill.load(myfile)
+        current_test = dill.load(myfile)
 
     # plot results to file
-    plot_funcs.plot_true_stress_strain(experiment=experiment, out_dir=vis_export_dir)
-    plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
+    plot_funcs.plot_true_stress_strain(experiment=current_test, out_dir=vis_export_dir)
+    plot_funcs.plot_volume_strain(experiment=current_test, out_dir=vis_export_dir)
