@@ -13,7 +13,7 @@ from natsort import natsorted
 filepath = os.path.abspath(os.path.dirname(__file__))
 
 istra_acquisition_dir = os.path.join(filepath, "..", "data_istra_acquisition")
-dic_results_dir = os.path.join(filepath, "..", "data_istra_evaluation")
+istra_evaluation_dir = os.path.join(filepath, "..", "data_istra_evaluation")
 vis_export_dir = os.path.join(filepath, "..", "visualisation_istra")
 
 arg_parser = argparse.ArgumentParser(
@@ -46,7 +46,7 @@ experiment_list = natsorted(experiment_list)
 for test_dir in experiment_list:
     # create experiment object
     current_test = funcs.Experiment(name=test_dir)
-    current_test.read_istra_data(istra_acquisition_dir, dic_results_dir)
+    current_test.read_istra_data(istra_acquisition_dir, istra_evaluation_dir)
 
     direction_selector = gauge_funcs.TensileDirection(experiment.ref_image)
     direction_selector.__gui__()
@@ -60,17 +60,10 @@ for test_dir in experiment_list:
         x_idx = 1
         y_idx = 0
 
-    # get array with strains in y and y directions for all frames
-    # istra_strains[frame_id, x_id, y_id, strain_id]
-    # strain_id: 0=xx, 1=yy, 2=xy
-    # istra4D uses Langrangian strains [mm/m] for normal strains
-    lagrange_strain = current_test.eps[:, :, :, 0:2] / 1000
-    lagrange_strain[:, :, :, :][istra_reader.export.mask[:, :, :, 0] is False] = np.nan
-
-    exit()
-    # convert to logarithmic strains
-    # true_strain = 1/2 * log(2 * lagrange_strains + 1)
-    true_strain = 1.0 / 2.0 * np.log(2.0 * lagrange_strain + 1.0)
+    # get strains from evaluation
+    # pixel gradients are treated as elements of the deformation gradient
+    true_strain = gauge_funcs.get_true_strain(experiment.def_grad)
+    true_strain[:, :, :, :][istra_reader.evaluation.mask[:, :, :, 0] is False] = np.nan
 
     gauge = gauge_funcs.RectangleCoordinates(
         input_image=true_strain[int(0.75 * experiment.img_count), :, :, x_idx]
@@ -81,7 +74,7 @@ for test_dir in experiment_list:
 
     # image coordinates assume x-axis horizontal (i.e. columns)
     # and y-axis vertical (i.e. rows)
-    true_strain_gauge = log_strain[:, y_min:y_max, x_min:x_max, :]
+    true_strain_gauge = true_strain[:, y_min:y_max, x_min:x_max, :]
 
     true_strain_mean = np.nanmean(true_strain_gauge, axis=(1, 2))
 
@@ -90,7 +83,7 @@ for test_dir in experiment_list:
 
     true_stress_in_MPa = gauge_funcs.get_true_stress(
         force_in_N=reaction_force_in_kN * 1000.0,
-        log_strain_perpendicular=true_strain_mean[y_idx, y_idx, :].reshape(
+        true_strain_perpendicular=true_strain_mean[y_idx, y_idx, :].reshape(
             (experiment.image_count, 1)
         ),
         specimen_cross_section_in_mm2=specimen_width * specimen_thickness,
@@ -114,12 +107,8 @@ for test_dir in experiment_list:
             (
                 experiment.traverse_displ,
                 experiment.reaction_force,
-                true_strain_mean[x_idx, x_idx, :].reshape(
-                    (experiment.muDIC_image_count, 1)
-                ),
-                true_strain_mean[y_idx, y_idx, :].reshape(
-                    (experiment.muDIC_image_count, 1)
-                ),
+                true_strain_mean[x_idx, x_idx, :].reshape((experiment.image_count, 1)),
+                true_strain_mean[y_idx, y_idx, :].reshape((experiment.image_count, 1)),
                 true_stress_in_MPa,
                 poissons_ratio,
                 volume_strain,
@@ -129,8 +118,8 @@ for test_dir in experiment_list:
         columns=[
             "displacement_in_mm",
             "reaction_force_in_kN",
-            "log_strain_image_x",
-            "log_strain_image_y",
+            "true_strain_image_x",
+            "true_strain_image_y",
             "true_stress_in_MPa",
             "poissons_ratio",
             "volume_strain",
@@ -138,7 +127,7 @@ for test_dir in experiment_list:
     )
     # export dataframe with results as .csv
     experiment.test_results_dir = os.path.join(
-        dic_results_dir, experiment.name + "CORN1"
+        istra_evaluation_dir, experiment.name + "CORN1"
     )
     experiment.gauge_results.to_csv(
         os.path.join(
@@ -157,7 +146,8 @@ for test_dir in experiment_list:
 
 for test_dir in experiment_list:
     with open(
-        os.path.join(dic_results_dir, test_dir, test_dir + "_experiment_data.p"), "rb",
+        os.path.join(istra_evaluation_dir, test_dir, test_dir + "_experiment_data.p"),
+        "rb",
     ) as myfile:
         experiment = dill.load(myfile)
 

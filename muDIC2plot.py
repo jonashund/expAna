@@ -86,7 +86,7 @@ for test_dir in experiment_list:
 
     true_stress_in_MPa = gauge_funcs.get_true_stress(
         force_in_N=reaction_force_in_kN * 1000.0,
-        log_strain_perpendicular=true_strain_mean[y_idx, y_idx, :].reshape(
+        true_strain_perpendicular=true_strain_mean[y_idx, y_idx, :].reshape(
             (experiment.muDIC_image_count, 1)
         ),
         specimen_cross_section_in_mm2=specimen_width * specimen_thickness,
@@ -125,8 +125,8 @@ for test_dir in experiment_list:
         columns=[
             "displacement_in_mm",
             "reaction_force_in_kN",
-            "log_strain_image_x",
-            "log_strain_image_y",
+            "true_strain_image_x",
+            "true_strain_image_y",
             "true_stress_in_MPa",
             "poissons_ratio",
             "volume_strain",

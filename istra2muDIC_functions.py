@@ -47,7 +47,7 @@ class Experiment(object):
             if img == 0:
                 self.ref_image = image_reader.acquisition.images[img]
 
-    def read_istra_data(self, istra_acquisition_dir, istra_results_dir):
+    def read_istra_evaluation(self, istra_acquisition_dir, istra_evaluation_dir):
         import istra2py
         import os
 
@@ -55,24 +55,23 @@ class Experiment(object):
 
         image_reader = istra2py.Reader(
             path_dir_acquisition=os.path.join(istra_acquisition_dir, self.name),
-            path_dir_export=os.path.join(istra_results_dir, self.name + "CORN1"),
+            path_dir_evaluation=os.path.join(istra_evaluation_dir, self.name + "CORN1"),
             verbose=False,
         )
 
-        image_reader.read(identify_images_export=True)
+        image_reader.read(identify_images_evaluation=True)
 
         self.ref_image = image_reader.acquisition.images[0]
 
-        self.img_count = np.shape(image_reader.export.mask)[0]
+        self.img_count = np.shape(image_reader.evaluation.mask)[0]
 
         # save exported force and displacement
-        self.reaction_force = image_reader.export.traverse_force
-        self.traverse_displ = image_reader.export.traverse_displ * 10.0
+        self.reaction_force = image_reader.evaluation.traverse_force
+        self.traverse_displ = image_reader.evaluation.traverse_displ * 10.0
         # save exported fields from evaluation
-        self.coords = image_reader.x
-        self.u = image_reader.export.u
-        self.eps = image_reader.export.eps
-        self.mask = image_reader.export.mask
+        self.coords = image_reader.evaluation.x
+        self.def_grad = image_reader.evaluation.def_grad
+        self.mask = image_reader.evaluation.mask
 
 
 def print_remarks():
