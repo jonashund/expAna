@@ -55,7 +55,7 @@ class TensileDirection(object):
 
         plt.ioff()
         fig_1 = plt.figure()
-        plt.imshow(self.image, cmap="Greys")
+        plt.imshow(self.image, cmap="Greys_r")
         print_instructions()
         fig_1.canvas.mpl_connect("key_press_event", direction_selector)
         plt.show(block=True)
@@ -106,7 +106,7 @@ class RectangleCoordinates(object):
 
         # fig_1.subplots_adjust(0.05, 0.05, 0.98, 0.98, 0.1)
         axes_1 = plt.subplot2grid((12, 4), (0, 0), rowspan=12, colspan=4)
-        image_1 = axes_1.imshow(self.image, cmap="YlOrRd", interpolation="none")
+        image_1 = axes_1.imshow(self.image, cmap="rainbow", interpolation="none")
         fig_1.colorbar(
             image_1, ax=axes_1, fraction=0.046, pad=0.04, orientation="horizontal"
         )
