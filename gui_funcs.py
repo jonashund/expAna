@@ -1,14 +1,8 @@
 import platform
 import copy
-import sys
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-
-# doc funcs are located in instron2doc directory
-sys.path.append("../instron2doc/")
-
-import doc_funcs
 
 
 def set_gui_backend():
@@ -145,6 +139,14 @@ class RectangleCoordinates(object):
 
 class FailureLocator(object):
     def __gui__(self, experiment):
+
+        import matplotlib.ticker as mtick
+        import sys
+
+        # doc funcs are located in instron2doc directory
+        sys.path.append("../instron2doc/")
+
+        import doc_funcs
 
         experiment.gauge_results = doc_funcs.remove_fail_rows(
             experiment.gauge_results, "reaction_force_in_kN", 0.0
