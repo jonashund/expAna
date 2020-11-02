@@ -73,10 +73,10 @@ def get_fail_strain(experiment):
         experiment.gauge_results["true_stress_in_MPa"],
         label=f"{experiment.name}",
         linewidth=1.5,
-        picker=line_picker,
+        picker=5,
     )
     fig_1.tight_layout()
-    fig_1.canvas.mpl_connect("pick_event", onpick2)
+    fig_1.canvas.mpl_connect("pick_event", onpick1)
 
     plt.show()
 
@@ -102,6 +102,15 @@ def line_picker(line, mouseevent):
         return True, props
     else:
         return False, dict()
+
+
+def onpick1(event):
+    if isinstance(event.artist, Line2D):
+        thisline = event.artist
+        xdata = thisline.get_xdata()
+        ydata = thisline.get_ydata()
+        ind = event.ind
+        print("onpick1 line:", zip(np.take(xdata, ind), np.take(ydata, ind)))
 
 
 def onpick2(event):
