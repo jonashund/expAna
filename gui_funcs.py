@@ -174,7 +174,7 @@ class FailureLocator(object):
             picker=5,
         )
         fig_1.tight_layout()
-        fig_1.canvas.mpl_connect("pick_event", onpick1)
+        fig_1.canvas.mpl_connect("pick_event", onpick2)
 
         plt.show()
 
