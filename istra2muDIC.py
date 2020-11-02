@@ -100,7 +100,7 @@ for exp_name, experiment in current_project.experiments.items():
     inputs = dic.DICInput(
         experiment.mesh,
         image_stack,
-        ref_update_frames=np.arange(0, experiment.img_count, 50).tolist(),
+        ref_update_frames=np.arange(0, experiment.image_count, 50).tolist(),
         noconvergence="ignore",
     )
     # create a digital image correlation analysis object with the inputs
