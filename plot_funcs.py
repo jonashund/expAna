@@ -27,7 +27,7 @@ def set_gui_backend():
         )
         exit()
 
-    plt.style.use("classic")
+    matplotlib.rcParams.update(matplotlib.rcParamsDefault)
 
 
 def remove_offsets(experiment):
