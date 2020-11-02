@@ -164,8 +164,8 @@ for test_dir in experiment_list:
     with open(
         os.path.join(
             istra_evaluation_dir,
-            experiment.name + "CORN1",
-            experiment.name + "CORN1_experiment_data.p",
+            test_dir + "CORN1",
+            test_dir + "CORN1_experiment_data.p",
         ),
         "rb",
     ) as myfile:
