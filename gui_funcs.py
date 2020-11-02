@@ -138,10 +138,13 @@ class RectangleCoordinates(object):
 
 
 def FailureLocator(object):
-    def __gui__(self, experiment):
+    def __init__(self, experiment):
+        self.experiment = experiment
 
-        experiment.gauge_results = doc_funcs.remove_fail_rows(
-            experiment.gauge_results, "reaction_force_in_kN", 0.0
+    def __gui__(self,):
+
+        self.experiment.gauge_results = doc_funcs.remove_fail_rows(
+            self.experiment.gauge_results, "reaction_force_in_kN", 0.0
         )
 
         doc_funcs.plot_style()
@@ -155,16 +158,20 @@ def FailureLocator(object):
         axes_1.yaxis.set_minor_locator(mtick.AutoMinorLocator(2))
         axes_1.grid(color="#929591", linewidth=0.33, zorder=0)
 
-        axes_1.set_xlim(0, 1.1 * experiment.gauge_results["true_strain_image_x"].max())
-        axes_1.set_ylim(0, 1.1 * experiment.gauge_results["true_stress_in_MPa"].max())
+        axes_1.set_xlim(
+            0, 1.1 * self.experiment.gauge_results["true_strain_image_x"].max()
+        )
+        axes_1.set_ylim(
+            0, 1.1 * self.experiment.gauge_results["true_stress_in_MPa"].max()
+        )
 
         axes_1.set_xlabel(r"log. strain $\varepsilon$ [-]")
         axes_1.set_ylabel(r"true stress $\sigma$ [MPa]")
         axes_1.set_title("Pick point of material failure (left mouse button).")
 
         lineplot = axes_1.plot(
-            experiment.gauge_results["true_strain_image_x"],
-            experiment.gauge_results["true_stress_in_MPa"],
+            self.experiment.gauge_results["true_strain_image_x"],
+            self.experiment.gauge_results["true_stress_in_MPa"],
             label=f"{experiment.name}",
             linewidth=1.5,
             picker=5,
@@ -200,5 +207,5 @@ def FailureLocator(object):
 
         def onpick2(event):
             print("onpick2 line:", event.pickx, event.picky)
-            experiment.fail_strain = event.pickx
-            experiment.fail_stress = event.picky
+            self.experiment.fail_strain = event.pickx
+            self.experiment.fail_stress = event.picky
