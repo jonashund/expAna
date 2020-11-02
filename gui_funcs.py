@@ -4,6 +4,11 @@ import copy
 import matplotlib
 import matplotlib.pyplot as plt
 
+# doc funcs are located in instron2doc directory
+sys.path.append("../instron2doc/")
+
+import doc_funcs
+
 
 def set_gui_backend():
     if platform.system() == "Darwin":
