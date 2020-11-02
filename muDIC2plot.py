@@ -148,34 +148,31 @@ for test_dir in experiment_list:
         dill.dump(experiment, myfile)
 
 for test_dir in experiment_list:
-    if str("Test" in test_dir):
-        with open(
-            os.path.join(dic_results_dir, test_dir, test_dir + "_true_strain.npy"),
-            "rb",
-        ) as myfile:
-            true_strain = np.load(myfile)
-        with open(
-            os.path.join(dic_results_dir, test_dir, test_dir + "_experiment_data.p"),
-            "rb",
-        ) as myfile:
-            experiment = dill.load(myfile)
+    with open(
+        os.path.join(dic_results_dir, test_dir, test_dir + "_true_strain.npy"), "rb",
+    ) as myfile:
+        true_strain = np.load(myfile)
+    with open(
+        os.path.join(dic_results_dir, test_dir, test_dir + "_experiment_data.p"), "rb",
+    ) as myfile:
+        experiment = dill.load(myfile)
 
-        # plot results to file
-        plot_funcs.remove_offsets(experiment)
+    # plot results to file
+    plot_funcs.remove_offsets(experiment)
 
-        fail_location = gui_funcs.FailureLocator()
-        fail_location.__gui__(experiment)
+    fail_location = gui_funcs.FailureLocator()
+    fail_location.__gui__(experiment)
 
-        plot_funcs.plot_true_stress_strain(
-            experiment=experiment, out_dir=vis_export_dir
-        )
-        plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
+    plot_funcs.plot_true_stress_strain(experiment=experiment, out_dir=vis_export_dir)
+    plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
 
-        # export experiment data
-        with open(
-            os.path.join(
-                experiment.test_results_dir, experiment.name + "_experiment_data.p"
-            ),
-            "wb",
-        ) as myfile:
-            dill.dump(experiment, myfile)
+    gui_funcs.set_gui_backend()
+
+    # export experiment data
+    with open(
+        os.path.join(
+            experiment.test_results_dir, experiment.name + "_experiment_data.p"
+        ),
+        "wb",
+    ) as myfile:
+        dill.dump(experiment, myfile)
