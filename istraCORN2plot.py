@@ -4,8 +4,9 @@ import argparse
 import dill
 import numpy as np
 import pandas as pd
-import gauge_funcs
+import gui_funcs
 import plot_funcs
+import dic_post_funcs
 import istra2muDIC_functions as funcs
 
 from natsort import natsorted
@@ -64,7 +65,7 @@ for test_dir in experiment_list:
 
     experiment.read_istra_evaluation(istra_acquisition_dir, istra_evaluation_dir)
 
-    direction_selector = gauge_funcs.TensileDirection(experiment.ref_image)
+    direction_selector = gui_funcs.TensileDirection(experiment.ref_image)
     direction_selector.__gui__()
     experiment.tensile_direction = direction_selector.direction
 
@@ -77,10 +78,10 @@ for test_dir in experiment_list:
 
     # get strains from evaluation
     # pixel gradients are treated as elements of the deformation gradient
-    true_strain = gauge_funcs.get_true_strain(experiment.def_grad)
+    true_strain = dic_post_funcs.get_true_strain(experiment.def_grad)
     true_strain[:, :, :, :][experiment.mask[:, :, :, 0] == 0] = np.nan
 
-    gauge = gauge_funcs.RectangleCoordinates(
+    gauge = gui_funcs.RectangleCoordinates(
         input_image=true_strain[int(0.75 * experiment.image_count), :, :, x_idx]
     )
     gauge.__gui__()
@@ -96,7 +97,7 @@ for test_dir in experiment_list:
     specimen_width = 12.0  # mm
     specimen_thickness = 3.0  # mm
 
-    true_stress_in_MPa = gauge_funcs.get_true_stress(
+    true_stress_in_MPa = dic_post_funcs.get_true_stress(
         force_in_N=experiment.reaction_force * 1000.0,
         true_strain_perpendicular=true_strain_mean[:, y_idx].reshape(
             (experiment.image_count, 1)

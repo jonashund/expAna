@@ -4,8 +4,9 @@ import argparse
 import dill
 import numpy as np
 import pandas as pd
-import gauge_funcs
 import plot_funcs
+import gui_funcs
+import dic_post_funcs
 
 from natsort import natsorted
 
@@ -51,7 +52,7 @@ for test_dir in experiment_list:
     ) as myfile:
         experiment = dill.load(myfile)
 
-    direction_selector = gauge_funcs.TensileDirection(experiment.ref_image)
+    direction_selector = gui_funcs.TensileDirection(experiment.ref_image)
     direction_selector.__gui__()
     experiment.tensile_direction = direction_selector.direction
 
@@ -66,9 +67,7 @@ for test_dir in experiment_list:
     experiment.muDIC_image_count = true_strain.shape[-1]
     plot_frame = int(0.8 * experiment.muDIC_image_count)
 
-    mask = gauge_funcs.RectangleCoordinates(
-        input_image=true_strain_x[:, :, plot_frame].T
-    )
+    mask = gui_funcs.RectangleCoordinates(input_image=true_strain_x[:, :, plot_frame].T)
     mask.__gui__()
 
     [x_min, y_min, x_max, y_max] = [int(i) for i in mask.coordinates]
@@ -84,7 +83,7 @@ for test_dir in experiment_list:
     specimen_width = 12.0  # mm
     specimen_thickness = 3.0  # mm
 
-    true_stress_in_MPa = gauge_funcs.get_true_stress(
+    true_stress_in_MPa = dic_post_funcs.get_true_stress(
         force_in_N=reaction_force_in_kN * 1000.0,
         true_strain_perpendicular=true_strain_mean[y_idx, y_idx, :].reshape(
             (experiment.muDIC_image_count, 1)
@@ -164,7 +163,8 @@ for test_dir in experiment_list:
         # plot results to file
         plot_funcs.remove_offsets(experiment)
 
-        plot_funcs.get_fail_strain(experiment)
+        fail_location = gui_funcs.FailureLocator()
+        fail_location.__gui__(experiment)
 
         # plot_funcs.plot_true_stress_strain(
         #     experiment=experiment, out_dir=vis_export_dir

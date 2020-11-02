@@ -14,7 +14,7 @@ def set_gui_backend():
         print(
             f"""
         {platform.system()} not supported (yet).
-        Could you please add it in gauge_funcs.set_gui_backend()?
+        Could you please add it in gui_funcs.set_gui_backend()?
         """
         )
         exit()
@@ -137,43 +137,68 @@ class RectangleCoordinates(object):
         plt.show(block=True)
 
 
-def get_true_stress(
-    force_in_N, true_strain_perpendicular, specimen_cross_section_in_mm2
-):
-    true_stress = force_in_N / (
-        specimen_cross_section_in_mm2 * np.exp(2.0 * true_strain_perpendicular)
-    )
+def FailureLocator(object):
+    def __gui__(self, experiment):
 
-    return true_stress
+        experiment.gauge_results = doc_funcs.remove_fail_rows(
+            experiment.gauge_results, "reaction_force_in_kN", 0.0
+        )
 
+        doc_funcs.plot_style()
 
-def get_true_strain(def_grad):
-    """
-    calculation of the elements of the true strain tensor
-    E_0 = 1./2. * log(C)
-    where C is the right Cauchy-Green tensor
-    C = F^T * F
-    """
-    def_grad_dxdx = def_grad[:, :, :, 0]
-    def_grad_dxdy = def_grad[:, :, :, 1]
-    def_grad_dydx = def_grad[:, :, :, 2]
-    def_grad_dydy = def_grad[:, :, :, 3]
+        set_gui_backend()
 
-    true_strain_xx = 1.0 / 2.0 * np.log(def_grad_dxdx ** 2 + def_grad_dydx ** 2)
+        fig_1, axes_1 = plt.subplots(figsize=[12, 8])
+        # axes styling
+        axes_1.xaxis.set_minor_locator(mtick.AutoMinorLocator(2))
+        # axes_1.xaxis.set_major_formatter(mtick.PercentFormatter(1.0))
+        axes_1.yaxis.set_minor_locator(mtick.AutoMinorLocator(2))
+        axes_1.grid(color="#929591", linewidth=0.33, zorder=0)
 
-    true_strain_yy = 1.0 / 2.0 * np.log(def_grad_dydy ** 2 + def_grad_dxdy ** 2)
+        axes_1.set_xlim(0, 1.1 * experiment.gauge_results["true_strain_image_x"].max())
+        axes_1.set_ylim(0, 1.1 * experiment.gauge_results["true_stress_in_MPa"].max())
 
-    true_strain_xy = (
-        1.0
-        / 2.0
-        * np.log(def_grad_dxdx * def_grad_dxdy + def_grad_dydy * def_grad_dydx)
-    )
+        axes_1.set_xlabel(r"log. strain $\varepsilon$ [-]")
+        axes_1.set_ylabel(r"true stress $\sigma$ [MPa]")
+        axes_1.set_title("Pick point of material failure (left mouse button).")
 
-    (nbr_files, nbr_x, nbr_y, nbr_components_def_grad) = def_grad.shape
-    true_strain = np.zeros((nbr_files, nbr_x, nbr_y, 3), dtype=np.float64)
+        lineplot = axes_1.plot(
+            experiment.gauge_results["true_strain_image_x"],
+            experiment.gauge_results["true_stress_in_MPa"],
+            label=f"{experiment.name}",
+            linewidth=1.5,
+            picker=5,
+        )
+        fig_1.tight_layout()
+        fig_1.canvas.mpl_connect("pick_event", onpick1)
 
-    true_strain[:, :, :, 0] = true_strain_xx
-    true_strain[:, :, :, 1] = true_strain_yy
-    true_strain[:, :, :, 2] = true_strain_xy
+        plt.show()
 
-    return true_strain
+        def line_picker(line, mouseevent):
+            """
+            find the points within a certain distance from the mouseclick in
+            data coords and attach some extra attributes, pickx and picky
+            which are the data points that were picked
+            """
+            if mouseevent.xdata is None:
+                return False, dict()
+            xdata = line.get_xdata()
+            ydata = line.get_ydata()
+            maxd = 0.05
+            d = np.sqrt(
+                (xdata - mouseevent.xdata) ** 2.0 + (ydata - mouseevent.ydata) ** 2.0
+            )
+
+            ind = np.nonzero(np.less_equal(d, maxd))
+            if len(ind):
+                pickx = np.take(xdata, ind)
+                picky = np.take(ydata, ind)
+                props = dict(ind=ind, pickx=pickx, picky=picky)
+                return True, props
+            else:
+                return False, dict()
+
+        def onpick2(event):
+            print("onpick2 line:", event.pickx, event.picky)
+            experiment.fail_strain = event.pickx
+            experiment.fail_stress = event.picky
