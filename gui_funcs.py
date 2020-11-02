@@ -199,7 +199,7 @@ class FailureLocator(object):
             experiment.gauge_results["true_stress_in_MPa"],
             label=f"{experiment.name}",
             linewidth=1.5,
-            picker=5,
+            picker=line_picker,
         )
         fig_1.tight_layout()
         fig_1.canvas.mpl_connect("pick_event", onpick2)
