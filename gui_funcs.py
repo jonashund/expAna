@@ -112,13 +112,12 @@ class RectangleCoordinates(object):
         plt.ioff()
         fig_1 = plt.figure(figsize=(10, 8))
 
-        plt.set_cmap("RdYlBu_r")
-        current_cmap = copy.copy(matplotlib.cm.get_cmap("RdYlBu_r"))
-        current_cmap.set_bad(color="grey")
+        custom_cmap = copy.copy(matplotlib.cm.get_cmap("RdYlBu_r"))
+        custom_cmap.set_bad(color="grey")
 
         # fig_1.subplots_adjust(0.05, 0.05, 0.98, 0.98, 0.1)
         axes_1 = plt.subplot2grid((12, 4), (0, 0), rowspan=12, colspan=4)
-        image_1 = axes_1.imshow(self.image, interpolation="none")
+        image_1 = axes_1.imshow(self.image, interpolation="none", cmap=custom_cmap)
 
         axes_1.set_title(
             """Use the whole image (default) or select rectangular part
@@ -179,17 +178,25 @@ class FailureLocator(object):
 
         def onpick2(event):
             print("selected [[strain(s)]][[stress(es)]]:", event.pickx, event.picky)
+
             experiment.fail_strain = event.pickx
             experiment.fail_stress = event.picky
 
         def confirmation(event):
             if event.key in ["enter"]:
-                fail_idx = experiment.gauge_results[
-                    experiment.gauge_results["true_strain_image_x"]
-                    == experiment.fail_strain[0][0]
-                ].index[0]
+                if experiment.fail_strain.size > 0:
+                    fail_idx = experiment.gauge_results[
+                        experiment.gauge_results["true_strain_image_x"]
+                        == experiment.fail_strain[0][0]
+                    ].index[0]
 
-                experiment.gauge_results = experiment.gauge_results[:fail_idx]
+                    experiment.gauge_results = experiment.gauge_results[:fail_idx]
+                else:
+                    print(
+                        """
+                    No valid point selected. Assuming no failure of specimen.
+                    """
+                    )
                 plt.close()
 
         import matplotlib.ticker as mtick
