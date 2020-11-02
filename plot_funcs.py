@@ -49,17 +49,34 @@ def get_fail_strain(experiment):
         picker=line_picker,
     )
     fig_1.tight_layout()
-    fig_1.canvas.mpl_connect("pick_event", onpick)
+    fig_1.canvas.mpl_connect("pick_event", onpick2)
 
 
-def onpick(event):
-    if isinstance(event.artist, Line2D):
-        thisline = event.artist
-        xdata = thisline.get_xdata()
-        ydata = thisline.get_ydata()
-        ind = event.ind
-        print("X=" + str(np.take(xdata, ind)[0]))  # Print X point
-        print("Y=" + str(np.take(ydata, ind)[0]))  # Print Y point
+def line_picker(line, mouseevent):
+    """
+    find the points within a certain distance from the mouseclick in
+    data coords and attach some extra attributes, pickx and picky
+    which are the data points that were picked
+    """
+    if mouseevent.xdata is None:
+        return False, dict()
+    xdata = line.get_xdata()
+    ydata = line.get_ydata()
+    maxd = 0.05
+    d = np.sqrt((xdata - mouseevent.xdata) ** 2.0 + (ydata - mouseevent.ydata) ** 2.0)
+
+    ind = np.nonzero(np.less_equal(d, maxd))
+    if len(ind):
+        pickx = np.take(xdata, ind)
+        picky = np.take(ydata, ind)
+        props = dict(ind=ind, pickx=pickx, picky=picky)
+        return True, props
+    else:
+        return False, dict()
+
+
+def onpick2(event):
+    print("onpick2 line:", event.pickx, event.picky)
 
 
 def plot_true_stress_strain(
