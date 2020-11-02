@@ -1,5 +1,6 @@
 import os
 import sys
+import platform
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
@@ -7,6 +8,23 @@ import matplotlib.ticker as mtick
 sys.path.append("../instron2doc/")
 
 import doc_funcs
+
+
+def set_gui_backend():
+    if platform.system() == "Darwin":
+        matplotlib.use("macosx")
+    elif platform.system() == "Linux":
+        matplotlib.use("TkAgg")
+    else:
+        print(
+            f"""
+        {platform.system()} not supported (yet).
+        Could you please add it in gauge_funcs.set_gui_backend()?
+        """
+        )
+        exit()
+
+    plt.style.use("classic")
 
 
 def remove_offsets(experiment):
@@ -26,6 +44,8 @@ def get_fail_strain(experiment):
     )
 
     doc_funcs.plot_style()
+
+    set_gui_backend()
 
     fig_1, axes_1 = plt.subplots(figsize=[12, 8])
     # axes styling
