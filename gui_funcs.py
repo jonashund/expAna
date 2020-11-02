@@ -172,7 +172,7 @@ class FailureLocator(object):
             if event.key in ["enter"]:
                 fail_idx = experiment.gauge_results[
                     experiment.gauge_results["true_strain_image_x"]
-                    == experiment.fail_strain[0]
+                    == experiment.fail_strain[0][0]
                 ].index[0]
 
                 experiment.gauge_results = experiment.gauge_results[:fail_idx]
