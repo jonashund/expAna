@@ -110,6 +110,7 @@ def onpick1(event):
         ydata = thisline.get_ydata()
         ind = event.ind
         print("onpick1 line:", zip(np.take(xdata, ind), np.take(ydata, ind)))
+        print(f"{xdata}, {ydata}")
 
 
 def onpick2(event):
