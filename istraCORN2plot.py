@@ -180,6 +180,8 @@ for test_dir in experiment_list:
     plot_funcs.plot_true_stress_strain(experiment=experiment, out_dir=vis_export_dir)
     plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
 
+    gui_funcs.set_gui_backend()
+
     # export experiment data
     with open(
         os.path.join(
