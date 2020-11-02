@@ -105,7 +105,7 @@ class RectangleCoordinates(object):
         fig_1 = plt.figure(figsize=(10, 8))
 
         plt.set_cmap("RdYlBu_r")
-        current_cmap = matplotlib.cm.get_cmap()
+        current_cmap = copy.copy(mpl.cm.get_cmap("RdYlBu_r"))
         current_cmap.set_bad(color="grey")
 
         # fig_1.subplots_adjust(0.05, 0.05, 0.98, 0.98, 0.1)
