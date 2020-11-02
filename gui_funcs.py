@@ -56,6 +56,12 @@ class TensileDirection(object):
 
         plt.ioff()
         fig_1 = plt.figure()
+        fig_1.suptitle(
+            """
+            Enter tensile direction in image shown using arrow keys.
+            Skip with enter to accept default direction: `horizontal`.
+            """
+        )
         plt.imshow(self.image, cmap="Greys_r")
         print_instructions()
         fig_1.canvas.mpl_connect("key_press_event", direction_selector)
@@ -113,6 +119,13 @@ class RectangleCoordinates(object):
         axes_1 = plt.subplot2grid((12, 4), (0, 0), rowspan=12, colspan=4)
         image_1 = axes_1.imshow(self.image, interpolation="none")
 
+        axes_1.set_title(
+            """Use the whole image (default) or select rectangular part
+                        of image for mean strain calculation.
+                                Confirm with `enter`.
+            """
+        )
+
         fig_1.colorbar(
             image_1, ax=axes_1, fraction=0.046, pad=0.04, orientation="horizontal"
         )
@@ -164,7 +177,7 @@ class FailureLocator(object):
                 return False, dict()
 
         def onpick2(event):
-            print("onpick2 line:", event.pickx, event.picky)
+            print("selected [[strain(s)]][[stress(es)]]:", event.pickx, event.picky)
             experiment.fail_strain = event.pickx
             experiment.fail_stress = event.picky
 
