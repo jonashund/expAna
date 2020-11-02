@@ -41,10 +41,6 @@ def remove_offsets(experiment):
 
 
 def get_fail_strain(experiment):
-    from matplotlib.lines import Line2D
-    from matplotlib.patches import Rectangle
-    from matplotlib.text import Text
-    from matplotlib.image import AxesImage
 
     experiment.gauge_results = doc_funcs.remove_fail_rows(
         experiment.gauge_results, "reaction_force_in_kN", 0.0
@@ -105,6 +101,9 @@ def line_picker(line, mouseevent):
 
 
 def onpick1(event):
+
+    from matplotlib.lines import Line2D
+
     if isinstance(event.artist, Line2D):
         thisline = event.artist
         xdata = thisline.get_xdata()
