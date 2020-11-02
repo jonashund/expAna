@@ -11,6 +11,8 @@ import doc_funcs
 
 
 def set_gui_backend():
+    import matplotlib
+
     if platform.system() == "Darwin":
         matplotlib.use("macosx")
     elif platform.system() == "Linux":
@@ -38,6 +40,11 @@ def remove_offsets(experiment):
 
 
 def get_fail_strain(experiment):
+
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Rectangle
+    from matplotlib.text import Text
+    from matplotlib.image import AxesImage
 
     experiment.gauge_results = doc_funcs.remove_fail_rows(
         experiment.gauge_results, "reaction_force_in_kN", 0.0
