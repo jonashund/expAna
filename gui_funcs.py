@@ -168,6 +168,10 @@ class FailureLocator(object):
             # experiment.fail_strain = event.pickx
             # experiment.fail_stress = event.picky
 
+        def confirmation(event):
+            if event.key in ["enter"]:
+                plt.close()
+
         import matplotlib.ticker as mtick
         import sys
 
@@ -192,7 +196,12 @@ class FailureLocator(object):
 
         axes_1.set_xlabel(r"log. strain $\varepsilon$ [-]")
         axes_1.set_ylabel(r"true stress $\sigma$ [MPa]")
-        axes_1.set_title("Pick point of material failure (left mouse button).")
+        axes_1.set_title(
+            """
+            Pick point of material failure (left mouse button).
+            Confirm with `enter`.
+            """
+        )
 
         lineplot = axes_1.plot(
             experiment.gauge_results["true_strain_image_x"],
@@ -203,5 +212,6 @@ class FailureLocator(object):
         )
         fig_1.tight_layout()
         fig_1.canvas.mpl_connect("pick_event", onpick2)
+        fig_1.canvas.mpl_connect("key_press_event", confirmation)
 
         plt.show()
