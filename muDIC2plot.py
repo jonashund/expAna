@@ -166,7 +166,7 @@ for test_dir in experiment_list:
         fail_location = gui_funcs.FailureLocator()
         fail_location.__gui__(experiment)
 
-        # plot_funcs.plot_true_stress_strain(
-        #     experiment=experiment, out_dir=vis_export_dir
-        # )
-        # plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
+        plot_funcs.plot_true_stress_strain(
+            experiment=experiment, out_dir=vis_export_dir
+        )
+        plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
