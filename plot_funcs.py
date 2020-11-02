@@ -1,6 +1,7 @@
 import os
 import sys
 import platform
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
@@ -40,7 +41,6 @@ def remove_offsets(experiment):
 
 
 def get_fail_strain(experiment):
-    import numpy as np
     from matplotlib.lines import Line2D
     from matplotlib.patches import Rectangle
     from matplotlib.text import Text
