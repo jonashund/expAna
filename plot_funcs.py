@@ -51,6 +51,8 @@ def get_fail_strain(experiment):
     fig_1.tight_layout()
     fig_1.canvas.mpl_connect("pick_event", onpick2)
 
+    plt.show()
+
 
 def line_picker(line, mouseevent):
     """
