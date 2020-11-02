@@ -162,6 +162,10 @@ for test_dir in experiment_list:
             experiment = dill.load(myfile)
 
         # plot results to file
+        plot_funcs.remove_offsets(experiment)
+
+        plot_funcs.get_fail_strain(experiment)
+
         plot_funcs.plot_true_stress_strain(
             experiment=experiment, out_dir=vis_export_dir
         )
