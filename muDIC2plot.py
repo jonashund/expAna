@@ -170,3 +170,12 @@ for test_dir in experiment_list:
             experiment=experiment, out_dir=vis_export_dir
         )
         plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
+
+        # export experiment data
+        with open(
+            os.path.join(
+                experiment.test_results_dir, experiment.name + "_experiment_data.p"
+            ),
+            "wb",
+        ) as myfile:
+            dill.dump(experiment, myfile)
