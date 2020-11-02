@@ -166,7 +166,7 @@ for test_dir in experiment_list:
 
         plot_funcs.get_fail_strain(experiment)
 
-        plot_funcs.plot_true_stress_strain(
-            experiment=experiment, out_dir=vis_export_dir
-        )
-        plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
+        # plot_funcs.plot_true_stress_strain(
+        #     experiment=experiment, out_dir=vis_export_dir
+        # )
+        # plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
