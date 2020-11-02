@@ -19,6 +19,8 @@ def set_gui_backend():
         )
         exit()
 
+    plt.style.use("classic")
+
 
 class TensileDirection(object):
     def __init__(self, input_image):
