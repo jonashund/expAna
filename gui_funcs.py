@@ -152,10 +152,6 @@ class FailureLocator(object):
             experiment.gauge_results, "reaction_force_in_kN", 0.0
         )
 
-        doc_funcs.plot_style()
-
-        set_gui_backend()
-
         fig_1, axes_1 = plt.subplots(figsize=[12, 8])
         # axes styling
         axes_1.xaxis.set_minor_locator(mtick.AutoMinorLocator(2))
