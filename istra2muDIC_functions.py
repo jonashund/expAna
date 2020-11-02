@@ -74,7 +74,7 @@ class Experiment(object):
         self.def_grad = image_reader.evaluation.def_grad
         self.mask = image_reader.evaluation.mask
 
-    def set_documentation_data(experiment_data):
+    def set_documentation_data(self, experiment_data):
 
         if experiment_data[r"\dic"] == 1:
             experiment_data[r"\dic"] = "yes"
