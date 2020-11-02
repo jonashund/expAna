@@ -100,7 +100,8 @@ class RectangleCoordinates(object):
 
         def print_instructions():
             print(
-                """Use the whole image (default) or select rectangular part
+                """
+                Use the whole image (default) or select rectangular part
                 of image for mean strain calculation.
                 Confirm with `enter`.
                 """
