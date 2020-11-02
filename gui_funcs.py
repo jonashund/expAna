@@ -165,8 +165,15 @@ class FailureLocator(object):
 
         def onpick2(event):
             print("onpick2 line:", event.pickx, event.picky)
-            experiment.fail_strain = event.pickx[0]
-            experiment.fail_stress = event.picky[0]
+            experiment.fail_strain = event.pickx
+            experiment.fail_stress = event.picky
+
+            fail_idx = experiment.gauge_results[
+                experiment.gauge_results["true_strain_image_x"]
+                == experiment.fail_strain[0]
+            ].index[0]
+
+            experiment.gauge_results = experiment.gauge_results[:fail_idx]
 
         def confirmation(event):
             if event.key in ["enter"]:
