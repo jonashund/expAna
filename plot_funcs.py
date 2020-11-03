@@ -70,6 +70,8 @@ def plot_true_stress_strain(
     axes_1.yaxis.set_minor_locator(mtick.AutoMinorLocator(2))
     axes_1.grid(color="#929591", linewidth=0.33, zorder=0)
 
+    axes_1.tick_params(direction="out", pad=5)
+
     # axes_1.set_xlim(0, 1.1 * experiment.gauge_results["true_strain_image_x"].max())
     axes_1.set_xlim(0, 1.0)
     axes_1.set_ylim(0, 1.1 * experiment.gauge_results["true_stress_in_MPa"].max())
