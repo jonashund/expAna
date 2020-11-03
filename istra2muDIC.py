@@ -136,8 +136,3 @@ for exp_name, experiment in current_project.experiments.items():
         "wb",
     ) as myfile:
         dill.dump(experiment, myfile)
-
-
-# visualisation of the results
-# viz = dic.Visualizer(experiment.results, images=image_stack)
-# viz.show(field="True strain", component=(0, 0), frame=200)

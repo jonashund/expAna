@@ -23,7 +23,7 @@ arg_parser.add_argument(
     "--experiments",
     nargs="*",
     default=None,
-    help="experiment folder name(s) located in ../data_istra_acquisition/",
+    help="experiment folder name(s) located in ../data_muDIC/",
 )
 
 arg_parser.add_argument(

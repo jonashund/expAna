@@ -79,7 +79,7 @@ for test_dir in experiment_list:
     # export experiment data
     with open(
         os.path.join(
-            experiment.test_results_dir, experiment.name + "_experiment_data.p"
+            experiment.test_results_dir, experiment.name + "CORN1_experiment_data.p"
         ),
         "wb",
     ) as myfile:
