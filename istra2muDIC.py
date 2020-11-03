@@ -110,26 +110,20 @@ for exp_name, experiment in current_project.experiments.items():
     experiment.results = dic.Fields(results)
 
     # export the results
-    experiment.test_results_dir = os.path.join(dic_results_dir, experiment.name)
-    os.makedirs(experiment.test_results_dir, exist_ok=True)
+    test_results_dir = os.path.join(dic_results_dir, experiment.name)
+    os.makedirs(test_results_dir, exist_ok=True)
 
-    dic.IO.save(
-        results, os.path.join(experiment.test_results_dir, experiment.name + "_muDIC")
-    )
+    dic.IO.save(results, os.path.join(test_results_dir, experiment.name + "_muDIC"))
 
     # extract the true strain field from the results
     true_strain = experiment.results.true_strain()
     # export the true strain field
     np.save(
-        os.path.join(experiment.test_results_dir, experiment.name + "_true_strain"),
-        true_strain,
+        os.path.join(test_results_dir, experiment.name + "_true_strain"), true_strain,
     )
 
     # save experiment data
     with open(
-        os.path.join(
-            experiment.test_results_dir, experiment.name + "_experiment_data.p"
-        ),
-        "wb",
+        os.path.join(test_results_dir, experiment.name + "_experiment_data.p"), "wb",
     ) as myfile:
         dill.dump(experiment, myfile)

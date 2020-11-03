@@ -34,6 +34,16 @@ arg_parser.add_argument(
     help="Save space through not exporting the local strain fields but only the mean results from the gauge element.",
 )
 
+arg_parser.add_argument(
+    "-g",
+    "--geometry",
+    nargs=2,
+    metavar=("specimen_width", "specimen_thickness"),
+    type=float,
+    default=[12.0, 3.0],
+    help="Specimen width and thickness in mm to compute cross section in DIC area.",
+)
+
 passed_args = arg_parser.parse_args()
 
 if passed_args.experiments is None:
@@ -99,8 +109,8 @@ for test_dir in experiment_list:
 
     true_strain_mean = np.nanmean(true_strain_gauge, axis=(1, 2))
 
-    specimen_width = 12.0  # mm
-    specimen_thickness = 3.0  # mm
+    specimen_width = passed_args.geometry[0]
+    specimen_thickness = passed_args.geometry[1]
 
     true_stress_in_MPa = dic_post_funcs.get_true_stress(
         force_in_N=experiment.reaction_force * 1000.0,

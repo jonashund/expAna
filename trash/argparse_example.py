@@ -17,7 +17,21 @@ arg_parser.add_argument(
     help="experiment folder name(s) located in ../data_istra_acquisition/",
 )
 
+arg_parser.add_argument(
+    "-g",
+    "--geometry",
+    nargs=2,
+    metavar=("specimen_width", "specimen_thickness"),
+    type=float,
+    default=[12.0, 3.0],
+    help="Specimen width and thickness in mm to compute cross section in DIC area.",
+)
+
 passed_args = arg_parser.parse_args()
 
 print(f"{passed_args.experiments == None}")
-print(f"{passed_args.experiments[0]}")
+
+print(f"{passed_args.geometry}")
+
+specimen_width = passed_args.geometry[0]
+specimen_thickness = passed_args.geometry[1]
