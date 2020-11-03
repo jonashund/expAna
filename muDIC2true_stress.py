@@ -131,16 +131,12 @@ for test_dir in experiment_list:
         ],
     )
     # export dataframe with results as .csv
+    test_results_dir = os.path.join(dic_results_dir, experiment.name)
     experiment.gauge_results.to_csv(
-        os.path.join(
-            experiment.test_results_dir, experiment.name + "_gauge_results.csv"
-        )
+        os.path.join(test_results_dir, experiment.name + "_gauge_results.csv")
     )
 
     with open(
-        os.path.join(
-            experiment.test_results_dir, experiment.name + "_experiment_data.p"
-        ),
-        "wb",
+        os.path.join(test_results_dir, experiment.name + "_experiment_data.p"), "wb",
     ) as myfile:
         dill.dump(experiment, myfile)
