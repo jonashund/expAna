@@ -24,16 +24,26 @@ arg_parser.add_argument(
 )
 
 arg_parser.add_argument(
-    "-dic",
+    "-d",
+    "--dic",
     default="istra",
     help="Specify DIC software with which the results were obtained. Options: `istra` (default) or `muDIC`.",
 )
 
 arg_parser.add_argument(
-    "-fail",
+    "-f",
+    "--fail",
     default=False,
     help="If `True` the option to graphically determine the failure strain of each curve will be called. If `False` all data points found in `experiment_data` will be plotted to files.",
 )
+
+arg_parser.add_argument(
+    "-o",
+    "--offset",
+    default=True,
+    help="If `False` the curve offsets in terms of force and displacement are removed automatically",
+)
+
 
 passed_args = arg_parser.parse_args()
 
@@ -70,7 +80,11 @@ for test_dir in experiment_list:
         experiment = dill.load(myfile)
 
     # plot results to file
-    plot_funcs.remove_offsets(experiment)
+
+    if not passed_args.offset:
+        plot_funcs.remove_offsets(experiment)
+    else:
+        pass
 
     if passed_args.fail:
         fail_location = gui_funcs.FailureLocator()
