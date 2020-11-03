@@ -46,7 +46,7 @@ else:
 if passed_args.experiments is None:
     experiment_list = list()
     print(
-        f"No experiments passed. Will search for folders named `Test*` in {dic_results_dir}."
+        f"No experiments passed. Will search for folders named `Test*` in {exp_data_dir}."
     )
     for path, directories, files in os.walk(exp_data_dir):
         for test_dir in directories:
@@ -62,16 +62,18 @@ for test_dir in experiment_list:
         os.path.join(exp_data_dir, test_dir + dir_ending, test_dir + file_ending), "rb",
     ) as myfile:
         experiment = dill.load(myfile)
-    try:
-        experiment.slenderise()
-    except:
-        new_experiment = funcs.Experiment(experiment.name)
-        new_experiment.gauge_results = experiment.gauge_results
-        new_experiment.documentation_data = experiment.documentation_data
-        experiment = new_experiment
-        print(
-            "Data for export has been copied to `new_experiment` instance. `new_experiment` will be exported."
-        )
+    # try:
+    #     experiment.slenderise()
+    # except:
+    #     new_experiment = funcs.Experiment(experiment.name)
+    #     new_experiment.gauge_results = experiment.gauge_results
+    #     new_experiment.documentation_data = experiment.documentation_data
+    #     experiment = new_experiment
+    #     print(
+    #         "Data for export has been copied to `new_experiment` instance. `new_experiment` will be exported."
+    #     )
+
+    experiment.slenderise()
 
     with open(
         os.path.join(exp_data_dir, test_dir + dir_ending, test_dir + file_ending), "wb",
