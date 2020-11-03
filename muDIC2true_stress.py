@@ -13,7 +13,6 @@ from natsort import natsorted
 filepath = os.path.abspath(os.path.dirname(__file__))
 
 dic_results_dir = os.path.join(filepath, "..", "data_muDIC")
-vis_export_dir = os.path.join(filepath, "..", "visualisation_muDIC")
 
 arg_parser = argparse.ArgumentParser(
     description="istra2true_stress offers `gauge` element functionality based on Python."

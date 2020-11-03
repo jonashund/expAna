@@ -16,7 +16,6 @@ filepath = os.path.abspath(os.path.dirname(__file__))
 test_reports_dir_python = os.path.join(filepath, "..", "test_reports", "python")
 istra_acquisition_dir = os.path.join(filepath, "..", "data_istra_acquisition")
 istra_evaluation_dir = os.path.join(filepath, "..", "data_istra_evaluation")
-vis_export_dir = os.path.join(filepath, "..", "visualisation_istra")
 
 arg_parser = argparse.ArgumentParser(
     description="istra2true_stress offers `gauge` element functionality based on Python."
