@@ -19,7 +19,7 @@ arg_parser.add_argument(
     "--experiments",
     nargs="*",
     default=None,
-    help="experiment folder name(s) located in ../data_istra_acquisition/",
+    help="evaluation folder name(s) located in ../data_istra_evaluation/",
 )
 
 arg_parser.add_argument(
@@ -72,6 +72,6 @@ for test_dir in experiment_list:
     experiment.slenderise()
 
     with open(
-        os.path.join(exp_data_dir, test_dir + dir_ending, test_dir + file_ending), "wb",
+        os.path.join(exp_data_dir, test_dir, test_dir + "_experiment_data.p"), "wb",
     ) as myfile:
         dill.dump(experiment, myfile)
