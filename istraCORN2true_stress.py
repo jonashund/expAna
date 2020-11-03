@@ -148,22 +148,16 @@ for test_dir in experiment_list:
         ],
     )
     # export dataframe with results as .csv
-    experiment.test_results_dir = os.path.join(
-        istra_evaluation_dir, experiment.name + "CORN1"
-    )
+    test_results_dir = os.path.join(istra_evaluation_dir, experiment.name + "CORN1")
     experiment.gauge_results.to_csv(
-        os.path.join(
-            experiment.test_results_dir, experiment.name + "CORN1_gauge_results.csv"
-        )
+        os.path.join(test_results_dir, experiment.name + "CORN1_gauge_results.csv")
     )
 
     # export experiment data
     if passed_args.eco is True:
         experiment.slenderise()
     with open(
-        os.path.join(
-            experiment.test_results_dir, experiment.name + "CORN1_experiment_data.p"
-        ),
+        os.path.join(test_results_dir, experiment.name + "CORN1_experiment_data.p"),
         "wb",
     ) as myfile:
         dill.dump(experiment, myfile)
