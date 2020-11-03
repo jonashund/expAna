@@ -14,11 +14,8 @@ funcs.print_remarks()
 filepath = os.path.abspath(os.path.dirname(__file__))
 
 test_reports_dir_python = os.path.join(filepath, "..", "test_reports", "python")
-
 export2tif_dir = os.path.join(filepath, "..", "data_export2tif")
-
 dic_results_dir = os.path.join(filepath, "..", "data_muDIC")
-
 istra_acquisition_dir = os.path.join(filepath, "..", "data_istra_acquisition")
 
 os.makedirs(export2tif_dir, exist_ok=True)
