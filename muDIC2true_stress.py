@@ -25,22 +25,6 @@ arg_parser.add_argument(
     help="experiment folder name(s) located in ../data_muDIC/",
 )
 
-arg_parser.add_argument(
-    "-eco",
-    default=True,
-    help="Save space through not exporting the local strain fields but only the mean results from the gauge element.",
-)
-
-arg_parser.add_argument(
-    "-g",
-    "--geometry",
-    nargs=2,
-    metavar=("specimen_width", "specimen_thickness"),
-    type=float,
-    default=[12.0, 3.0],
-    help="Specimen width and thickness in mm to compute cross section in DIC area.",
-)
-
 passed_args = arg_parser.parse_args()
 
 if passed_args.experiments is None:
@@ -95,8 +79,8 @@ for test_dir in experiment_list:
     displacement_in_mm = experiment.traverse_displ[: experiment.muDIC_image_count, :]
     reaction_force_in_kN = experiment.reaction_force[: experiment.muDIC_image_count, :]
 
-    specimen_width = passed_args.geometry[0]
-    specimen_thickness = passed_args.geometry[1]
+    specimen_width = 12.0  # mm
+    specimen_thickness = 3.0  # mm
 
     true_stress_in_MPa = dic_post_funcs.get_true_stress(
         force_in_N=reaction_force_in_kN * 1000.0,
@@ -147,18 +131,16 @@ for test_dir in experiment_list:
         ],
     )
     # export dataframe with results as .csv
-
-    test_results_dir = os.path.join(dic_results_dir, experiment.name)
-
     experiment.gauge_results.to_csv(
-        os.path.join(test_results_dir, experiment.name + "_gauge_results.csv")
+        os.path.join(
+            experiment.test_results_dir, experiment.name + "_gauge_results.csv"
+        )
     )
 
-    # export experiment data
-    if passed_args.eco is True:
-        experiment.slenderise()
-
     with open(
-        os.path.join(test_results_dir, experiment.name + "_experiment_data.p"), "wb",
+        os.path.join(
+            experiment.test_results_dir, experiment.name + "_experiment_data.p"
+        ),
+        "wb",
     ) as myfile:
         dill.dump(experiment, myfile)
