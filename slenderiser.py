@@ -32,15 +32,15 @@ passed_args = arg_parser.parse_args()
 
 if passed_args.dic == "istra":
     exp_data_dir = os.path.join(filepath, "..", "data_istra_evaluation")
-    file_ending = ("CORN1_experiment_data.p",)
+    file_ending = "CORN1_experiment_data.p"
     dir_ending = "CORN1"
 elif passed_args.dic == "muDIC":
     exp_data_dir = os.path.join(filepath, "..", "data_muDIC")
-    file_ending = ("_experiment_data.p",)
+    file_ending = "_experiment_data.p"
     dir_ending = ""
 else:
     raise InputError(
-        "-dic", f"{passed_args.dic} is not a valid value for argument `dic`"
+        "-dic", f"`{passed_args.dic}` is not a valid value for argument `-dic`"
     )
 
 if passed_args.experiments is None:
