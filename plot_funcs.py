@@ -71,6 +71,7 @@ def plot_true_stress_strain(
     axes_1.grid(color="#929591", linewidth=0.33, zorder=0)
 
     axes_1.tick_params(direction="out", pad=5)
+    axes_1.tick_params(bottom=True, left=True, top=False, right=False)
 
     # axes_1.set_xlim(0, 1.1 * experiment.gauge_results["true_strain_image_x"].max())
     axes_1.set_xlim(0, 1.0)
@@ -125,6 +126,9 @@ def plot_volume_strain(
     # axes_1.set_xlim(0, 1.1 * experiment.gauge_results["true_strain_image_x"].max())
     axes_1.set_xlim(0, 1.0)
     axes_1.set_ylim(0, 1.1 * experiment.gauge_results["volume_strain"].max())
+
+    axes_1.tick_params(direction="out", pad=5)
+    axes_1.tick_params(bottom=True, left=True, top=False, right=False)
 
     axes_1.set_xlabel(r"log. strain $\varepsilon$ [-]")
     axes_1.set_ylabel(r"volume strain $\varepsilon_{ii}$")
