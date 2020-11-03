@@ -30,5 +30,11 @@ present as Istra4D hdf5 files.
 
 ## TO DO:
 - Istra4D version?
-- finish implementation istraCORN2plot
-- add option to pass arguments to only re-evaluate specific `TestX` experiments
+
+### Eco mode - saving space
+- only export the gauge results, strip fields from experiment object before export 
+
+### Plot util
+- rename istraCORN2plot -> istraCORN2true_stress
+- rename muDIC2plot -> muDIC2true_stress
+- plot results via seperate plot util with more features than the current plot_funcs

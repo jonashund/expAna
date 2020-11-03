@@ -106,6 +106,14 @@ class Experiment(object):
             "load_cell": experiment_data[r"\loadCell"],
         }
 
+    def slenderise(self):
+        keep = ["documentation_data", "name", "gauge_results"]
+
+        discard = [x for x in vars(self).keys() if not x in keep]
+
+        for attribute in discard:
+            delattr(self, attribute)
+
 
 def print_remarks():
     print(

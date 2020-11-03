@@ -161,6 +161,8 @@ if passed_args.gauge is True:
         )
 
         # export experiment data
+        if passed_args.eco is True:
+            experiment.slenderise()
         with open(
             os.path.join(
                 experiment.test_results_dir, experiment.name + "CORN1_experiment_data.p"
@@ -168,34 +170,3 @@ if passed_args.gauge is True:
             "wb",
         ) as myfile:
             dill.dump(experiment, myfile)
-
-for test_dir in experiment_list:
-    with open(
-        os.path.join(
-            istra_evaluation_dir,
-            test_dir + "CORN1",
-            test_dir + "CORN1_experiment_data.p",
-        ),
-        "rb",
-    ) as myfile:
-        experiment = dill.load(myfile)
-
-    # plot results to file
-    plot_funcs.remove_offsets(experiment)
-
-    fail_location = gui_funcs.FailureLocator()
-    fail_location.__gui__(experiment)
-
-    plot_funcs.plot_true_stress_strain(experiment=experiment, out_dir=vis_export_dir)
-    plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
-
-    gui_funcs.set_gui_backend()
-
-    # export experiment data
-    with open(
-        os.path.join(
-            experiment.test_results_dir, experiment.name + "_experiment_data.p"
-        ),
-        "wb",
-    ) as myfile:
-        dill.dump(experiment, myfile)

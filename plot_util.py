@@ -52,3 +52,66 @@ experiment_list = natsorted(experiment_list)
 #   - selection feature (string) experiment.documentation_data[<key>], i.e. experiment.documentation_data["specimen_orientation"]
 #   - selection criterion (string) value (or part of value) of experiment.documentation_data[<key>]
 #   - plot original curves (boolean)
+
+# from istraCORN2true_stress
+for test_dir in experiment_list:
+    with open(
+        os.path.join(
+            istra_evaluation_dir,
+            test_dir + "CORN1",
+            test_dir + "CORN1_experiment_data.p",
+        ),
+        "rb",
+    ) as myfile:
+        experiment = dill.load(myfile)
+
+    # plot results to file
+    plot_funcs.remove_offsets(experiment)
+
+    fail_location = gui_funcs.FailureLocator()
+    fail_location.__gui__(experiment)
+
+    plot_funcs.plot_true_stress_strain(experiment=experiment, out_dir=vis_export_dir)
+    plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
+
+    gui_funcs.set_gui_backend()
+
+    # export experiment data
+    with open(
+        os.path.join(
+            experiment.test_results_dir, experiment.name + "_experiment_data.p"
+        ),
+        "wb",
+    ) as myfile:
+        dill.dump(experiment, myfile)
+
+# from muDIC2true_stress
+for test_dir in experiment_list:
+    with open(
+        os.path.join(dic_results_dir, test_dir, test_dir + "_true_strain.npy"), "rb",
+    ) as myfile:
+        true_strain = np.load(myfile)
+    with open(
+        os.path.join(dic_results_dir, test_dir, test_dir + "_experiment_data.p"), "rb",
+    ) as myfile:
+        experiment = dill.load(myfile)
+
+    # plot results to file
+    plot_funcs.remove_offsets(experiment)
+
+    fail_location = gui_funcs.FailureLocator()
+    fail_location.__gui__(experiment)
+
+    plot_funcs.plot_true_stress_strain(experiment=experiment, out_dir=vis_export_dir)
+    plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
+
+    gui_funcs.set_gui_backend()
+
+    # export experiment data
+    with open(
+        os.path.join(
+            experiment.test_results_dir, experiment.name + "_experiment_data.p"
+        ),
+        "wb",
+    ) as myfile:
+        dill.dump(experiment, myfile)
