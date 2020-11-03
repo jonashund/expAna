@@ -32,12 +32,8 @@ passed_args = arg_parser.parse_args()
 
 if passed_args.dic == "istra":
     exp_data_dir = os.path.join(filepath, "..", "data_istra_evaluation")
-    file_ending = "CORN1_experiment_data.p"
-    dir_ending = "CORN1"
 elif passed_args.dic == "muDIC":
     exp_data_dir = os.path.join(filepath, "..", "data_muDIC")
-    file_ending = "_experiment_data.p"
-    dir_ending = ""
 else:
     raise InputError(
         "-dic", f"`{passed_args.dic}` is not a valid value for argument `-dic`"
@@ -59,7 +55,7 @@ experiment_list = natsorted(experiment_list)
 
 for test_dir in experiment_list:
     with open(
-        os.path.join(exp_data_dir, test_dir + dir_ending, test_dir + file_ending), "rb",
+        os.path.join(exp_data_dir, test_dir, test_dir + "_experiment_data.p"), "rb",
     ) as myfile:
         experiment = dill.load(myfile)
     # try:
