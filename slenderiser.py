@@ -58,16 +58,6 @@ for test_dir in experiment_list:
         os.path.join(exp_data_dir, test_dir, test_dir + "_experiment_data.p"), "rb",
     ) as myfile:
         experiment = dill.load(myfile)
-    # try:
-    #     experiment.slenderise()
-    # except:
-    #     new_experiment = funcs.Experiment(experiment.name)
-    #     new_experiment.gauge_results = experiment.gauge_results
-    #     new_experiment.documentation_data = experiment.documentation_data
-    #     experiment = new_experiment
-    #     print(
-    #         "Data for export has been copied to `new_experiment` instance. `new_experiment` will be exported."
-    #     )
 
     experiment.slenderise()
 

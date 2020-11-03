@@ -30,11 +30,9 @@ arg_parser.add_argument(
 )
 
 arg_parser.add_argument(
-    "-g",
-    "--gauge",
-    nargs="*",
+    "-eco",
     default=True,
-    help="Carry out the actual definition and evaluation of gauge elements. If `False` only existing data is plotted.",
+    help="Save space through not exporting the local strain fields but only the mean results from the gauge element.",
 )
 
 passed_args = arg_parser.parse_args()
