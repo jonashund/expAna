@@ -1,5 +1,11 @@
 class Project(object):
-    def __init__(self, name, istra_acquisition_dir, export2tif_dir, dic_results_dir):
+    def __init__(
+        self,
+        name,
+        istra_acquisition_dir=None,
+        export2tif_dir=None,
+        dic_results_dir=None,
+    ):
         self.name = name
         self.experiments = {}
         self.export2tif_dir = export2tif_dir
