@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Error(Exception):
     """An error occured."""
 
