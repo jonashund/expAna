@@ -84,7 +84,7 @@ if passed_args.experiments is None:
     print(
         f"No experiments passed. Will search for folders named `Test*` in {istra_acquisition_dir}."
     )
-    for path, directories, files in os.walk(istra_acquisition_dir):
+    for path, directories, files in os.walk(exp_data_dir):
         for test_dir in directories:
             if str(test_dir[:5] == "Test"):
                 experiment_list.append(test_dir)
