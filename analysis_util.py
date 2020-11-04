@@ -101,9 +101,9 @@ experiment_list = natsorted(experiment_list)
 # calculate the averages for each value
 # plot average result for one value in a separate plot
 # plot average results for all values in a plot
-analysis_project = funcs.Project(name=analysis)
 analysis_key = parsed_args.key
 analysis_dict = {}
+analysis_project = funcs.Project(name=f"analysis_{analysis_key}")
 
 # load the experiments
 for test_dir in experiment_list:
