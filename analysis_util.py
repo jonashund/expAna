@@ -101,7 +101,7 @@ experiment_list = natsorted(experiment_list)
 # calculate the averages for each value
 # plot average result for one value in a separate plot
 # plot average results for all values in a plot
-analysis_key = passed_args.key
+analysis_key = passed_args.key[0]
 analysis_dict = {}
 analysis_project = funcs.Project(name=f"analysis_{analysis_key}")
 
@@ -121,7 +121,7 @@ if passed_args.value is None:
         analysis_values.append(experiment_data.documentation_data[analysis_key])
     analysis_values = set(analysis_values)
 else:
-    analysis_values = [analysis_key]
+    analysis_values = [analysis_value[0]]
 
 for analysis_value in analysis_values:
     analysis_dict[analysis_value] = {}
@@ -135,7 +135,7 @@ for analysis_value in analysis_values:
     true_strain_arrays = []
     true_stress_arrays = []
     # create list of arrays with x and y values
-    for experiment_name in analysis_dict[analasis_value]["experiment_list"]:
+    for experiment_name in analysis_dict[analysis_value]["experiment_list"]:
         true_strain_arrays.append(
             analysis_project.experiments[experiment_name]
             .gauge_results["true_strain_image_x"]
