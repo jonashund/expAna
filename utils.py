@@ -28,7 +28,7 @@ def get_mean_curves(list_of_x_arrays, list_of_y_arrays):
     interpolated_y_arrays = []
     for i in range(len(list_of_x_arrays)):
         interpolated_y_arrays.append(
-            np.interp(mean_x_axis, list_of_x_arrays[i], list_of_y_arrays[i])
+            np.interp(mean_x_array, list_of_x_arrays[i], list_of_y_arrays[i])
         )
 
     mean_y_array = np.mean(interpolated_y_arrays, axis=0)
