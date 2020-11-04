@@ -53,7 +53,6 @@ if passed_args.dic == "istra":
 elif passed_args.dic == "muDIC":
     exp_data_dir = os.path.join(filepath, "..", "data_muDIC")
     vis_export_dir = os.path.join(filepath, "..", "visualisation_muDIC")
-
 else:
     raise InputError(
         "-dic", f"`{passed_args.dic}` is not a valid value for argument `-dic`"

@@ -58,7 +58,26 @@ arg_parser.add_argument(
     help="If `True` all curves are plotted as opposd to only the averaged curves if `False`.",
 )
 
+arg_parser.add_argument(
+    "-d",
+    "--dic",
+    default="istra",
+    help="Specify DIC software with which the results were obtained. Options: `istra` (default) or `muDIC`.",
+)
+
 passed_args = arg_parser.parse_args()
+
+if passed_args.dic == "istra":
+    exp_data_dir = os.path.join(filepath, "..", "data_istra_evaluation")
+    vis_export_dir = os.path.join(filepath, "..", "visualisation_istra")
+elif passed_args.dic == "muDIC":
+    exp_data_dir = os.path.join(filepath, "..", "data_muDIC")
+    vis_export_dir = os.path.join(filepath, "..", "visualisation_muDIC")
+else:
+    raise InputError(
+        "-dic", f"`{passed_args.dic}` is not a valid value for argument `-dic`"
+    )
+
 
 if passed_args.experiments is None:
     experiment_list = list()
