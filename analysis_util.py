@@ -130,7 +130,7 @@ for analysis_value in analysis_values:
         if experiment_data.documentation_data[analysis_key] == analysis_value:
             analysis_dict[analysis_value]["experiment_list"].append(experiment_name)
 
-# calculate average curves for every analasis_value
+# calculate average curves for every analysis_value
 for analysis_value in analysis_values:
     true_strain_arrays = []
     true_stress_arrays = []
@@ -151,12 +151,12 @@ for analysis_value in analysis_values:
         true_strain_arrays, true_stress_arrays
     )
 
-    analysis_dict[analasis_value]["stress_strain_arrays"] = [
+    analysis_dict[analysis_value]["stress_strain_arrays"] = [
         mean_true_strain,
         mean_true_stress,
     ]
 
-for analasis_value in analysis_values:
+for analysis_value in analysis_values:
     plt.plot(
         analysis_dict[analysis_value]["stress_strain_arrays"][0],
         analysis_dict[analysis_value]["stress_strain_arrays"][1],
