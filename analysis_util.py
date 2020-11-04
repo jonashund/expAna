@@ -33,7 +33,7 @@ arg_parser.add_argument(
     metavar="experiment.documentation_data[<key>]",
     required=True,
     nargs=1,
-    type=string,
+    type=str,
     help="Dictionary key of dictionary experiment.documentation_data.",
 )
 

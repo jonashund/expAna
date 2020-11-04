@@ -32,7 +32,7 @@ def get_mean_curves(list_of_x_arrays, list_of_y_arrays):
     return mean_x_array, mean_y_array
 
 
-def tolerant_mean(list_of_arrays):
+def get_mean_axis(list_of_arrays):
     # create a list with the array lengths
     list_of_array_lengths = []
     for i in list_of_arrays:
@@ -41,7 +41,7 @@ def tolerant_mean(list_of_arrays):
     array = np.ma.empty((np.max(list_of_array_lengths), len(list_of_arrays)))
     array.mask = True
     for position_i, array_at_position_i in enumerate(arrays):
-        array[: len(array_at_position_i), position_i] = position
+        array[: len(array_at_position_i), position_i] = array_at_position_i
     array_mean = array.mean(axis=-1)
     array_std = array.std(axis=-1)
     return array_mean, array_std
