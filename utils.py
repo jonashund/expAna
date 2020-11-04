@@ -22,7 +22,9 @@ class InputError(Error):
 
 def get_mean_curves(list_of_x_arrays, list_of_y_arrays):
     # interpolation positions
-    mean_x_array = np.linspace(0, max(list_of_x_arrays), 200)
+    mean_x_array = np.linspace(
+        0, max([max(list_of_x_arrays[i]) for i in range(len(list_of_x_arrays))]), 200
+    )
     interpolated_y_arrays = []
     for i in len(list_of_x_arrays):
         interpolated_y_arrays.append(
