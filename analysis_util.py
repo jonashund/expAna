@@ -7,6 +7,7 @@ import pandas as pd
 import gui_funcs
 import plot_funcs
 import istra2muDIC_functions as funcs
+import utils
 
 from natsort import natsorted
 
@@ -27,16 +28,35 @@ arg_parser.add_argument(
 
 #   - selection feature (string) experiment.documentation_data[<key>], i.e. experiment.documentation_data["specimen_orientation"]
 arg_parser.add_argument(
-    "-c",
-    "--criterion",
+    "-k",
+    "--key",
     metavar="experiment.documentation_data[<key>]",
-    nargs=2,
-    default=None,
-    help="Dictionary key and value of dictionary experiment.documentation_data.",
+    required=True,
+    nargs=1,
+    type=string,
+    help="Dictionary key of dictionary experiment.documentation_data.",
 )
 
 #   - selection criterion (string) value (or part of value) of experiment.documentation_data[<key>]
+arg_parser.add_argument(
+    "-v",
+    "--value",
+    metavar="experiment.documentation_data[`key`]: <value>",
+    nargs=1,
+    default=None,
+    help="Value for given --key argument of dictionary experiment.documentation_data.",
+)
 
+#   - plot original curves (boolean)
+arg_parser.add_argument(
+    "-a",
+    "--all",
+    metavar="plot_all_curves",
+    type=bool,
+    nargs=1,
+    default=True,
+    help="If `True` all curves are plotted as opposd to only the averaged curves if `False`.",
+)
 
 passed_args = arg_parser.parse_args()
 
@@ -52,15 +72,74 @@ if passed_args.experiments is None:
 else:
     experiment_list = passed_args.experiments
 
+# get the list of experiments that are part of the analysis
 experiment_list = natsorted(experiment_list)
 
-# what should the plot util do?
-# - plot averaged stress strain curves that match criterion like "orientation"= "parallel to flow"
-# - plot stress strain curves of experiments that match criterion like "orientation"= "parallel to flow" with reduced alpha in same plot
-# - plot averaged stress strain curves of experiments that differ in a feature like "orientation" for comparison
-#
-#
-# input arguments:
-#   - selection feature (string) experiment.documentation_data[<key>], i.e. experiment.documentation_data["specimen_orientation"]
-#   - selection criterion (string) value (or part of value) of experiment.documentation_data[<key>]
-#   - plot original curves (boolean)
+
+# load all experiments and count the different values for given key
+# compile a list of different values for given key
+# create a dictionary that has every found value as key and a list of experiments with that value as list
+# calculate the averages for each value
+# plot average result for one value in a separate plot
+# plot average results for all values in a plot
+analysis_project = funcs.Project(name=analysis)
+analysis_key = parsed_args.key
+analysis_dict = {}
+
+# load the experiments
+for test_dir in experiment_list:
+    with open(
+        os.path.join(exp_data_dir, test_dir, test_dir + "_experiment_data.p"), "rb",
+    ) as myfile:
+        experiment = dill.load(myfile)
+
+        analysis_project.add_experiment(experiment)
+
+# compile list of different values for key or just filter experiments for given key
+if parsed_args.value is None:
+    analysis_values = []
+    for experiment_name, experiment_data in analysis_project.experiments.items():
+        analysis_values.append(experiment_data.documentation_data[analysis_key])
+    analysis_values = set(analysis_values)
+else:
+    analysis_values = [analysis_key]
+
+for analysis_value in analysis_values:
+    analysis_dict[analysis_value] = {}
+    analysis_dict[analysis_value]["experiment_list"] = []
+    for experiment_name, experiment_data in analysis_project.experiments.items():
+        if experiment_data.documentation_data[analysis_key] == analysis_value:
+            analysis_dict[analysis_value]["experiment_list"].append(experiment_name)
+
+# calculate average curves for every analasis_value
+for analysis_value in analysis_values:
+    true_strain_arrays = []
+    true_stress_arrays = []
+    # create list of arrays with x and y values
+    for experiment_name in analysis_dict[analasis_value]["experiment_list"]:
+        true_strain_arrays.append(
+            analysis_project.experiments[experiment_name]
+            .gauge_results["true_strain_image_x"]
+            .to_numpy()
+        )
+        true_stress_arrays.append(
+            analysis_project.experiments[experiment_name]
+            .gauge_results["true_stress_in_MPa"]
+            .to_numpy
+        )
+
+    mean_true_strain, mean_true_stress = utils.get_mean_curves(
+        true_strain_arrays, true_stress_arrays
+    )
+
+    analysis_dict[analasis_value]["stress_strain_arrays"] = [
+        mean_true_strain,
+        mean_true_stress,
+    ]
+
+for analasis_value in analysis_values:
+    plt.plot(
+        analysis_dict[analysis_value]["stress_strain_arrays"][0],
+        analysis_dict[analysis_value]["stress_strain_arrays"][1],
+    )
+    plt.show()
