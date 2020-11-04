@@ -32,7 +32,7 @@ def get_mean_curves(list_of_x_arrays, list_of_y_arrays):
         )
 
     mean_y_array = np.mean(interpolated_y_arrays, axis=0)
-    std_y_array = np.std(interpolated_y_arrays, axis=0)
+    # std_y_array = np.std(interpolated_y_arrays, axis=0)
 
     return mean_x_array, mean_y_array
 

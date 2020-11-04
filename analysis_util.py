@@ -144,7 +144,7 @@ for analysis_value in analysis_values:
         true_stress_arrays.append(
             analysis_project.experiments[experiment_name]
             .gauge_results["true_stress_in_MPa"]
-            .to_numpy
+            .to_numpy()
         )
 
     mean_true_strain, mean_true_stress = utils.get_mean_curves(
