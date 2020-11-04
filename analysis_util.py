@@ -101,7 +101,7 @@ experiment_list = natsorted(experiment_list)
 # calculate the averages for each value
 # plot average result for one value in a separate plot
 # plot average results for all values in a plot
-analysis_key = parsed_args.key
+analysis_key = passed_args.key
 analysis_dict = {}
 analysis_project = funcs.Project(name=f"analysis_{analysis_key}")
 
@@ -115,7 +115,7 @@ for test_dir in experiment_list:
         analysis_project.add_experiment(experiment)
 
 # compile list of different values for key or just filter experiments for given key
-if parsed_args.value is None:
+if passed_args.value is None:
     analysis_values = []
     for experiment_name, experiment_data in analysis_project.experiments.items():
         analysis_values.append(experiment_data.documentation_data[analysis_key])
