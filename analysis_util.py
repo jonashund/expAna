@@ -14,8 +14,6 @@ from natsort import natsorted
 
 filepath = os.path.abspath(os.path.dirname(__file__))
 
-istra_evaluation_dir = os.path.join(filepath, "..", "data_istra_evaluation")
-
 arg_parser = argparse.ArgumentParser(
     description="istra2true_stress offers `gauge` element functionality based on Python."
 )
@@ -24,7 +22,15 @@ arg_parser.add_argument(
     "--experiments",
     nargs="*",
     default=None,
-    help="experiment folder name(s) located in ../data_istra_acquisition/",
+    help="Include specified experiments in analysis.",
+)
+
+arg_parser.add_argument(
+    "-i",
+    "--ignore",
+    nargs="*",
+    default=None,
+    help="Ignore experiments specified in analysis.",
 )
 
 #   - selection feature (string) experiment.documentation_data[<key>], i.e. experiment.documentation_data["specimen_orientation"]
@@ -57,18 +63,6 @@ arg_parser.add_argument(
     nargs=1,
     default=True,
     help="If `True` all curves are plotted as opposed to only the averaged curves if `False`.",
-)
-
-
-#   - ignore outliers (by name)
-arg_parser.add_argument(
-    "-i",
-    "--ignore",
-    metavar="ignore_experiments",
-    type=bool,
-    nargs="*",
-    default=None,
-    help="Ignore experiments specified.",
 )
 
 arg_parser.add_argument(
@@ -105,6 +99,7 @@ else:
     experiment_list = passed_args.experiments
 
 if not passed_args.ignore is None:
+    print(passed_args.ignore)
     experiment_list.remove(ignore)
 
 # get the list of experiments that are part of the analysis
