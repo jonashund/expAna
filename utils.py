@@ -48,19 +48,14 @@ def get_mean_axis(list_of_arrays, n=3):
     assert len(list_of_arrays) >= n
     array_lengths = np.array([len(array) for array in list_of_arrays])
     array_indices = np.argsort(array_lengths)
-    print(array_lengths)
-    print(array_indices)
-    print(array_lengths[array_indices])
-    assert False
     masked_array = np.ma.empty((np.max(array_lengths), n))
     masked_array.mask = True
     for i in range(n):
-        k = array_indices(i)
+        k = array_indices[-(i + 1)]
         masked_array[: array_lengths[k], i] = list_of_arrays[k]
 
-    # array_mean = masked_array.mean(axis=-1)
     sums = masked_array.sum(axis=1)
     counts = masked_array.count(axis=1)
     array_mean = sums / counts
 
-    return array_mean, counts
+    return array_mean[: array_lengths[array_indices[-n]]]

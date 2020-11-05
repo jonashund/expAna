@@ -181,8 +181,8 @@ for analysis_value in analysis_values:
             strain, true_stresses[i], interval
         )
     # compute the mean curve as long as at least three values are available
-    mean_stress, counts = utils.get_mean_axis(true_stresses)
-    mean_vol_strain, counts = utils.get_mean_axis(vol_strains)
+    mean_stress = utils.get_mean_axis(true_stresses)
+    mean_vol_strain = utils.get_mean_axis(vol_strains)
 
     analysis_dict[analysis_value]["mean_strain"] = mean_strain
     analysis_dict[analysis_value]["mean_stress"] = mean_stress
