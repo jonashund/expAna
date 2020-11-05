@@ -52,6 +52,16 @@ def style_true_stress(x_data, y_data, x_lim=None, y_lim=None, width=None, height
     axes_1.set_xlabel(r"log. strain $\varepsilon$ [-]")
     axes_1.set_ylabel(r"true stress $\sigma$ [MPa]")
 
+    if x_lim:
+        axes_1.set_xlim(0, x_lim)
+    else:
+        axes_1.set_xlim(0, 1.1 * x_data.max())
+
+    if y_lim:
+        axes_1.set_ylim(y_lim)
+    else:
+        axes_1.set_ylim(0, 1.1 * y_data.max())
+
     return fig_1, axes_1
 
 
@@ -66,6 +76,16 @@ def style_vol_strain(x_data, y_data, x_lim=None, y_lim=None):
 
     axes_1.set_xlabel(r"log. strain $\varepsilon$ [-]")
     axes_1.set_ylabel(r"volume strain $\varepsilon_{ii}$")
+
+    if x_lim:
+        axes_1.set_xlim(0, x_lim)
+    else:
+        axes_1.set_xlim(0, 1.1 * x_data.max())
+
+    if y_lim:
+        axes_1.set_ylim(y_lim)
+    else:
+        axes_1.set_ylim(0, 1.1 * y_data.max())
 
     return fig_1, axes_1
 
@@ -82,15 +102,5 @@ def create_styled_figure(width=4, height=3, x_lim=None, y_lim=None):
 
     axes_1.tick_params(direction="out", pad=5)
     axes_1.tick_params(bottom=True, left=True, top=False, right=False)
-
-    if x_lim:
-        axes_1.set_xlim(0, x_lim)
-    else:
-        axes_1.set_xlim(0, 1.1 * x_data.max())
-
-    if y_lim:
-        axes_1.set_ylim(y_lim)
-    else:
-        axes_1.set_ylim(0, 1.1 * y_data.max())
 
     return fig_1, axes_1
