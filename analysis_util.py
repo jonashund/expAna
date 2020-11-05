@@ -8,6 +8,7 @@ import gui_funcs
 import plot_funcs
 import istra2muDIC_functions as funcs
 import utils
+import matplotlib.pyplot as plt
 
 from natsort import natsorted
 
@@ -55,7 +56,7 @@ arg_parser.add_argument(
     type=bool,
     nargs=1,
     default=True,
-    help="If `True` all curves are plotted as opposd to only the averaged curves if `False`.",
+    help="If `True` all curves are plotted as opposed to only the averaged curves if `False`.",
 )
 
 arg_parser.add_argument(
@@ -119,6 +120,9 @@ if passed_args.value is None:
     analysis_values = []
     for experiment_name, experiment_data in analysis_project.experiments.items():
         analysis_values.append(experiment_data.documentation_data[analysis_key])
+    # remove experiments with no value for given key
+    analysis_values = list(filter(None, analysis_values))
+    # remove duplicates from list
     analysis_values = set(analysis_values)
 else:
     analysis_values = [analysis_value[0]]
@@ -132,33 +136,50 @@ for analysis_value in analysis_values:
 
 # calculate average curves for every analysis_value
 for analysis_value in analysis_values:
-    true_strain_arrays = []
-    true_stress_arrays = []
+    true_strains = []
+    true_stresses = []
+    vol_strains = []
     # create list of arrays with x and y values
     for experiment_name in analysis_dict[analysis_value]["experiment_list"]:
-        true_strain_arrays.append(
+        true_strains.append(
             analysis_project.experiments[experiment_name]
             .gauge_results["true_strain_image_x"]
             .to_numpy()
         )
-        true_stress_arrays.append(
+        true_stresses.append(
             analysis_project.experiments[experiment_name]
             .gauge_results["true_stress_in_MPa"]
             .to_numpy()
         )
+        vol_strains.append(
+            analysis_project.experiments[experiment_name]
+            .gauge_results["volume_strain"]
+            .to_numpy()
+        )
 
-    mean_true_strain, mean_true_stress = utils.get_mean_curves(
-        true_strain_arrays, true_stress_arrays
-    )
+    mean_strain, mean_stress = utils.get_mean_curves(true_strains, true_stresses)
 
-    analysis_dict[analysis_value]["stress_strain_arrays"] = [
-        mean_true_strain,
-        mean_true_stress,
-    ]
+    mean_strain, mean_vol_strain = utils.get_mean_curves(true_strains, vol_strains)
 
+    analysis_dict[analysis_value]["mean_strain"] = mean_strain
+    analysis_dict[analysis_value]["mean_stress"] = mean_stress
+    analysis_dict[analysis_value]["strains"] = true_strains
+    analysis_dict[analysis_value]["stresses"] = true_stresses
+    analysis_dict[analysis_value]["vol_strains"] = vol_strains
+
+# plot individual curves and averaged curves in one plot for each analysis value
+for analysis_value in analysis_values:
+    pass
+
+# plot averaged curves for all analysis values in one comparison plot
 for analysis_value in analysis_values:
     plt.plot(
-        analysis_dict[analysis_value]["stress_strain_arrays"][0],
-        analysis_dict[analysis_value]["stress_strain_arrays"][1],
+        analysis_dict[analysis_value]["mean_strain"],
+        analysis_dict[analysis_value]["mean_stress"],
+    )
+    plt.show()
+    plt.plot(
+        analysis_dict[analysis_value]["strains"],
+        analysis_dict[analysis_value]["stresses"],
     )
     plt.show()
