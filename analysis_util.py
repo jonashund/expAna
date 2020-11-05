@@ -208,10 +208,13 @@ for analysis_value in analysis_values:
     vol_strains = analysis_dict[analysis_value]["vol_strains"]
 
     fig_1, axes_1 = plot_funcs.style_true_stress(
-        x_lim=1.0, y_lim=1.1 * stresses[-1].max(), width=None, height=None
+        x_lim=1.0,
+        y_lim=1.1 * stresses[stress_indices[-1]].max(),
+        width=None,
+        height=None,
     )
     for i in stress_indices:
-        axes_1.plot(strains[i], stresses[i], linewidth=1, zorder=1, alpha=0.75)
+        axes_1.plot(strains[i], stresses[i], linewidth=1, zorder=1, alpha=0.5)
 
     axes_1.plot(
         x_stress_mean,
