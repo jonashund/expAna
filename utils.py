@@ -41,7 +41,7 @@ def interpolate_curve(x_array, y_array, x_spacing):
     # interpolation positions
     mean_x_array = np.arange(start=0.0, stop=max(x_array), step=x_spacing)
     interpolated_y_array = np.interp(mean_x_array, x_array, y_array)
-    return mean_x_array, mean_y_array
+    return mean_x_array, interpolated_y_array
 
 
 def get_mean_axis(list_of_arrays, n_min=3):
