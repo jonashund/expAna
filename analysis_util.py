@@ -15,7 +15,7 @@ from natsort import natsorted
 filepath = os.path.abspath(os.path.dirname(__file__))
 
 arg_parser = argparse.ArgumentParser(
-    description="istra2true_stress offers `gauge` element functionality based on Python."
+    description="This utility makes plots of stress strain and volume strain curves of experiment files in the corresponding directory filtered by a criterion."
 )
 arg_parser.add_argument(
     "-e",
@@ -182,7 +182,7 @@ for analysis_value in analysis_values:
         )
     # compute the mean curve as long as at least three values are available
     mean_stress, counts = utils.get_mean_axis(true_stresses)
-    mmean_vol_strain, counts = utils.get_mean_axis(vol_strains)
+    mean_vol_strain, counts = utils.get_mean_axis(vol_strains)
 
     analysis_dict[analysis_value]["mean_strain"] = mean_strain
     analysis_dict[analysis_value]["mean_stress"] = mean_stress
