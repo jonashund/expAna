@@ -157,9 +157,12 @@ for analysis_value in analysis_values:
             .to_numpy()
         )
 
-    mean_strain, mean_stress = utils.get_mean_curves(true_strains, true_stresses)
+    # mean_strain, mean_stress = utils.get_mean_curves(true_strains, true_stresses)
+    # mean_strain, mean_vol_strain = utils.get_mean_curves(true_strains, vol_strains)
 
-    mean_strain, mean_vol_strain = utils.get_mean_curves(true_strains, vol_strains)
+    mean_strain, mean_strain_error = utils.get_mean_axis(true_strains)
+    mean_stress, mean_stress_error = utils.get_mean_axis(true_stresses)
+    mean_vol_strain, mean_vol_strain_error = utils.get_mean_axis(vol_strains)
 
     analysis_dict[analysis_value]["mean_strain"] = mean_strain
     analysis_dict[analysis_value]["mean_stress"] = mean_stress
@@ -177,9 +180,9 @@ for analysis_value in analysis_values:
         analysis_dict[analysis_value]["mean_strain"],
         analysis_dict[analysis_value]["mean_stress"],
     )
-    plt.show()
-    plt.plot(
-        analysis_dict[analysis_value]["strains"],
-        analysis_dict[analysis_value]["stresses"],
-    )
+    for i in range(len(analysis_dict[analysis_value]["strains"])):
+        plt.plot(
+            analysis_dict[analysis_value]["strains"][i],
+            analysis_dict[analysis_value]["stresses"][i],
+        )
     plt.show()
