@@ -59,6 +59,18 @@ arg_parser.add_argument(
     help="If `True` all curves are plotted as opposed to only the averaged curves if `False`.",
 )
 
+
+#   - ignore outliers (by name)
+arg_parser.add_argument(
+    "-i",
+    "--ignore",
+    metavar="ignore_experiments",
+    type=bool,
+    nargs="*",
+    default=None,
+    help="Ignore experiments specified.",
+)
+
 arg_parser.add_argument(
     "-d",
     "--dic",
@@ -91,6 +103,9 @@ if passed_args.experiments is None:
                 experiment_list.append(test_dir)
 else:
     experiment_list = passed_args.experiments
+
+if not passed_args.ignore is None:
+    experiment_list.remove(ignore)
 
 # get the list of experiments that are part of the analysis
 experiment_list = natsorted(experiment_list)
@@ -180,9 +195,9 @@ for analysis_value in analysis_values:
         analysis_dict[analysis_value]["mean_strain"],
         analysis_dict[analysis_value]["mean_stress"],
     )
-    for i in range(len(analysis_dict[analysis_value]["strains"])):
-        plt.plot(
-            analysis_dict[analysis_value]["strains"][i],
-            analysis_dict[analysis_value]["stresses"][i],
-        )
+    # for i in range(len(analysis_dict[analysis_value]["strains"])):
+    #     plt.plot(
+    #         analysis_dict[analysis_value]["strains"][i],
+    #         analysis_dict[analysis_value]["stresses"][i],
+    #     )
     plt.show()
