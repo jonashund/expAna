@@ -170,12 +170,23 @@ for analysis_value in analysis_values:
     # mean_strain, mean_stress = utils.get_mean_curves(true_strains, true_stresses)
     # mean_strain, mean_vol_strain = utils.get_mean_curves(true_strains, vol_strains)
 
-    mean_strain, mean_strain_error = utils.get_mean_axis(true_strains)
-    mean_stress, mean_stress_error = utils.get_mean_axis(true_stresses)
-    mean_vol_strain, mean_vol_strain_error = utils.get_mean_axis(vol_strains)
+    # interpolate every stress strain curve to an x-axis with equally spaced points
+    # set spacing dependent on maximum x-value found in all x arrays
+
+    max_x = max([max(true_strains[i]) for i in range(len(true_strains))])
+    interval = max_x / 200
+    mean_strain = np.arange(start=0.0, stop=max_x, step=interval)
+    for i, strain in enumerate(true_strains):
+        true_strains[i], true_stresses[i] = utils.interpolate_curve(
+            strain, true_stresses[i], interval
+        )
+    # compute the mean curve as long as at least three values are available
+    mean_stress, counts = utils.get_mean_axis(true_stresses)
+    mmean_vol_strain, counts = utils.get_mean_axis(vol_strains)
 
     analysis_dict[analysis_value]["mean_strain"] = mean_strain
     analysis_dict[analysis_value]["mean_stress"] = mean_stress
+    analysis_dict[analysis_value]["mean_vol_strain"] = mean_vol_strain
     analysis_dict[analysis_value]["strains"] = true_strains
     analysis_dict[analysis_value]["stresses"] = true_stresses
     analysis_dict[analysis_value]["vol_strains"] = vol_strains
@@ -187,14 +198,8 @@ for analysis_value in analysis_values:
 # plot averaged curves for all analysis values in one comparison plot
 for analysis_value in analysis_values:
     plt.plot(
-        # analysis_dict[analysis_value]["mean_strain"],
-        np.arange(len(analysis_dict[analysis_value]["mean_stress"])) + 1,
-        analysis_dict[analysis_value]["mean_stress"],
-    )
-    plt.plot(
-        # analysis_dict[analysis_value]["mean_strain"],
-        np.arange(len(analysis_dict[analysis_value]["mean_strain"])) + 1,
         analysis_dict[analysis_value]["mean_strain"],
+        analysis_dict[analysis_value]["mean_stress"],
     )
     for i in range(len(analysis_dict[analysis_value]["strains"])):
         plt.plot(

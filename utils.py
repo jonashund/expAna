@@ -37,7 +37,14 @@ def get_mean_curves(list_of_x_arrays, list_of_y_arrays):
     return mean_x_array, mean_y_array
 
 
-def get_mean_axis(list_of_arrays):
+def interpolate_curve(x_array, y_array, x_spacing):
+    # interpolation positions
+    mean_x_array = np.arange(start=0.0, stop=max(x_array), step=x_spacing)
+    interpolated_y_array = np.interp(mean_x_array, x_array, y_array)
+    return mean_x_array, mean_y_array
+
+
+def get_mean_axis(list_of_arrays, n_min=3):
     array_lengths = [len(array) for array in list_of_arrays]
 
     masked_array = np.ma.empty((np.max(array_lengths), len(list_of_arrays)))
@@ -45,13 +52,10 @@ def get_mean_axis(list_of_arrays):
     for i, k in enumerate(np.argsort(array_lengths)):
         masked_array[: len(list_of_arrays[i]), k] = list_of_arrays[i]
 
-    array_mean = masked_array.mean(axis=-1)
-    array_mean = masked_array.sum(axis=1) / masked_array.count(axis=1)
-    print(masked_array.sum(axis=1))
-    print(masked_array.sum(axis=1).shape)
-    print(masked_array.count(axis=1))
-    print(masked_array.count(axis=1).shape)
+    # array_mean = masked_array.mean(axis=-1)
+    sums = masked_array.sum(axis=1)
+    counts = masked_array.count(axis=1)
+    array_mean = sums / counts
+    array_mean = array_mean[not counts < n_min]
 
-    array_std = masked_array.std(axis=-1)
-
-    return array_mean, array_std
+    return array_mean, counts
