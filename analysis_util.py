@@ -187,12 +187,18 @@ for analysis_value in analysis_values:
 # plot averaged curves for all analysis values in one comparison plot
 for analysis_value in analysis_values:
     plt.plot(
-        analysis_dict[analysis_value]["mean_strain"],
+        # analysis_dict[analysis_value]["mean_strain"],
+        np.arange(len(analysis_dict[analysis_value]["mean_stress"])) + 1,
         analysis_dict[analysis_value]["mean_stress"],
     )
-    # for i in range(len(analysis_dict[analysis_value]["strains"])):
-    #     plt.plot(
-    #         analysis_dict[analysis_value]["strains"][i],
-    #         analysis_dict[analysis_value]["stresses"][i],
-    #     )
+    plt.plot(
+        # analysis_dict[analysis_value]["mean_strain"],
+        np.arange(len(analysis_dict[analysis_value]["mean_strain"])) + 1,
+        analysis_dict[analysis_value]["mean_strain"],
+    )
+    for i in range(len(analysis_dict[analysis_value]["strains"])):
+        plt.plot(
+            analysis_dict[analysis_value]["strains"][i],
+            analysis_dict[analysis_value]["stresses"][i],
+        )
     plt.show()
