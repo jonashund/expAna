@@ -22,7 +22,7 @@ arg_parser.add_argument(
     "--experiments",
     nargs="*",
     default=None,
-    help="Include specified experiments in analysis.",
+    help="Include specified experiments in analysis., e.g. Test1CORN1 TEST9CORN1",
 )
 
 arg_parser.add_argument(
@@ -30,7 +30,7 @@ arg_parser.add_argument(
     "--ignore",
     nargs="*",
     default=None,
-    help="Ignore experiments specified in analysis.",
+    help="Ignore experiments specified in analysis, e.g. Test5CORN1",
 )
 
 #   - selection feature (string) experiment.documentation_data[<key>], i.e. experiment.documentation_data["specimen_orientation"]
@@ -99,7 +99,8 @@ else:
     experiment_list = passed_args.experiments
 
 if not passed_args.ignore is None:
-    experiment_list.remove(passed_args.ignore)
+    for experiment in passed_args.ignore:
+        experiment_list.remove(experiment)
 
 # get the list of experiments that are part of the analysis
 experiment_list = natsorted(experiment_list)
