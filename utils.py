@@ -51,7 +51,7 @@ def get_mean_axis(list_of_arrays, n=3):
     masked_array.mask = True
     for i in range(n):
         k = np.argsort(array_lengths)[-i + 1]
-        masked_array[: len(array_lengths[k]), i] = list_of_arrays[k]
+        masked_array[: array_lengths[k], i] = list_of_arrays[k]
 
     # array_mean = masked_array.mean(axis=-1)
     sums = masked_array.sum(axis=1)
