@@ -5,23 +5,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 
-def set_gui_backend():
-    if platform.system() == "Darwin":
-        matplotlib.use("macosx")
-    elif platform.system() == "Linux":
-        matplotlib.use("TkAgg")
-    else:
-        print(
-            f"""
-        {platform.system()} not supported (yet).
-        Could you please add it in gui_funcs.set_gui_backend()?
-        """
-        )
-        exit()
-
-    plt.style.use("classic")
-
-
 class TensileDirection(object):
     def __init__(self, input_image):
         self.image = input_image
