@@ -58,4 +58,4 @@ def get_mean_axis(list_of_arrays, n=3):
     counts = masked_array.count(axis=1)
     array_mean = sums / counts
 
-    return array_mean[: array_lengths[array_indices[-n]]]
+    return array_mean[: array_lengths[array_indices[-n]]], array_indices[-n:]
