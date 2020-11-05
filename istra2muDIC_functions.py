@@ -1,3 +1,4 @@
+import os
 import plot_funcs
 import matplotlib.pyplot as plt
 
@@ -119,7 +120,7 @@ class Experiment(object):
     def slenderise(self):
         keep = ["documentation_data", "name", "gauge_results"]
 
-        discard = [x for x in vars(self).keys() if not x in keep]
+        discard = [x for x in vars(self).keys() if x not in keep]
 
         for attribute in discard:
             delattr(self, attribute)
@@ -133,19 +134,19 @@ class Experiment(object):
 
         os.makedirs(out_dir, exist_ok=True)
 
-        x_data = experiment.gauge_results["true_strain_image_x"]
-        y_data = experiment.gauge_results["true_stress_in_MPa"]
+        x_data = self.gauge_results["true_strain_image_x"]
+        y_data = self.gauge_results["true_stress_in_MPa"]
 
         fig_1, axes_1 = plot_funcs.style_true_stress(
             x_data, y_data, xlim=1.0, y_data=1.1 * y_data.max()
         )
 
         axes_1.plot(
-            x_data, y_data, label=f"{experiment.name}", linewidth=1.0, zorder=1,
+            x_data, y_data, label=f"{self.name}", linewidth=1.0, zorder=1,
         )
         fig_1.tight_layout()
-        plt.savefig(os.path.join(out_dir, experiment.name + "_stress_strain.pgf",))
-        plt.savefig(os.path.join(out_dir, experiment.name + "_stress_strain.png",))
+        plt.savefig(os.path.join(out_dir, self.name + "_stress_strain.pgf",))
+        plt.savefig(os.path.join(out_dir, self.name + "_stress_strain.png",))
 
         plt.close()
 
@@ -158,19 +159,19 @@ class Experiment(object):
 
         os.makedirs(out_dir, exist_ok=True)
 
-        x_data = experiment.gauge_results["true_strain_image_x"]
-        y_data = experiment.gauge_results["volume_strain"]
+        x_data = self.gauge_results["true_strain_image_x"]
+        y_data = self.gauge_results["volume_strain"]
 
         fig_1, axes_1 = plot_funcs.style_vol_strain(
             x_data, y_data, xlim=1.0, y_data=1.1 * y_data.max()
         )
 
         axes_1.plot(
-            x_data, y_data, label=f"{experiment.name}", linewidth=1.0, zorder=1,
+            x_data, y_data, label=f"{self.name}", linewidth=1.0, zorder=1,
         )
         fig_1.tight_layout()
-        plt.savefig(os.path.join(out_dir, experiment.name + "_vol_strain.pgf",))
-        plt.savefig(os.path.join(out_dir, experiment.name + "_vol_strain.png",))
+        plt.savefig(os.path.join(out_dir, self.name + "_vol_strain.pgf",))
+        plt.savefig(os.path.join(out_dir, self.name + "_vol_strain.png",))
 
         plt.close()
 
