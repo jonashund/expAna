@@ -225,7 +225,7 @@ for analysis_value in analysis_values:
     )
 
     fig_1.tight_layout()
-    fig.set_size_inches(8, 6)
+    fig_1.set_size_inches(8, 6)
     plt.savefig(os.path.join(filepath, f"debug_{analysis_value}.png",))
 
     # fig_2, axes_2 = plot_funcs.style_vol_strain(
