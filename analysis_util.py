@@ -194,14 +194,6 @@ for analysis_value in analysis_values:
 # plot individual curves and averaged curves in one plot for each analysis value
 for analysis_value in analysis_values:
 
-    fig_1, axes_1 = plot_funcs.style_true_stress(
-        x_lim=1.0, y_lim=1.1 * y_data[0].max(), width=None, height=None
-    )
-
-    fit_2, axes_2 = plot_funcs.style_vol_strain(
-        x_lim=1.0, y_lim=1.1 * y_data[0].max(), width=None, height=None
-    )
-
     x_stress_mean = analysis_dict[analysis_value]["mean_strain"][
         : len(analysis_dict[analysis_value]["mean_stress"])
     ]
@@ -211,6 +203,13 @@ for analysis_value in analysis_values:
     ]
     vol_strain_mean = analysis_dict[analysis_value]["mean_vol_strain"]
 
+    fig_1, axes_1 = plot_funcs.style_true_stress(
+        x_lim=1.0, y_lim=1.1 * stress_mean.max(), width=None, height=None
+    )
+
+    fit_2, axes_2 = plot_funcs.style_vol_strain(
+        x_lim=1.0, y_lim=1.1 * vol_strain_mean.max(), width=None, height=None
+    )
     strains = analysis_dict[analysis_value]["strains"]
     stresses = analysis_dict[analysis_value]["stresses"]
     vol_strains = analysis_dict[analysis_value]["vol_strains"]
