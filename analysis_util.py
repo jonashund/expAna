@@ -207,9 +207,9 @@ for analysis_value in analysis_values:
         x_lim=1.0, y_lim=1.1 * stress_mean.max(), width=None, height=None
     )
 
-    fit_2, axes_2 = plot_funcs.style_vol_strain(
-        x_lim=1.0, y_lim=1.1 * vol_strain_mean.max(), width=None, height=None
-    )
+    # fig_2, axes_2 = plot_funcs.style_vol_strain(
+    #     x_lim=1.0, y_lim=1.1 * vol_strain_mean.max(), width=None, height=None
+    # )
     strains = analysis_dict[analysis_value]["strains"]
     stresses = analysis_dict[analysis_value]["stresses"]
     vol_strains = analysis_dict[analysis_value]["vol_strains"]
@@ -219,10 +219,10 @@ for analysis_value in analysis_values:
             strains[i], stresses[i], linewidth=0.5, ls="dashed", zorder=1, alpha=0.5
         )
 
-    for i in vol_strain_indices:
-        axes_2.plot(
-            strains[i], vol_strains[i], linewidth=0.5, ls="dashed", zorder=1, alpha=0.5
-        )
+    # for i in vol_strain_indices:
+    #     axes_2.plot(
+    #         strains[i], vol_strains[i], linewidth=0.5, ls="dashed", zorder=1, alpha=0.5
+    #     )
 
     axes_1.plot(
         x_stress_mean,
@@ -233,15 +233,15 @@ for analysis_value in analysis_values:
         zorder=1,
     )
 
-    axes_2.plot(
-        x_vol_strain_mean,
-        vol_strain_mean,
-        label=f"avg.",
-        linewidth=1.5,
-        color="black",
-        zorder=1,
-    )
+    # axes_2.plot(
+    #     x_vol_strain_mean,
+    #     vol_strain_mean,
+    #     label=f"avg.",
+    #     linewidth=1.5,
+    #     color="black",
+    #     zorder=1,
+    # )
 
-    plot_funcs.set_gui_backend()
+    plot_funcs.set_plot_backend()
 
     plt.show()
