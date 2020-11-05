@@ -40,14 +40,12 @@ def remove_offsets(experiment):
     )
 
 
-def style_true_stress(x_data, y_data, x_lim=None, y_lim=None, width=None, height=None):
+def style_true_stress(width=None, height=None, x_lim=None, y_lim=None):
 
     if width and height:
-        fig_1, axes_1 = create_styled_figure(
-            width=width, height=height, x_lim=x_lim, y_lim=y_lim
-        )
+        fig_1, axes_1 = create_styled_figure(width=width, height=height)
     else:
-        fig_1, axes_1 = create_styled_figure(x_lim=x_lim, y_lim=y_lim)
+        fig_1, axes_1 = create_styled_figure()
 
     axes_1.set_xlabel(r"log. strain $\varepsilon$ [-]")
     axes_1.set_ylabel(r"true stress $\sigma$ [MPa]")
@@ -55,24 +53,22 @@ def style_true_stress(x_data, y_data, x_lim=None, y_lim=None, width=None, height
     if x_lim:
         axes_1.set_xlim(0, x_lim)
     else:
-        axes_1.set_xlim(0, 1.1 * x_data.max())
+        pass
 
     if y_lim:
-        axes_1.set_ylim(y_lim)
+        axes_1.set_ylim(0, y_lim)
     else:
-        axes_1.set_ylim(0, 1.1 * y_data.max())
+        pass
 
     return fig_1, axes_1
 
 
-def style_vol_strain(x_data, y_data, x_lim=None, y_lim=None, width=None, height=None):
+def style_vol_strain(width=None, height=None, x_lim=None, y_lim=None):
 
     if width and height:
-        fig_1, axes_1 = create_styled_figure(
-            width=width, height=height, x_lim=x_lim, y_lim=y_lim
-        )
+        fig_1, axes_1 = create_styled_figure(width=width, height=height)
     else:
-        fig_1, axes_1 = create_styled_figure(x_lim=x_lim, y_lim=y_lim)
+        fig_1, axes_1 = create_styled_figure()
 
     axes_1.set_xlabel(r"log. strain $\varepsilon$ [-]")
     axes_1.set_ylabel(r"volume strain $\varepsilon_{ii}$")
@@ -80,17 +76,17 @@ def style_vol_strain(x_data, y_data, x_lim=None, y_lim=None, width=None, height=
     if x_lim:
         axes_1.set_xlim(0, x_lim)
     else:
-        axes_1.set_xlim(0, 1.1 * x_data.max())
+        pass
 
     if y_lim:
-        axes_1.set_ylim(y_lim)
+        axes_1.set_ylim(0, y_lim)
     else:
-        axes_1.set_ylim(0, 1.1 * y_data.max())
+        pass
 
     return fig_1, axes_1
 
 
-def create_styled_figure(width=4, height=3, x_lim=None, y_lim=None):
+def create_styled_figure(width=4, height=3):
     doc_funcs.plot_style()
 
     fig_1, axes_1 = plt.subplots(figsize=[width, height])

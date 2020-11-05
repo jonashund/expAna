@@ -193,15 +193,56 @@ for analysis_value in analysis_values:
 
 # plot individual curves and averaged curves in one plot for each analysis value
 for analysis_value in analysis_values:
-    plt.plot(
-        analysis_dict[analysis_value]["mean_strain"][
-            : len(analysis_dict[analysis_value]["mean_stress"])
-        ],
-        analysis_dict[analysis_value]["mean_stress"],
+
+    fig_1, axes_1 = plot_funcs.style_true_stress(
+        x_lim=1.0, y_lim=1.1 * y_data[0].max(), width=None, height=None
     )
+
+    fit_2, axes_2 = plot_funcs.style_vol_strain(
+        x_lim=1.0, y_lim=1.1 * y_data[0].max(), width=None, height=None
+    )
+
+    x_stress_mean = analysis_dict[analysis_value]["mean_strain"][
+        : len(analysis_dict[analysis_value]["mean_stress"])
+    ]
+    stress_mean = analysis_dict[analysis_value]["mean_stress"]
+    x_vol_strain_mean = analysis_dict[analysis_value]["mean_strain"][
+        : len(analysis_dict[analysis_value]["mean_vol_strain"])
+    ]
+    vol_strain_mean = analysis_dict[analysis_value]["mean_vol_strain"]
+
+    strains = analysis_dict[analysis_value]["strains"]
+    stresses = analysis_dict[analysis_value]["stresses"]
+    vol_strains = analysis_dict[analysis_value]["vol_strains"]
+
     for i in stress_indices:
-        plt.plot(
-            analysis_dict[analysis_value]["strains"][i],
-            analysis_dict[analysis_value]["stresses"][i],
+        axes_1.plot(
+            strains[i], stresses[i], linewidth=0.5, ls="dashed", zorder=1, alpha=0.5
         )
+
+    for i in vol_strain_indices:
+        axes_2.plot(
+            strains[i], vol_strains[i], linewidth=0.5, ls="dashed", zorder=1, alpha=0.5
+        )
+
+    axes_1.plot(
+        x_stress_mean,
+        stress_mean,
+        label=f"avg.",
+        linewidth=1.5,
+        color="black",
+        zorder=1,
+    )
+
+    axes_2.plot(
+        x_vol_strain_mean,
+        vol_strain_mean,
+        label=f"avg.",
+        linewidth=1.5,
+        color="black",
+        zorder=1,
+    )
+
+    plot_funcs.set_gui_backend()
+
     plt.show()
