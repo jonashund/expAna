@@ -96,7 +96,7 @@ for test_dir in experiment_list:
     else:
         pass
 
-    plot_funcs.plot_true_stress_strain(experiment=experiment, out_dir=vis_export_dir)
-    plot_funcs.plot_volume_strain(experiment=experiment, out_dir=vis_export_dir)
+    experiment.plot_true_stress(out_dir=vis_export_dir)
+    experiment.plot_volume_strain(out_dir=vis_export_dir)
 
-    gui_funcs.set_gui_backend()
+    plot_funcs.set_plot_backend()
