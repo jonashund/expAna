@@ -56,6 +56,6 @@ def get_mean_axis(list_of_arrays, n_min=3):
     sums = masked_array.sum(axis=1)
     counts = masked_array.count(axis=1)
     array_mean = sums / counts
-    array_mean = array_mean[not counts < n_min]
+    # array_mean = array_mean[not counts < n_min]
 
     return array_mean, counts
