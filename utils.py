@@ -38,15 +38,13 @@ def get_mean_curves(list_of_x_arrays, list_of_y_arrays):
 
 
 def get_mean_axis(list_of_arrays):
-    # create a list with the array lengths
-    list_of_array_lengths = []
-    for i in list_of_arrays:
-        list_of_array_lengths.append(len(i))
-    # create an empty mask array with dimensions: (length of longest array, count of arrays)
-    array = np.ma.empty((np.max(list_of_array_lengths), len(list_of_arrays)))
-    array.mask = True
-    for position_i, array_at_position_i in enumerate(arrays):
-        array[: len(array_at_position_i), position_i] = array_at_position_i
-    array_mean = array.mean(axis=-1)
-    array_std = array.std(axis=-1)
+    array_lengths = [len(array) for array in list_of_arrays]
+    masked_array = np.ma.empty((np.max(array_lengths), len(list_of_arrays)))
+    masked_array.mask = True
+    for i, ith_array in enumerate(list_of_arrays):
+        masked_array[: len(ith_array), i] = ith_array
+
+    array_mean = masked_array.mean(axis=-1)
+    array_std = masked_array.std(axis=-1)
+
     return array_mean, array_std
