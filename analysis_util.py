@@ -99,8 +99,7 @@ else:
     experiment_list = passed_args.experiments
 
 if not passed_args.ignore is None:
-    print(passed_args.ignore)
-    experiment_list.remove(ignore)
+    experiment_list.remove(passed_args.ignore)
 
 # get the list of experiments that are part of the analysis
 experiment_list = natsorted(experiment_list)
