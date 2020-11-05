@@ -47,10 +47,15 @@ def interpolate_curve(x_array, y_array, x_spacing):
 def get_mean_axis(list_of_arrays, n=3):
     assert len(list_of_arrays) >= n
     array_lengths = np.array([len(array) for array in list_of_arrays])
+    array_indices = np.argsort(array_lengths)
+    print(array_lengths)
+    print(array_indices)
+    print(array_lengths[array_indices])
+    assert False
     masked_array = np.ma.empty((np.max(array_lengths), n))
     masked_array.mask = True
     for i in range(n):
-        k = np.argsort(array_lengths)[-i + 1]
+        k = array_indices(i)
         masked_array[: array_lengths[k], i] = list_of_arrays[k]
 
     # array_mean = masked_array.mean(axis=-1)
