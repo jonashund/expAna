@@ -181,8 +181,8 @@ for analysis_value in analysis_values:
             strain, true_stresses[i], interval
         )
     # compute the mean curve as long as at least three values are available
-    mean_stress = utils.get_mean_axis(true_stresses)
-    mean_vol_strain = utils.get_mean_axis(vol_strains)
+    mean_stress, stress_indices = utils.get_mean_axis(true_stresses)
+    mean_vol_strain, vol_strain_indices = utils.get_mean_axis(vol_strains)
 
     analysis_dict[analysis_value]["mean_strain"] = mean_strain
     analysis_dict[analysis_value]["mean_stress"] = mean_stress
@@ -193,15 +193,13 @@ for analysis_value in analysis_values:
 
 # plot individual curves and averaged curves in one plot for each analysis value
 for analysis_value in analysis_values:
-    pass
-
-# plot averaged curves for all analysis values in one comparison plot
-for analysis_value in analysis_values:
     plt.plot(
-        analysis_dict[analysis_value]["mean_strain"],
+        analysis_dict[analysis_value]["mean_strain"][
+            : len(analysis_dict[analysis_value]["mean_stress"])
+        ],
         analysis_dict[analysis_value]["mean_stress"],
     )
-    for i in range(len(analysis_dict[analysis_value]["strains"])):
+    for i in stress_indices:
         plt.plot(
             analysis_dict[analysis_value]["strains"][i],
             analysis_dict[analysis_value]["stresses"][i],
