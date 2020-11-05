@@ -138,7 +138,7 @@ class Experiment(object):
         y_data = self.gauge_results["true_stress_in_MPa"]
 
         fig_1, axes_1 = plot_funcs.style_true_stress(
-            x_data, y_data, xlim=1.0, y_data=1.1 * y_data.max()
+            x_data, y_data, x_lim=1.0, y_lim=None
         )
 
         axes_1.plot(
@@ -163,7 +163,7 @@ class Experiment(object):
         y_data = self.gauge_results["volume_strain"]
 
         fig_1, axes_1 = plot_funcs.style_vol_strain(
-            x_data, y_data, xlim=1.0, y_data=1.1 * y_data.max()
+            x_data, y_data, xlim=1.0, y_lim=None
         )
 
         axes_1.plot(
