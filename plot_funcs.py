@@ -65,7 +65,7 @@ def style_true_stress(x_data, y_data, x_lim=None, y_lim=None, width=None, height
     return fig_1, axes_1
 
 
-def style_vol_strain(x_data, y_data, x_lim=None, y_lim=None):
+def style_vol_strain(x_data, y_data, x_lim=None, y_lim=None, width=None, height=None):
 
     if width and height:
         fig_1, axes_1 = create_styled_figure(
