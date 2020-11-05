@@ -203,26 +203,17 @@ for analysis_value in analysis_values:
     ]
     vol_strain_mean = analysis_dict[analysis_value]["mean_vol_strain"]
 
-    fig_1, axes_1 = plot_funcs.style_true_stress(
-        x_lim=1.0, y_lim=1.1 * stress_mean.max(), width=None, height=None
-    )
-
-    # fig_2, axes_2 = plot_funcs.style_vol_strain(
-    #     x_lim=1.0, y_lim=1.1 * vol_strain_mean.max(), width=None, height=None
-    # )
     strains = analysis_dict[analysis_value]["strains"]
     stresses = analysis_dict[analysis_value]["stresses"]
     vol_strains = analysis_dict[analysis_value]["vol_strains"]
 
+    fig_1, axes_1 = plot_funcs.style_true_stress(
+        x_lim=1.0, y_lim=1.25 * stresses[-1].max(), width=None, height=None
+    )
     for i in stress_indices:
         axes_1.plot(
             strains[i], stresses[i], linewidth=0.5, ls="dashed", zorder=1, alpha=0.5
         )
-
-    # for i in vol_strain_indices:
-    #     axes_2.plot(
-    #         strains[i], vol_strains[i], linewidth=0.5, ls="dashed", zorder=1, alpha=0.5
-    #     )
 
     axes_1.plot(
         x_stress_mean,
@@ -233,6 +224,17 @@ for analysis_value in analysis_values:
         zorder=1,
     )
 
+    fig_1.tight_layout()
+    fig.set_size_inches(8, 6)
+    plt.savefig(os.path.join(filepath, f"debug_{analysis_value}.png",))
+
+    # fig_2, axes_2 = plot_funcs.style_vol_strain(
+    #     x_lim=1.0, y_lim=1.1 * vol_strain_mean.max(), width=None, height=None
+    # )
+    # for i in vol_strain_indices:
+    #     axes_2.plot(
+    #         strains[i], vol_strains[i], linewidth=0.5, ls="dashed", zorder=1, alpha=0.5
+    #     )
     # axes_2.plot(
     #     x_vol_strain_mean,
     #     vol_strain_mean,
@@ -241,7 +243,3 @@ for analysis_value in analysis_values:
     #     color="black",
     #     zorder=1,
     # )
-
-    plt.savefig(os.path.join(filepath, "debug.png",))
-
-    plt.show()
