@@ -242,6 +242,6 @@ for analysis_value in analysis_values:
     #     zorder=1,
     # )
 
-    plot_funcs.set_plot_backend()
+    plt.savefig(os.path.join(filepath, "debug.png",))
 
     plt.show()
