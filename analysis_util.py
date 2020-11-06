@@ -362,7 +362,7 @@ plt.savefig(
     )
 )
 fig_3.set_size_inches(12, 9)
-fig_3.suptitle(f"{material}, comparison: {analysis_key}", fontsize=12)
+fig_3.suptitle(f"{material}, comparison: {title_key}", fontsize=12)
 fig_3.tight_layout()
 plt.savefig(
     os.path.join(
@@ -408,7 +408,7 @@ plt.savefig(
     )
 )
 fig_4.set_size_inches(12, 9)
-fig_4.suptitle(f"{material}, comparison: {analysis_key}", fontsize=12)
+fig_4.suptitle(f"{material}, comparison: {title_key}", fontsize=12)
 fig_4.tight_layout()
 plt.savefig(
     os.path.join(
