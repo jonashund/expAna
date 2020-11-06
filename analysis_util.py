@@ -179,9 +179,7 @@ for analysis_value in analysis_values:
         true_strains[i], true_stresses[i] = utils.interpolate_curve(
             strain, true_stresses[i], interval
         )
-        foo, true_stresses[i] = utils.interpolate_curve(
-            strain, vol_strains[i], interval
-        )
+        foo, vol_strains[i] = utils.interpolate_curve(strain, vol_strains[i], interval)
     # compute the mean curve as long as at least three values are available
     mean_stress, stress_indices = utils.get_mean_axis(true_stresses)
     mean_vol_strain, vol_strain_indices = utils.get_mean_axis(vol_strains)
