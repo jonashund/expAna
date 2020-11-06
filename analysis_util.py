@@ -185,11 +185,23 @@ for analysis_value in analysis_values:
 
     analysis_dict[analysis_value]["mean_strain"] = mean_strain
     analysis_dict[analysis_value]["mean_stress"] = mean_stress
+    analysis_dict[analysis_value]["stress_indices"] = stress_indices
     analysis_dict[analysis_value]["mean_vol_strain"] = mean_vol_strain
+    analysis_dict[analysis_value]["vol_strain_indices"] = vol_strain_indices
     analysis_dict[analysis_value]["strains"] = true_strains
     analysis_dict[analysis_value]["stresses"] = true_stresses
     analysis_dict[analysis_value]["vol_strains"] = vol_strains
 
+    analysis_dict[analysis_value].update(
+        {"max_stress": np.array(true_stresses, dtype=object)[stress_indices][-1].max()}
+    )
+    analysis_dict[analysis_value].update(
+        {
+            "max_vol_strain": np.array(vol_strains, dtype=object)[vol_strain_indices][
+                -1
+            ].max()
+        }
+    )
 # some string replacement for underscores in filenames
 title_key = analysis_key.replace("_", " ")
 material = analysis_project.experiments[experiment_name].documentation_data["material"]
@@ -197,12 +209,10 @@ export_material = material.replace(" ", "_")
 
 # plot individual curves and averaged curves in one plot for each analysis value
 for analysis_value in analysis_values:
+    # stress strain behaviour
     fig_1, axes_1 = plot_funcs.style_true_stress(
         x_lim=1.0,
-        y_lim=1.1
-        * np.array(analysis_dict[analysis_value]["stresses"], dtype=object)[
-            stress_indices
-        ][-1].max(),
+        y_lim=1.1 * analysis_dict[analysis_value]["max_stress"],
         width=None,
         height=None,
     )
@@ -215,10 +225,10 @@ for analysis_value in analysis_values:
         ],
         y_mean=analysis_dict[analysis_value]["mean_stress"],
         xs=np.array(analysis_dict[analysis_value]["strains"], dtype=object)[
-            stress_indices
+            analysis_dict[analysis_value]["stress_indices"]
         ],
         ys=np.array(analysis_dict[analysis_value]["stresses"], dtype=object)[
-            stress_indices
+            analysis_dict[analysis_value]["stress_indices"]
         ],
         value=analysis_value,
     )
@@ -231,12 +241,14 @@ for analysis_value in analysis_values:
     fig_1.tight_layout()
     plt.savefig(
         os.path.join(
-            vis_export_dir, f"{export_material}_{analysis_key}_{export_value}.pgf"
+            vis_export_dir,
+            f"{export_material}_stress_{analysis_key}_{export_value}.pgf",
         )
     )
     plt.savefig(
         os.path.join(
-            vis_export_dir, f"{export_material}_{analysis_key}_{export_value}_small.png"
+            vis_export_dir,
+            f"{export_material}_stress_{analysis_key}_{export_value}_small.png",
         )
     )
 
@@ -245,56 +257,160 @@ for analysis_value in analysis_values:
     fig_1.tight_layout()
     plt.savefig(
         os.path.join(
-            vis_export_dir, f"{export_material}_{analysis_key}_{export_value}_large.png"
+            vis_export_dir,
+            f"{export_material}_stress_{analysis_key}_{export_value}_large.png",
         )
     )
     plt.close()
 
+    # volume strain behaviour
+    fig_2, axes_2 = plot_funcs.style_vol_strain(
+        x_lim=1.0,
+        y_lim=1.1 * analysis_dict[analysis_value]["max_vol_strain"],
+        width=None,
+        height=None,
+    )
+
+    plot_funcs.add_curves_same_value(
+        fig=fig_2,
+        axes=axes_2,
+        x_mean=analysis_dict[analysis_value]["mean_strain"][
+            : len(analysis_dict[analysis_value]["mean_vol_strain"])
+        ],
+        y_mean=analysis_dict[analysis_value]["mean_vol_strain"],
+        xs=np.array(analysis_dict[analysis_value]["strains"], dtype=object)[
+            analysis_dict[analysis_value]["vol_strain_indices"]
+        ],
+        ys=np.array(analysis_dict[analysis_value]["vol_strains"], dtype=object)[
+            analysis_dict[analysis_value]["vol_strain_indices"]
+        ],
+        value=analysis_value,
+    )
+
+    axes_2.legend(loc="lower center")
+
+    # remove spaces in string before export
+    export_value = analysis_value.replace(" ", "_")
+
+    fig_2.tight_layout()
+    plt.savefig(
+        os.path.join(
+            vis_export_dir,
+            f"{export_material}_vol_strain_{analysis_key}_{export_value}.pgf",
+        )
+    )
+    plt.savefig(
+        os.path.join(
+            vis_export_dir,
+            f"{export_material}_vol_strain_{analysis_key}_{export_value}_small.png",
+        )
+    )
+
+    fig_2.set_size_inches(12, 9)
+    fig_2.suptitle(f"{material}, {analysis_key}: {analysis_value}", fontsize=12)
+    fig_2.tight_layout()
+    plt.savefig(
+        os.path.join(
+            vis_export_dir,
+            f"{export_material}_vol_strain_{analysis_key}_{export_value}_large.png",
+        )
+    )
+    plt.close()
+
+max_stress = max(
+    analysis_dict[analysis_value]["max_stress"] for analysis_value in analysis_values
+)
+max_vol_strain = max(
+    analysis_dict[analysis_value]["max_vol_strain"]
+    for analysis_value in analysis_values
+)
 # comparison plot
-fig_2, axes_2 = plot_funcs.style_true_stress(
-    x_lim=1.0,
-    y_lim=1.1
-    * np.array(analysis_dict[analysis_value]["stresses"], dtype=object)[stress_indices][
-        -1
-    ].max(),
-    width=None,
-    height=None,
+# stress strain behaviour
+fig_3, axes_3 = plot_funcs.style_true_stress(
+    x_lim=1.0, y_lim=1.1 * max_stress, width=None, height=None,
 )
 
 for analysis_value in analysis_values:
     plot_funcs.add_curves_same_value(
-        fig=fig_2,
-        axes=axes_2,
+        fig=fig_3,
+        axes=axes_3,
         x_mean=analysis_dict[analysis_value]["mean_strain"][
             : len(analysis_dict[analysis_value]["mean_stress"])
         ],
         y_mean=analysis_dict[analysis_value]["mean_stress"],
         xs=np.array(analysis_dict[analysis_value]["strains"], dtype=object)[
-            stress_indices
+            analysis_dict[analysis_value]["stress_indices"]
         ],
         ys=np.array(analysis_dict[analysis_value]["stresses"], dtype=object)[
-            stress_indices
+            analysis_dict[analysis_value]["stress_indices"]
         ],
         value=analysis_value,
     )
 
-axes_2.legend(loc="lower center")
+axes_3.legend(loc="lower center")
 
-fig_2.tight_layout()
-plt.savefig(
-    os.path.join(vis_export_dir, f"{export_material}_{analysis_key}_comparison.pgf")
-)
+fig_3.tight_layout()
 plt.savefig(
     os.path.join(
-        vis_export_dir, f"{export_material}_{analysis_key}_comparison_small.png"
+        vis_export_dir, f"{export_material}_stress_{analysis_key}_comparison.pgf"
     )
 )
-fig_2.set_size_inches(12, 9)
-fig_2.suptitle(f"{material}, {analysis_key}: {analysis_value}", fontsize=12)
-fig_2.tight_layout()
 plt.savefig(
     os.path.join(
-        vis_export_dir, f"{export_material}_{analysis_key}_comparison_large.png"
+        vis_export_dir, f"{export_material}_stress_{analysis_key}_comparison_small.png"
+    )
+)
+fig_3.set_size_inches(12, 9)
+fig_3.suptitle(f"{material}, {analysis_key}: {analysis_value}", fontsize=12)
+fig_3.tight_layout()
+plt.savefig(
+    os.path.join(
+        vis_export_dir, f"{export_material}_stress_{analysis_key}_comparison_large.png"
+    )
+)
+plt.close()
+
+# volume strain behaviour
+fig_4, axes_4 = plot_funcs.style_vol_strain(
+    x_lim=1.0, y_lim=1.1 * max_vol_strain, width=None, height=None,
+)
+
+for analysis_value in analysis_values:
+    plot_funcs.add_curves_same_value(
+        fig=fig_4,
+        axes=axes_4,
+        x_mean=analysis_dict[analysis_value]["mean_strain"][
+            : len(analysis_dict[analysis_value]["mean_vol_strain"])
+        ],
+        y_mean=analysis_dict[analysis_value]["mean_vol_strain"],
+        xs=np.array(analysis_dict[analysis_value]["strains"], dtype=object)[
+            analysis_dict[analysis_value]["vol_strain_indices"]
+        ],
+        ys=np.array(analysis_dict[analysis_value]["vol_strains"], dtype=object)[
+            analysis_dict[analysis_value]["vol_strain_indices"]
+        ],
+        value=analysis_value,
+    )
+
+axes_4.legend(loc="lower center")
+
+fig_4.tight_layout()
+plt.savefig(
+    os.path.join(
+        vis_export_dir, f"{export_material}_stress_{analysis_key}_comparison.pgf"
+    )
+)
+plt.savefig(
+    os.path.join(
+        vis_export_dir, f"{export_material}_stress_{analysis_key}_comparison_small.png"
+    )
+)
+fig_4.set_size_inches(12, 9)
+fig_4.suptitle(f"{material}, {analysis_key}: {analysis_value}", fontsize=12)
+fig_4.tight_layout()
+plt.savefig(
+    os.path.join(
+        vis_export_dir, f"{export_material}_stress_{analysis_key}_comparison_large.png"
     )
 )
 plt.close()
