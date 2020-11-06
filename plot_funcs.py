@@ -103,14 +103,14 @@ def create_styled_figure(width=4, height=3):
     return fig_1, axes_1
 
 
-def add_curves_same_value(fig, axes, x_mean, y_mean, xs=[], ys=[]):
+def add_curves_same_value(fig, axes, x_mean, y_mean, xs=[], ys=[], value=None):
     from cycler import cycler
 
     current_color = next(axes._get_lines.prop_cycler)["color"]
     axes.plot(
         x_mean,
         y_mean,
-        label=f"average material response",
+        label=f"average {value}",
         linewidth=1.5,
         zorder=1,
         color=current_color,
