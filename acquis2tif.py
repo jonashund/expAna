@@ -48,12 +48,9 @@ else:
 
 experiment_list = natsorted(experiment_list)
 
-project_mesher = dic.Mesher()
-
 current_project = funcs.Project(
-    "project_name", istra_acquisition_dir, export2tif_dir, dic_results_dir
+    "project", istra_acquisition_dir, export2tif_dir, dic_results_dir
 )
-
 for test_dir in experiment_list:
     try:
         with open(
@@ -67,7 +64,7 @@ for test_dir in experiment_list:
             f"""
         Warning:
         No documentation data found for {test_dir}!
-        Document your experiments properly using instron2doc.
+        Document your experiments properly using expDoc.
         """
         )
 
@@ -76,7 +73,14 @@ for test_dir in experiment_list:
     )
     current_project.add_experiment(experiment)
 
+# export project
+with open(
+    os.path.join(export2tif_dir, current_project.name + "_data.p"), "wb",
+) as myfile:
+    dill.dump(current_project, myfile)
+
 # muDIC
+project_mesher = dic.Mesher()
 # read only first image in each test folder to create the mesh with GUI
 for exp_name, experiment in current_project.experiments.items():
     # create a mesh on the reference image and save to experiment

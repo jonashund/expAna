@@ -1,6 +1,6 @@
-# istra2true_stress
+# expAna
 
-Export true stress strain curves from DIC images exported from Istra4D.  
+Evaluate DIC images or evaluation data exported from Istra4D.  
 True stress strain curves can be extracted from raw image material or evaluations    
 present as Istra4D hdf5 files.
 

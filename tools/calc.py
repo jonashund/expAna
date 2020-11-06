@@ -1,25 +1,6 @@
 import numpy as np
 
 
-class Error(Exception):
-    """An error occured."""
-
-    pass
-
-
-class InputError(Error):
-    """Exception raised for errors in the input.
-
-    Attributes:
-        expression -- input expression in which the error occurred
-        message -- explanation of the error
-    """
-
-    def __init__(self, expression, message):
-        self.expression = expression
-        self.message = message
-
-
 def get_mean_curves(list_of_x_arrays, list_of_y_arrays):
     # interpolation positions
     mean_x_array = np.linspace(
@@ -44,7 +25,7 @@ def interpolate_curve(x_array, y_array, x_spacing):
     return mean_x_array, interpolated_y_array
 
 
-def get_mean_axis(list_of_arrays, n=3):
+def mean_curve(list_of_arrays, n=3):
     assert len(list_of_arrays) >= n
     array_lengths = np.array([len(array) for array in list_of_arrays])
     array_indices = np.argsort(array_lengths)
