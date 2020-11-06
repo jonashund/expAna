@@ -213,7 +213,7 @@ for analysis_value in analysis_values:
     # stress strain behaviour
     fig_1, axes_1 = plot_funcs.style_true_stress(
         x_lim=1.0,
-        y_lim=1.33 * analysis_dict[analysis_value]["max_stress"],
+        y_lim=1.5 * analysis_dict[analysis_value]["max_stress"],
         width=None,
         height=None,
     )
@@ -234,7 +234,7 @@ for analysis_value in analysis_values:
         value=analysis_value,
     )
 
-    axes_1.legend(loc="lower center")
+    axes_1.legend(loc="upper center")
 
     # remove spaces in string before export
     export_value = analysis_value.replace(" ", "_")
@@ -267,7 +267,7 @@ for analysis_value in analysis_values:
     # volume strain behaviour
     fig_2, axes_2 = plot_funcs.style_vol_strain(
         x_lim=1.0,
-        y_lim=1.33 * analysis_dict[analysis_value]["max_vol_strain"],
+        y_lim=1.5 * analysis_dict[analysis_value]["max_vol_strain"],
         width=None,
         height=None,
     )
@@ -288,7 +288,7 @@ for analysis_value in analysis_values:
         value=analysis_value,
     )
 
-    axes_2.legend(loc="lower center")
+    axes_2.legend(loc="upper center")
 
     # remove spaces in string before export
     export_value = analysis_value.replace(" ", "_")
@@ -328,7 +328,7 @@ max_vol_strain = max(
 # comparison plot
 # stress strain behaviour
 fig_3, axes_3 = plot_funcs.style_true_stress(
-    x_lim=1.0, y_lim=1.33 * max_stress, width=None, height=None,
+    x_lim=1.0, y_lim=1.5 * max_stress, width=None, height=None,
 )
 
 for analysis_value in analysis_values:
@@ -348,7 +348,7 @@ for analysis_value in analysis_values:
         value=analysis_value,
     )
 
-axes_3.legend(loc="lower center")
+axes_3.legend(loc="upper center")
 
 fig_3.tight_layout()
 plt.savefig(
@@ -373,7 +373,7 @@ plt.close()
 
 # volume strain behaviour
 fig_4, axes_4 = plot_funcs.style_vol_strain(
-    x_lim=1.0, y_lim=1.33 * max_vol_strain, width=None, height=None,
+    x_lim=1.0, y_lim=1.5 * max_vol_strain, width=None, height=None,
 )
 
 for analysis_value in analysis_values:
@@ -393,7 +393,7 @@ for analysis_value in analysis_values:
         value=analysis_value,
     )
 
-axes_4.legend(loc="lower center")
+axes_4.legend(loc="upper center")
 
 fig_4.tight_layout()
 plt.savefig(
