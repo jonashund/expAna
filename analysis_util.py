@@ -234,7 +234,7 @@ for analysis_value in analysis_values:
         value=analysis_value,
     )
 
-    axes_1.legend(loc="upper center")
+    axes_1.legend(loc="upper left")
 
     # remove spaces in string before export
     export_value = analysis_value.replace(" ", "_")
@@ -288,7 +288,7 @@ for analysis_value in analysis_values:
         value=analysis_value,
     )
 
-    axes_2.legend(loc="upper center")
+    axes_2.legend(loc="upper left")
 
     # remove spaces in string before export
     export_value = analysis_value.replace(" ", "_")
@@ -348,7 +348,7 @@ for analysis_value in analysis_values:
         value=analysis_value,
     )
 
-axes_3.legend(loc="upper center")
+axes_3.legend(loc="upper left")
 
 fig_3.tight_layout()
 plt.savefig(
@@ -393,7 +393,7 @@ for analysis_value in analysis_values:
         value=analysis_value,
     )
 
-axes_4.legend(loc="upper center")
+axes_4.legend(loc="upper left")
 
 fig_4.tight_layout()
 plt.savefig(
