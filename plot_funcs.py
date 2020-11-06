@@ -111,7 +111,7 @@ def add_curves_same_value(fig, axes, x_mean, y_mean, xs=[], ys=[]):
         x_mean,
         y_mean,
         label=f"average material response",
-        linewidth=1.0,
+        linewidth=1.5,
         zorder=1,
         color=current_color,
     )
