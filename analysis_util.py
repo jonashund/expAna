@@ -192,39 +192,28 @@ for analysis_value in analysis_values:
 
 # plot individual curves and averaged curves in one plot for each analysis value
 for analysis_value in analysis_values:
-
-    x_stress_mean = analysis_dict[analysis_value]["mean_strain"][
-        : len(analysis_dict[analysis_value]["mean_stress"])
-    ]
-    stress_mean = analysis_dict[analysis_value]["mean_stress"]
-    x_vol_strain_mean = analysis_dict[analysis_value]["mean_strain"][
-        : len(analysis_dict[analysis_value]["mean_vol_strain"])
-    ]
-    vol_strain_mean = analysis_dict[analysis_value]["mean_vol_strain"]
-
-    strains = analysis_dict[analysis_value]["strains"]
-    stresses = analysis_dict[analysis_value]["stresses"]
-    vol_strains = analysis_dict[analysis_value]["vol_strains"]
-
     fig_1, axes_1 = plot_funcs.style_true_stress(
         x_lim=1.0,
         y_lim=1.1 * stresses[stress_indices[-1]].max(),
         width=None,
         height=None,
     )
-    for i in stress_indices:
-        axes_1.plot(strains[i], stresses[i], linewidth=1, zorder=1, alpha=0.5)
 
-    axes_1.plot(
-        x_stress_mean,
-        stress_mean,
-        label=f"avg.",
-        linewidth=1.0,
-        color="black",
-        zorder=1,
+    plot_funcs.add_curves_same_value(
+        fig=fig_1,
+        axes=axes_1,
+        x_mean=analysis_dict[analysis_value]["mean_strain"][
+            : len(analysis_dict[analysis_value]["mean_stress"])
+        ],
+        y_mean=analysis_dict[analysis_value]["mean_stress"],
+        xs=np.array(analysis_dict[analysis_value]["strains"])[stress_indices],
+        ys=np.array(analysis_dict[analysis_value]["stresses"])[stress_indices],
     )
+
+    axes_1.legend(loc="lower center")
+    # remove underscores in strings for titles
+    title_key = analysis_key.replace("_", " ")
     # remove spaces in strings before export
-    export_key = analysis_key.replace(" ", "_")
     export_value = analysis_value.replace(" ", "_")
     material = analysis_project.experiments[experiment_name].documentation_data[
         "material"
@@ -232,25 +221,30 @@ for analysis_value in analysis_values:
     export_material = material.replace(" ", "_")
 
     fig_1.tight_layout()
-    plt.savefig(os.path.join(vis_export_dir, f"{export_key}_{export_value}.pgf"))
+    plt.savefig(os.path.join(vis_export_dir, f"{analysis_key}_{export_value}.pgf"))
 
-    fig_1.set_size_inches(8, 6)
+    fig_1.set_size_inches(12, 9)
     fig_1.suptitle(f"{material}, {analysis_key}: {analysis_value}", fontsize=12)
     fig_1.tight_layout()
-    plt.savefig(os.path.join(vis_export_dir, f"{export_key}_{export_value}.png"))
+    plt.savefig(os.path.join(vis_export_dir, f"{analysis_key}_{export_value}.png"))
+    plt.close()
 
-    # fig_2, axes_2 = plot_funcs.style_vol_strain(
-    #     x_lim=1.0, y_lim=1.1 * vol_strain_mean.max(), width=None, height=None
-    # )
-    # for i in vol_strain_indices:
-    #     axes_2.plot(
-    #         strains[i], vol_strains[i], linewidth=0.5, ls="dashed", zorder=1, alpha=0.5
-    #     )
-    # axes_2.plot(
-    #     x_vol_strain_mean,
-    #     vol_strain_mean,
-    #     label=f"avg.",
-    #     linewidth=1.5,
-    #     color="black",
-    #     zorder=1,
-    # )
+# comparison plot
+# fig_1, axes_1 = plot_funcs.style_true_stress(
+#     x_lim=1.0,
+#     y_lim=1.1 * stresses[stress_indices[-1]].max(),
+#     width=None,
+#     height=None,
+# )
+# plot averaged curves
+# for analysis_value in analysis_values
+#     axes_1.plot(
+#         x_stress_mean,
+#         stress_mean,
+#         label=f"average material response",
+#         linewidth=1.0,
+#         color="black",
+#         zorder=1,
+#     )
+# plot individual curves?
+#   - same colour as averaged curve but low alpha and thin lines
