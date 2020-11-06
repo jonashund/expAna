@@ -173,11 +173,14 @@ for analysis_value in analysis_values:
     # set spacing dependent on maximum x-value found in all x arrays
 
     max_x = max([max(true_strains[i]) for i in range(len(true_strains))])
-    interval = max_x / 200
+    interval = max_x / 500
     mean_strain = np.arange(start=0.0, stop=max_x, step=interval)
     for i, strain in enumerate(true_strains):
         true_strains[i], true_stresses[i] = utils.interpolate_curve(
             strain, true_stresses[i], interval
+        )
+        foo, true_stresses[i] = utils.interpolate_curve(
+            strain, vol_strains[i], interval
         )
     # compute the mean curve as long as at least three values are available
     mean_stress, stress_indices = utils.get_mean_axis(true_stresses)
