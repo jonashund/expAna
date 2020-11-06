@@ -254,7 +254,7 @@ for analysis_value in analysis_values:
     )
 
     fig_1.set_size_inches(12, 9)
-    fig_1.suptitle(f"{material}, {analysis_key}: {analysis_value}", fontsize=12)
+    fig_1.suptitle(f"{material}, {title_key}: {analysis_value}", fontsize=12)
     fig_1.tight_layout()
     plt.savefig(
         os.path.join(
@@ -308,7 +308,7 @@ for analysis_value in analysis_values:
     )
 
     fig_2.set_size_inches(12, 9)
-    fig_2.suptitle(f"{material}, {analysis_key}: {analysis_value}", fontsize=12)
+    fig_2.suptitle(f"{material}, {title_key}: {analysis_value}", fontsize=12)
     fig_2.tight_layout()
     plt.savefig(
         os.path.join(
@@ -362,7 +362,7 @@ plt.savefig(
     )
 )
 fig_3.set_size_inches(12, 9)
-fig_3.suptitle(f"{material}, {analysis_key}: {analysis_value}", fontsize=12)
+fig_3.suptitle(f"{material}, comparison: {analysis_key}", fontsize=12)
 fig_3.tight_layout()
 plt.savefig(
     os.path.join(
@@ -408,7 +408,7 @@ plt.savefig(
     )
 )
 fig_4.set_size_inches(12, 9)
-fig_4.suptitle(f"{material}, {analysis_key}: {analysis_value}", fontsize=12)
+fig_4.suptitle(f"{material}, comparison: {analysis_key}", fontsize=12)
 fig_4.tight_layout()
 plt.savefig(
     os.path.join(
