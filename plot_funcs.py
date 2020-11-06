@@ -124,7 +124,7 @@ def add_curves_same_value(fig, axes, x_mean, y_mean, xs=[], ys=[], value=None):
                 zorder=1,
                 alpha=0.5,
                 color=current_color,
-                key=f"experiments {value}",
+                label=f"experiments {value}",
             )
         else:
             axes.plot(
