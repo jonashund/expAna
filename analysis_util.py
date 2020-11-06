@@ -234,13 +234,18 @@ for analysis_value in analysis_values:
             vis_export_dir, f"{export_material}_{analysis_key}_{export_value}.pgf"
         )
     )
+    plt.savefig(
+        os.path.join(
+            vis_export_dir, f"{export_material}_{analysis_key}_{export_value}_small.png"
+        )
+    )
 
     fig_1.set_size_inches(12, 9)
     fig_1.suptitle(f"{material}, {analysis_key}: {analysis_value}", fontsize=12)
     fig_1.tight_layout()
     plt.savefig(
         os.path.join(
-            vis_export_dir, f"{export_material}_{analysis_key}_{export_value}.png"
+            vis_export_dir, f"{export_material}_{analysis_key}_{export_value}_large.png"
         )
     )
     plt.close()
@@ -279,11 +284,17 @@ fig_2.tight_layout()
 plt.savefig(
     os.path.join(vis_export_dir, f"{export_material}_{analysis_key}_comparison.pgf")
 )
-
+plt.savefig(
+    os.path.join(
+        vis_export_dir, f"{export_material}_{analysis_key}_comparison_small.png"
+    )
+)
 fig_2.set_size_inches(12, 9)
 fig_2.suptitle(f"{material}, {analysis_key}: {analysis_value}", fontsize=12)
 fig_2.tight_layout()
 plt.savefig(
-    os.path.join(vis_export_dir, f"{export_material}_{analysis_key}_comparison.png")
+    os.path.join(
+        vis_export_dir, f"{export_material}_{analysis_key}_comparison_large.png"
+    )
 )
 plt.close()
