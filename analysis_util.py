@@ -194,7 +194,10 @@ for analysis_value in analysis_values:
 for analysis_value in analysis_values:
     fig_1, axes_1 = plot_funcs.style_true_stress(
         x_lim=1.0,
-        y_lim=1.1 * stresses[stress_indices[-1]].max(),
+        y_lim=1.1
+        * np.array(analysis_dict[analysis_value]["stresses"], dtype=object)[
+            stress_indices
+        ][-1].max(),
         width=None,
         height=None,
     )
@@ -206,8 +209,12 @@ for analysis_value in analysis_values:
             : len(analysis_dict[analysis_value]["mean_stress"])
         ],
         y_mean=analysis_dict[analysis_value]["mean_stress"],
-        xs=np.array(analysis_dict[analysis_value]["strains"])[stress_indices],
-        ys=np.array(analysis_dict[analysis_value]["stresses"])[stress_indices],
+        xs=np.array(analysis_dict[analysis_value]["strains"], dtype=object)[
+            stress_indices
+        ],
+        ys=np.array(analysis_dict[analysis_value]["stresses"], dtype=object)[
+            stress_indices
+        ],
     )
 
     axes_1.legend(loc="lower center")
