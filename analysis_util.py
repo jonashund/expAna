@@ -214,8 +214,8 @@ for analysis_value in analysis_values:
     fig_1, axes_1 = plot_funcs.style_true_stress(
         x_lim=1.0,
         y_lim=1.5 * analysis_dict[analysis_value]["max_stress"],
-        width=None,
-        height=None,
+        width=6,
+        height=4,
     )
 
     plot_funcs.add_curves_same_value(
@@ -268,8 +268,8 @@ for analysis_value in analysis_values:
     fig_2, axes_2 = plot_funcs.style_vol_strain(
         x_lim=1.0,
         y_lim=1.5 * analysis_dict[analysis_value]["max_vol_strain"],
-        width=None,
-        height=None,
+        width=6,
+        height=4,
     )
 
     plot_funcs.add_curves_same_value(
@@ -328,7 +328,7 @@ max_vol_strain = max(
 # comparison plot
 # stress strain behaviour
 fig_3, axes_3 = plot_funcs.style_true_stress(
-    x_lim=1.0, y_lim=1.5 * max_stress, width=None, height=None,
+    x_lim=1.0, y_lim=1.5 * max_stress, width=6, height=4,
 )
 
 for analysis_value in analysis_values:
@@ -373,7 +373,7 @@ plt.close()
 
 # volume strain behaviour
 fig_4, axes_4 = plot_funcs.style_vol_strain(
-    x_lim=1.0, y_lim=1.5 * max_vol_strain, width=None, height=None,
+    x_lim=1.0, y_lim=1.5 * max_vol_strain, width=6, height=4,
 )
 
 for analysis_value in analysis_values:
