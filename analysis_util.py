@@ -85,7 +85,6 @@ else:
         "-dic", f"`{passed_args.dic}` is not a valid value for argument `-dic`"
     )
 
-
 if passed_args.experiments is None:
     experiment_list = list()
     print(
@@ -224,10 +223,21 @@ for analysis_value in analysis_values:
         color="black",
         zorder=1,
     )
+    # remove spaces in strings before export
+    export_key = analysis_key.replace(" ", "_")
+    export_value = analysis_value.replace(" ", "_")
+    material = analysis_project.experiments[experiment_name].documentation_data[
+        "material"
+    ]
+    export_material = material.replace(" ", "_")
 
     fig_1.tight_layout()
+    plt.savefig(os.path.join(vis_export_dir, f"{export_key}_{export_value}.pgf"))
+
     fig_1.set_size_inches(8, 6)
-    plt.savefig(os.path.join(filepath, f"debug_{analysis_value}.png",))
+    fig_1.suptitle(f"{material}, {analysis_key}: {analysis_value}", fontsize=12)
+    fig_1.tight_layout()
+    plt.savefig(os.path.join(vis_export_dir, f"{export_key}_{export_value}.png"))
 
     # fig_2, axes_2 = plot_funcs.style_vol_strain(
     #     x_lim=1.0, y_lim=1.1 * vol_strain_mean.max(), width=None, height=None
