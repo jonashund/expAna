@@ -116,6 +116,19 @@ def add_curves_same_value(fig, axes, x_mean, y_mean, xs=[], ys=[], value=None):
         color=current_color,
     )
     for i in range(len(xs)):
-        axes.plot(xs[i], ys[i], linewidth=0.5, zorder=1, alpha=0.5, color=current_color)
+        if i == 0:
+            axes.plot(
+                xs[i],
+                ys[i],
+                linewidth=0.5,
+                zorder=1,
+                alpha=0.5,
+                color=current_color,
+                key=f"experiments {value}",
+            )
+        else:
+            axes.plot(
+                xs[i], ys[i], linewidth=0.5, zorder=1, alpha=0.5, color=current_color
+            )
 
     return fig, axes

@@ -213,7 +213,7 @@ for analysis_value in analysis_values:
     # stress strain behaviour
     fig_1, axes_1 = plot_funcs.style_true_stress(
         x_lim=1.0,
-        y_lim=1.1 * analysis_dict[analysis_value]["max_stress"],
+        y_lim=1.33 * analysis_dict[analysis_value]["max_stress"],
         width=None,
         height=None,
     )
@@ -267,7 +267,7 @@ for analysis_value in analysis_values:
     # volume strain behaviour
     fig_2, axes_2 = plot_funcs.style_vol_strain(
         x_lim=1.0,
-        y_lim=1.1 * analysis_dict[analysis_value]["max_vol_strain"],
+        y_lim=1.33 * analysis_dict[analysis_value]["max_vol_strain"],
         width=None,
         height=None,
     )
@@ -328,7 +328,7 @@ max_vol_strain = max(
 # comparison plot
 # stress strain behaviour
 fig_3, axes_3 = plot_funcs.style_true_stress(
-    x_lim=1.0, y_lim=1.1 * max_stress, width=None, height=None,
+    x_lim=1.0, y_lim=1.33 * max_stress, width=None, height=None,
 )
 
 for analysis_value in analysis_values:
@@ -373,7 +373,7 @@ plt.close()
 
 # volume strain behaviour
 fig_4, axes_4 = plot_funcs.style_vol_strain(
-    x_lim=1.0, y_lim=1.1 * max_vol_strain, width=None, height=None,
+    x_lim=1.0, y_lim=1.33 * max_vol_strain, width=None, height=None,
 )
 
 for analysis_value in analysis_values:
@@ -398,12 +398,13 @@ axes_4.legend(loc="lower center")
 fig_4.tight_layout()
 plt.savefig(
     os.path.join(
-        vis_export_dir, f"{export_material}_stress_{analysis_key}_comparison.pgf"
+        vis_export_dir, f"{export_material}_vol_strain_{analysis_key}_comparison.pgf"
     )
 )
 plt.savefig(
     os.path.join(
-        vis_export_dir, f"{export_material}_stress_{analysis_key}_comparison_small.png"
+        vis_export_dir,
+        f"{export_material}_vol_strain_{analysis_key}_comparison_small.png",
     )
 )
 fig_4.set_size_inches(12, 9)
@@ -411,7 +412,8 @@ fig_4.suptitle(f"{material}, {analysis_key}: {analysis_value}", fontsize=12)
 fig_4.tight_layout()
 plt.savefig(
     os.path.join(
-        vis_export_dir, f"{export_material}_stress_{analysis_key}_comparison_large.png"
+        vis_export_dir,
+        f"{export_material}_vol_strain_{analysis_key}_comparison_large.png",
     )
 )
 plt.close()
