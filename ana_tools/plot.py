@@ -5,10 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
-# doc funcs are located in instron2doc directory
-sys.path.append("../instron2doc/")
-
-import doc_funcs
+from expDoc.doc_tools import doc_funcs
 
 
 def set_plot_backend():

@@ -1,5 +1,5 @@
 import os
-import plot_funcs
+import plot
 import matplotlib.pyplot as plt
 
 
@@ -178,15 +178,3 @@ class Experiment(object):
         plt.savefig(os.path.join(out_dir, self.name + "_vol_strain.png",))
 
         plt.close()
-
-
-def print_remarks():
-    print(
-        """
-    REMARKS:
-        > image filtering improves convergence (lowpass_gaussian, sigma = 1)
-        > a mesh grid of roughly 40 by 40 pixels works well
-        > the meshed area should only contain speckled surface area and exclude the specimen's edges
-        > updating the reference frame every 50 frames improves convergence
-    """
-    )
