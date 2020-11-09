@@ -1,10 +1,17 @@
-import muDIC
+import os
+import sys
+import argparse
 import dill
+import muDIC
+import numpy as np
 
-from ana_tools.misc import print_remarks_muDIC
+import expAna
+
+from natsort import natsorted
+from expAna.misc import print_remarks_muDIC
 
 
-def main(experiment_list=None):
+def main(project_name="project", experiment_list=None):
     work_dir = os.getcwd()
 
     export2tif_dir = os.path.join(work_dir, "data_export2tif")
@@ -12,9 +19,7 @@ def main(experiment_list=None):
     os.makedirs(dic_results_dir, exist_ok=True)
 
     # open project file located in export2tif_dir
-    with open(
-        os.path.join(export2tif_dir, current_project.name + "_data.p"), "wb",
-    ) as myfile:
+    with open(os.path.join(export2tif_dir, project_name + "_data.p"), "rb",) as myfile:
         current_project = dill.load(myfile)
 
     if experiment_list is None:
@@ -92,7 +97,7 @@ def main(experiment_list=None):
                 dill.dump(experiment, myfile)
 
 
-if __name == "__main__":
+if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
         description="Perform DIC on images exported to .tif."
     )

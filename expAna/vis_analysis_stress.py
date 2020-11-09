@@ -5,10 +5,8 @@ import dill
 import numpy as np
 import matplotlib.pyplot as plt
 
-import ana_tools.plot as plot
-import ana_tools.data_trans as data_trans
-import ana_tools.calc as calc
-from ana_tools.misc import InputError
+import expAna
+from expAna.misc import InputError
 
 from natsort import natsorted
 
@@ -16,7 +14,11 @@ work_dir = os.getcwd()
 
 
 def main(
-    filter_key, filter_value=None, experiment_list=None, ignore_list=None,
+    filter_key,
+    filter_value=None,
+    experiment_list=None,
+    ignore_list=None,
+    dic_system="istra",
 ):
     if dic_system == "istra":
         exp_data_dir = os.path.join(work_dir, "data_istra_evaluation")
@@ -41,14 +43,14 @@ def main(
     else:
         pass
 
-    if not ignore_list is None:
+    if ignore_list is not None:
         for experiment in ignore_list:
             experiment_list.remove(experiment)
 
     experiment_list = natsorted(experiment_list)
 
     analysis_dict = {}
-    analysis_project = data_trans.Project(name=f"analysis_{filter_key}")
+    analysis_project = expAna.data_trans.Project(name=f"analysis_{filter_key}")
 
     # load the experiments
     for test_dir in experiment_list:
@@ -78,7 +80,7 @@ def main(
             if experiment_data.documentation_data[filter_key] == filter_value:
                 analysis_dict[filter_value]["experiment_list"].append(experiment_name)
 
-    # calculate average curves for every filter_value
+    # expAna.calculate average curves for every filter_value
     for filter_value in filter_values:
         true_strains = []
         true_stresses = []
@@ -101,8 +103,8 @@ def main(
                 .to_numpy()
             )
 
-        # mean_strain, mean_stress = calc.get_mean_curves(true_strains, true_stresses)
-        # mean_strain, mean_vol_strain = calc.get_mean_curves(true_strains, vol_strains)
+        # mean_strain, mean_stress = expAna.calc.get_mean_curves(true_strains, true_stresses)
+        # mean_strain, mean_vol_strain = expAna.calc.get_mean_curves(true_strains, vol_strains)
 
         # interpolate every stress strain curve to an x-axis with equally spaced points
         # set spacing dependent on maximum x-value found in all x arrays
@@ -111,15 +113,15 @@ def main(
         interval = max_x / 500
         mean_strain = np.arange(start=0.0, stop=max_x, step=interval)
         for i, strain in enumerate(true_strains):
-            true_strains[i], true_stresses[i] = calc.interpolate_curve(
+            true_strains[i], true_stresses[i] = expAna.calc.interpolate_curve(
                 strain, true_stresses[i], interval
             )
-            foo, vol_strains[i] = calc.interpolate_curve(
+            foo, vol_strains[i] = expAna.calc.interpolate_curve(
                 strain, vol_strains[i], interval
             )
         # compute the mean curve as long as at least three values are available
-        mean_stress, stress_indices = calc.get_mean_axis(true_stresses)
-        mean_vol_strain, vol_strain_indices = calc.get_mean_axis(vol_strains)
+        mean_stress, stress_indices = expAna.calc.mean_curve(true_stresses)
+        mean_vol_strain, vol_strain_indices = expAna.calc.mean_curve(vol_strains)
 
         analysis_dict[filter_value]["mean_strain"] = mean_strain
         analysis_dict[filter_value]["mean_stress"] = mean_stress
@@ -154,14 +156,14 @@ def main(
     # plot individual curves and averaged curves in one plot for each analysis value
     for filter_value in filter_values:
         # stress strain behaviour
-        fig_1, axes_1 = plot.style_true_stress(
+        fig_1, axes_1 = expAna.plot.style_true_stress(
             x_lim=1.0,
             y_lim=1.5 * analysis_dict[filter_value]["max_stress"],
             width=6,
             height=4,
         )
 
-        plot.add_curves_same_value(
+        expAna.plot.add_curves_same_value(
             fig=fig_1,
             axes=axes_1,
             x_mean=analysis_dict[filter_value]["mean_strain"][
@@ -208,14 +210,14 @@ def main(
         plt.close()
 
         # volume strain behaviour
-        fig_2, axes_2 = plot.style_vol_strain(
+        fig_2, axes_2 = expAna.plot.style_vol_strain(
             x_lim=1.0,
             y_lim=1.5 * analysis_dict[filter_value]["max_vol_strain"],
             width=6,
             height=4,
         )
 
-        plot.add_curves_same_value(
+        expAna.plot.add_curves_same_value(
             fig=fig_2,
             axes=axes_2,
             x_mean=analysis_dict[filter_value]["mean_strain"][
@@ -269,12 +271,12 @@ def main(
     )
     # comparison plot
     # stress strain behaviour
-    fig_3, axes_3 = plot.style_true_stress(
+    fig_3, axes_3 = expAna.plot.style_true_stress(
         x_lim=1.0, y_lim=1.5 * max_stress, width=6, height=4,
     )
 
     for filter_value in filter_values:
-        plot.add_curves_same_value(
+        expAna.plot.add_curves_same_value(
             fig=fig_3,
             axes=axes_3,
             x_mean=analysis_dict[filter_value]["mean_strain"][
@@ -316,12 +318,12 @@ def main(
     plt.close()
 
     # volume strain behaviour
-    fig_4, axes_4 = plot.style_vol_strain(
+    fig_4, axes_4 = expAna.plot.style_vol_strain(
         x_lim=1.0, y_lim=1.5 * max_vol_strain, width=6, height=4,
     )
 
     for filter_value in filter_values:
-        plot.add_curves_same_value(
+        expAna.plot.add_curves_same_value(
             fig=fig_4,
             axes=axes_4,
             x_mean=analysis_dict[filter_value]["mean_strain"][
@@ -365,7 +367,7 @@ def main(
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
-        description="This utility force displacement curves of experiment files in the corresponding directory filtered by a criterion."
+        description="This utility makes plots of stress strain and volume strain curves of experiment files in the corresponding directory filtered by a criterion."
     )
     arg_parser.add_argument(
         "-e",
@@ -415,6 +417,15 @@ if __name__ == "__main__":
     #     help="If `True` all curves are plotted as opposed to only the averaged curves if `False`.",
     # )
 
+    arg_parser.add_argument(
+        "-d",
+        "--dic",
+        default="istra",
+        help="Specify DIC software with which the results were obtained. Options: `istra` (default) or `muDIC`.",
+    )
+
+    # TO DO: add -t, --type (simple_tension, sent)
+
     passed_args = arg_parser.parse_args()
     sys.exit(
         main(
@@ -422,5 +433,6 @@ if __name__ == "__main__":
             filter_value=passed_args.value,
             experiment_list=passed_args.experiments,
             ignore_list=passed_args.ignore,
+            dic_system=passed_args.dic,
         )
     )

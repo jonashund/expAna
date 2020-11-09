@@ -1,11 +1,8 @@
-import os
-import sys
 import platform
-import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
-from expDoc.doc_tools import doc_funcs
+from expDoc import doc_funcs
 
 
 def set_plot_backend():

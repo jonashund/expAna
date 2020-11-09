@@ -4,9 +4,7 @@ import argparse
 import dill
 import numpy as np
 import pandas as pd
-
-import ana_tools.gui as gui
-import ana_tools.gauge as gauge
+import expAna
 
 from natsort import natsorted
 
@@ -42,7 +40,7 @@ def main(experiment_list=None):
         ) as myfile:
             experiment = dill.load(myfile)
 
-        direction_selector = gui.TensileDirection(experiment.ref_image)
+        direction_selector = expAna.gui.TensileDirection(experiment.ref_image)
         direction_selector.__gui__()
         experiment.tensile_direction = direction_selector.direction
 
@@ -57,7 +55,9 @@ def main(experiment_list=None):
         experiment.muDIC_image_count = true_strain.shape[-1]
         plot_frame = int(0.8 * experiment.muDIC_image_count)
 
-        mask = gui.RectangleCoordinates(input_image=true_strain_x[:, :, plot_frame].T)
+        mask = expAna.gui.RectangleCoordinates(
+            input_image=true_strain_x[:, :, plot_frame].T
+        )
         mask.__gui__()
 
         [x_min, y_min, x_max, y_max] = [int(i) for i in mask.coordinates]
@@ -77,7 +77,7 @@ def main(experiment_list=None):
         specimen_width = 12.0  # mm
         specimen_thickness = 3.0  # mm
 
-        true_stress_in_MPa = gauge.get_true_stress(
+        true_stress_in_MPa = expAna.gauge.get_true_stress(
             force_in_N=reaction_force_in_kN * 1000.0,
             true_strain_perpendicular=true_strain_mean[y_idx, y_idx, :].reshape(
                 (experiment.muDIC_image_count, 1)
@@ -139,7 +139,7 @@ def main(experiment_list=None):
             dill.dump(experiment, myfile)
 
 
-if __name == "__main__":
+if __name__ == "__main__":
 
     arg_parser = argparse.ArgumentParser(
         description="muDIC2stress offers `gauge` element functionality based on Python. From muDIC result files the true stress strain and volume strain behaviour is computed over a defined part of the whole DIC image."

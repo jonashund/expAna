@@ -5,7 +5,7 @@ import dill
 
 from natsort import natsorted
 
-import ana_tools.data_trans as data_trans
+import expAna
 
 
 def main(experiment_list=None):
@@ -33,7 +33,7 @@ def main(experiment_list=None):
 
     experiment_list = natsorted(experiment_list)
 
-    current_project = data_trans.Project(
+    current_project = expAna.data_trans.Project(
         "project", istra_acquisition_dir, export2tif_dir, dic_results_dir
     )
     for test_dir in experiment_list:
@@ -44,7 +44,7 @@ def main(experiment_list=None):
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
-            experiment = data_trans.Experiment(name=test_dir)
+            experiment = expAna.data_trans.Experiment(name=test_dir)
             print(
                 f"""
             Warning:

@@ -5,9 +5,7 @@ import dill
 import numpy as np
 import pandas as pd
 
-import ana_tools.gauge as gauge
-import ana_tools.gui as gui
-import ana_tools.data_trans as data_trans
+import expAna
 
 from natsort import natsorted
 
@@ -44,7 +42,7 @@ def main(
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
-            experiment = data_trans.Experiment(name=test_dir)
+            experiment = expAna.data_trans.Experiment(name=test_dir)
             print(
                 f"""
             Warning:
@@ -55,7 +53,7 @@ def main(
 
         experiment.read_istra_evaluation(istra_acquisition_dir, istra_evaluation_dir)
 
-        direction_selector = gui.TensileDirection(experiment.ref_image)
+        direction_selector = expAna.gui.TensileDirection(experiment.ref_image)
         direction_selector.__gui__()
         experiment.tensile_direction = direction_selector.direction
 
@@ -68,15 +66,15 @@ def main(
 
         # get strains from evaluation
         # pixel gradients are treated as elements of the deformation gradient
-        true_strain = gauge.get_true_strain(experiment.def_grad)
+        true_strain = expAna.gauge.get_true_strain(experiment.def_grad)
         true_strain[:, :, :, :][experiment.mask[:, :, :, 0] == 0] = np.nan
 
-        gauge = gui.RectangleCoordinates(
+        strain_gauge = expAna.gui.RectangleCoordinates(
             input_image=true_strain[int(0.75 * experiment.image_count), :, :, x_idx]
         )
-        gauge.__gui__()
+        strain_gauge.__gui__()
 
-        [x_min, y_min, x_max, y_max] = [int(i) for i in gauge.coordinates]
+        [x_min, y_min, x_max, y_max] = [int(i) for i in strain_gauge.coordinates]
 
         # image coordinates assume x-axis horizontal (i.e. columns)
         # and y-axis vertical (i.e. rows)
@@ -84,7 +82,7 @@ def main(
 
         true_strain_mean = np.nanmean(true_strain_gauge, axis=(1, 2))
 
-        true_stress_in_MPa = gauge.get_true_stress(
+        true_stress_in_MPa = expAna.gauge.get_true_stress(
             force_in_N=experiment.reaction_force * 1000.0,
             true_strain_perpendicular=true_strain_mean[:, y_idx].reshape(
                 (experiment.image_count, 1)

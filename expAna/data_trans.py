@@ -1,6 +1,11 @@
 import os
-import plot
 import matplotlib.pyplot as plt
+import istra2py
+import numpy as np
+
+import expAna
+
+from PIL import Image
 
 
 class Project(object):
@@ -29,10 +34,6 @@ class Experiment(object):
         self.name = name
 
     def read_and_convert_istra_images(self, istra_acquisition_dir, export2tif_dir):
-        import istra2py
-        import os
-
-        from PIL import Image
 
         image_reader = istra2py.Reader(
             path_dir_acquisition=os.path.join(istra_acquisition_dir, self.name),
@@ -59,11 +60,6 @@ class Experiment(object):
                 self.ref_image = image_reader.acquisition.images[img]
 
     def read_istra_evaluation(self, istra_acquisition_dir, istra_evaluation_dir):
-        import istra2py
-        import os
-        import numpy as np
-
-        from PIL import Image
 
         image_reader = istra2py.Reader(
             path_dir_acquisition=os.path.join(istra_acquisition_dir, self.name),
@@ -137,7 +133,7 @@ class Experiment(object):
         x_data = self.gauge_results["true_strain_image_x"]
         y_data = self.gauge_results["true_stress_in_MPa"]
 
-        fig_1, axes_1 = plot_funcs.style_true_stress(
+        fig_1, axes_1 = expAna.plot.style_true_stress(
             x_lim=1.0, y_lim=1.1 * y_data.max()
         )
 
@@ -165,7 +161,9 @@ class Experiment(object):
         x_data = self.gauge_results["true_strain_image_x"]
         y_data = self.gauge_results["volume_strain"]
 
-        fig_1, axes_1 = plot_funcs.style_vol_strain(x_lim=1.0, y_lim=1.1 * y_data.max())
+        fig_1, axes_1 = expAna.plot.style_vol_strain(
+            x_lim=1.0, y_lim=1.1 * y_data.max()
+        )
 
         axes_1.plot(
             x_data, y_data, label=f"{self.name}", linewidth=1.0, zorder=1,

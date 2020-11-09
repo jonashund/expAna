@@ -2,11 +2,9 @@ import os
 import sys
 import argparse
 import dill
-import numpy as np
-import pandas as pd
 
-import ana_tools.gui as gui
-import ana_tools.plot as plot
+import expAna
+from expAna.misc import InputError
 
 from natsort import natsorted
 
@@ -39,21 +37,20 @@ def main(experiment_list=None, keep_offset=True, set_failure=False, dic_system="
 
     experiment_list = natsorted(experiment_list)
 
+    # prepare plotting to file, avoid switching matplotlib backends (buggy)
     for test_dir in experiment_list:
         with open(
             os.path.join(exp_data_dir, test_dir, test_dir + "_experiment_data.p"), "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
-        # plot results to file
-
         if not keep_offset:
-            plot.remove_offsets(experiment)
+            expAna.plot.remove_offsets(experiment)
         else:
             pass
 
         if set_failure:
-            fail_location = gui.FailureLocator()
+            fail_location = expAna.gui.FailureLocator()
             fail_location.__gui__(experiment)
             # export truncated data
             with open(
@@ -64,10 +61,16 @@ def main(experiment_list=None, keep_offset=True, set_failure=False, dic_system="
         else:
             pass
 
+        # expAna.plot.set_plot_backend()
+
+    for test_dir in experiment_list:
+        with open(
+            os.path.join(exp_data_dir, test_dir, test_dir + "_experiment_data.p"), "rb",
+        ) as myfile:
+            experiment = dill.load(myfile)
+
         experiment.plot_true_stress(out_dir=vis_export_dir)
         experiment.plot_volume_strain(out_dir=vis_export_dir)
-
-        plot.set_plot_backend()
 
 
 if __name__ == "__main__":
