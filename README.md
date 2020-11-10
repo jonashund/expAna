@@ -70,7 +70,12 @@ Process raw DIC images or evaluation data exported from Istra4D to gain true str
 - plot stress strain curves: `expAna.vis_basic_stress.main()`
 
 ### Results analysis
-- results can be filtered using a <key> of the `documentation_data` dictionary that is created for every experiment  by running 'expDoc' and subsequently read by `expAna`
-- additionally a corresponding <value> can be provided and only experiments matching both criteria are analysed
-- basic usage: `expAna.vis_analysis_stress.main(filter_key="<key")`
-  - example: compare the experiments of the project regarding the different values for the key "specimen_orientation": `expAna.vis_analysis_stress.main(filter_key="specimen_orientation")`
+- results can be filtered using a `<key>` of the `documentation_data` dictionary that is created for every experiment by running `expDoc` and subsequently read by `expAna`
+- this dictionary is an attribute of every instance of the `Experiment` class and contains all the information for each experiment that is provided through the project's _Excel_ spreadsheet
+- additionally a corresponding `<value>` can be provided such that only experiments matching both criteria are analysed
+- **remark**: by default at least three experiments matching each criterion are required in order to calculate a meaningful average of the behaviour
+
+#### Usage: 
+  - **example #0:** calculate and visualise the mean behaviour for every `<value>` found for the provided `<key>` and also visualise the mean curves in a comparison plot: `expAna.vis_analysis_stress.main(filter_key="<key")`
+  - **example #1:** compare the experiments of the project regarding the different values for the key "specimen_orientation": `expAna.vis_analysis_stress.main(filter_key="specimen_orientation")`
+  - **example #2:** compare all experiments with a "specimen_orientation" (key) "parallel to flow" (value): `expAna.vis_analysis_stress.main(filter_key="specimen_orientation", filter_value="parallel to flow")`
