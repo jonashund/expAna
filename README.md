@@ -13,17 +13,17 @@ Process raw DIC images or evaluation data exported from Istra4D to gain true str
      - `cd ./istra2py`
      - `pip install -e .`
 2. [`muDIC_ifm`](https://git.scc.kit.edu/ifm/labor/exputil/mudic_ifm)
-   - `git clone git@git.scc.kit.edu:ifm/labor/exputil/mudic_ifm.git`
-   - `cd ./muDIC_ifm`
-   - `pip install -e .`
+     - `git clone git@git.scc.kit.edu:ifm/labor/exputil/mudic_ifm.git`
+     - `cd ./muDIC_ifm`
+     - `pip install -e .`
 3. [`expDoc`](https://git.scc.kit.edu/ifm/labor/exputil/expDoc):
-  - `git clone git@git.scc.kit.edu:ifm/labor/exputil/expDoc.git`
-  - `cd ./expDoc`
-  - `pip install -e .`
+     - `git clone git@git.scc.kit.edu:ifm/labor/exputil/expDoc.git`
+     - `cd ./expDoc`
+     - `pip install -e .`
 4. [`expAna`](https://git.scc.kit.edu/ifm/labor/exputil/expAna):
-  - `git clone git@git.scc.kit.edu:ifm/labor/exputil/expAna.git`
-  - `cd ./expAna`
-  - `pip install -e .`
+     - `git clone git@git.scc.kit.edu:ifm/labor/exputil/expAna.git`
+     - `cd ./expAna`
+     - `pip install -e .`
 
 ## Usage
 ### folder structure:
