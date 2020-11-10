@@ -79,3 +79,13 @@ Process raw DIC images or evaluation data exported from Istra4D to gain true str
   - **example #0:** calculate and visualise the mean behaviour for every `<value>` found for the provided `<key>` and also visualise the mean curves in a comparison plot: `expAna.vis_analysis_stress.main(filter_key="<key")`
   - **example #1:** compare the experiments of the project regarding the different values for the key "specimen_orientation": `expAna.vis_analysis_stress.main(filter_key="specimen_orientation")`
   - **example #2:** compare all experiments with a "specimen_orientation" (key) "parallel to flow" (value): `expAna.vis_analysis_stress.main(filter_key="specimen_orientation", filter_value="parallel to flow")`
+
+## TO DO:
+- add environmental.yml
+- add version number of _Istra4D_
+- finish `vis_analysis_force` to compare force displacement behviour in a similar manner as stress strain curves
+  - maybe create another sub-package structure:
+    - vis.anaylsis(type="stress"/"force")
+    - vis.basic(type="stress"/"force") ("force" will just point to the "doc_plot" function of `expDoc` )
+- add commands via console_script
+- add test data and tests
