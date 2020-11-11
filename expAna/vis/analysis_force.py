@@ -9,13 +9,12 @@ import expAna
 
 from natsort import natsorted
 
-work_dir = os.getcwd()
-
 
 def main(
     filter_key, filter_value=None, experiment_list=None, ignore_list=None,
 ):
 
+    work_dir = os.getcwd()
     exp_data_dir = os.path.join(work_dir, "data_instron")
     vis_export_dir = os.path.join(work_dir, "visualisation")
 
@@ -40,7 +39,9 @@ def main(
     analysis_dict = {}
     analysis_project = expAna.data_trans.Project(name=f"analysis_{filter_key}")
 
-    # load the experiments
+    # read the experiment files
+    # do they contain a data_frame with the force_displacement behaviour?
+    # no, they don't! fix that!
     for test_dir in experiment_list:
         with open(
             os.path.join(exp_data_dir, test_dir, test_dir + "_experiment_data.p"), "rb",
