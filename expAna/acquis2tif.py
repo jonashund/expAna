@@ -11,13 +11,11 @@ import expAna
 def main(experiment_list=None):
     work_dir = os.getcwd()
 
-    test_reports_dir_python = os.path.join(work_dir, "test_reports", "python")
+    expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
     export2tif_dir = os.path.join(work_dir, "data_export2tif")
-    dic_results_dir = os.path.join(work_dir, "data_muDIC")
     istra_acquisition_dir = os.path.join(work_dir, "data_istra_acquisition")
 
     os.makedirs(export2tif_dir, exist_ok=True)
-    os.makedirs(dic_results_dir, exist_ok=True)
 
     if experiment_list == None:
         experiment_list = list()
@@ -34,13 +32,14 @@ def main(experiment_list=None):
     experiment_list = natsorted(experiment_list)
 
     current_project = expAna.data_trans.Project(
-        "project", istra_acquisition_dir, export2tif_dir, dic_results_dir
+        "project",
+        istra_acquisition_dir=istra_acquisition_dir,
+        export2tif_dir=export2tif_dir,
     )
     for test_dir in experiment_list:
         try:
             with open(
-                os.path.join(test_reports_dir_python, test_dir + "_experiment_data.p"),
-                "rb",
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.p"), "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -50,6 +49,7 @@ def main(experiment_list=None):
             Warning:
             No documentation data found for {test_dir}!
             Document your experiments properly using expDoc.
+            Analysis features can only be used with expDoc data.
             """
             )
 
@@ -60,7 +60,7 @@ def main(experiment_list=None):
 
     # export project
     with open(
-        os.path.join(export2tif_dir, current_project.name + "_data.p"), "wb",
+        os.path.join(export2tif_dir, current_project.name + "_expAna.p"), "wb",
     ) as myfile:
         dill.dump(current_project, myfile)
 

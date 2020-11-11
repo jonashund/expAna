@@ -7,7 +7,4 @@ from . import gauge
 from . import gui
 from . import misc
 from . import muDIC2stress
-from . import plot
-from . import vis_analysis_force
-from . import vis_analysis_stress
-from . import vis_basic_stress
+from . import vis

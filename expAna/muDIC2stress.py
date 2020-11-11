@@ -35,8 +35,7 @@ def main(experiment_list=None):
         ) as myfile:
             true_strain = np.load(myfile)
         with open(
-            os.path.join(dic_results_dir, test_dir, test_dir + "_experiment_data.p"),
-            "rb",
+            os.path.join(dic_results_dir, test_dir, test_dir + "_expAna.p"), "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
@@ -133,8 +132,7 @@ def main(experiment_list=None):
         )
 
         with open(
-            os.path.join(test_results_dir, experiment.name + "_experiment_data.p"),
-            "wb",
+            os.path.join(test_results_dir, experiment.name + "_expAna.p"), "wb",
         ) as myfile:
             dill.dump(experiment, myfile)
 

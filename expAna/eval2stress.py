@@ -14,8 +14,7 @@ def main(
     experiment_list=None, eco_mode=True, specimen_width=12.0, specimen_thickness=3.0
 ):
     work_dir = os.getcwd()
-
-    test_reports_dir_python = os.path.join(work_dir, "test_reports", "python")
+    expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
     istra_acquisition_dir = os.path.join(work_dir, "data_istra_acquisition")
     istra_evaluation_dir = os.path.join(work_dir, "data_istra_evaluation")
 
@@ -37,8 +36,7 @@ def main(
         # load or create experiment object
         try:
             with open(
-                os.path.join(test_reports_dir_python, test_dir + "_experiment_data.p"),
-                "rb",
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.p"), "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -47,7 +45,7 @@ def main(
                 f"""
             Warning:
             No documentation data found for {test_dir}!
-            Document your experiments properly using instron2doc.
+            Document your experiments properly using the expDoc package.
             """
             )
 
@@ -136,8 +134,7 @@ def main(
         if eco_mode is True:
             experiment.slenderise()
         with open(
-            os.path.join(test_results_dir, experiment.name + "CORN1_experiment_data.p"),
-            "wb",
+            os.path.join(test_results_dir, experiment.name + "CORN1_expAna.p"), "wb",
         ) as myfile:
             dill.dump(experiment, myfile)
 
