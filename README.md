@@ -23,12 +23,14 @@ Process raw DIC images or evaluation data exported from Istra4D to gain true str
 **1. manually:** 
   - based on current Python version with ipython and numpy:   
     `conda create --name <my_env_name> ipython numpy`
+  - activate created environment:   
+    `conda activate <my_env_name>`
   - install scipy v1.2.1 (requirement of muDIC_ifm):   
     `pip install scipy==1.2.1`
     
 **2. from environmental.yml:**
   - execute in directory with `environmental.yml` (after cloning [`expDoc`](https://git.scc.kit.edu/ifm/labor/exputil/expDoc) or [`expAna`](https://git.scc.kit.edu/ifm/labor/exputil/expAna) )   
-    `conda env create -f environment.yml`
+    `conda env create -f environmental.yml`
 
 ### Cloning the repositories and installing
 Clone from [gitlab](https://git.scc.kit.edu/) into a local repository and install in the following order from within the corresponding repository:
