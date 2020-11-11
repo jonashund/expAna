@@ -50,7 +50,7 @@ Clone from [gitlab](https://git.scc.kit.edu/) into a local repository and instal
    - `pip install -e .`
 
 ## Usage
-### folder structure:
+### Folder structure:
 - `project_directory`
   - `data_expDoc` *created by expDoc*
   - `data_instron` *instron project directory*
@@ -102,10 +102,10 @@ Clone from [gitlab](https://git.scc.kit.edu/) into a local repository and instal
 - additionally a corresponding `<value>` can be provided such that only experiments matching both criteria are analysed
 - **remark**: by default at least three experiments matching each criterion are required in order to calculate a meaningful average of the behaviour
 
-#### Usage: 
-  - **example #0:** calculate and visualise the mean behaviour for every `<value>` found for the provided `<key>` and also visualise the mean curves in a comparison plot: `expAna.vis.analysis.stress(filter_key="<key")` or `expAna.vis.analysis.force(filter_key="<key")`
-  - **example #1:** compare the experiments of the project regarding the different values for the key "specimen_orientation": `expAna.vis.analysis.stress(filter_key="specimen_orientation")`
-  - **example #2:** compare all experiments with a "specimen_orientation" (key) "parallel to flow" (value): `expAna.vis.analysis.stress(filter_key="specimen_orientation", filter_value="parallel to flow")`
+  #### Usage: 
+    - **example #0:** calculate and visualise the mean behaviour for every `<value>` found for the provided `<key>` and also visualise the mean curves in a comparison plot: `expAna.vis.analysis.stress(filter_key="<key")` or `expAna.vis.analysis.force(filter_key="<key")`
+    - **example #1:** compare the experiments of the project regarding the different values for the key "specimen_orientation": `expAna.vis.analysis.stress(filter_key="specimen_orientation")`
+    - **example #2:** compare all experiments with a "specimen_orientation" (key) "parallel to flow" (value): `expAna.vis.analysis.stress(filter_key="specimen_orientation", filter_value="parallel to flow")`
 
 ## TO DO:
 - add version number of _Istra4D_
