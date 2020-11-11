@@ -15,15 +15,16 @@ def main(
 ):
 
     work_dir = os.getcwd()
-    exp_data_dir = os.path.join(work_dir, "data_instron")
+    expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
+    instron_data_dir = os.path.join(work_dir, "data_instron")
     vis_export_dir = os.path.join(work_dir, "visualisation")
 
     if experiment_list is None:
         experiment_list = list()
         print(
-            f"No experiments passed. Will search for folders named `Test*` in {exp_data_dir}."
+            f"No experiments passed. Will search for folders named `Test*` in {instron_data_dir}."
         )
-        for path, directories, files in os.walk(exp_data_dir):
+        for path, directories, files in os.walk(instron_data_dir):
             for test_dir in directories:
                 if str(test_dir[:5] == "Test"):
                     experiment_list.append(test_dir)
@@ -40,15 +41,30 @@ def main(
     analysis_project = expAna.data_trans.Project(name=f"analysis_{filter_key}")
 
     # read the experiment files
-    # do they contain a data_frame with the force_displacement behaviour?
-    # no, they don't! fix that!
     for test_dir in experiment_list:
-        with open(
-            os.path.join(exp_data_dir, test_dir, test_dir + "_experiment_data.p"), "rb",
-        ) as myfile:
-            experiment = dill.load(myfile)
-
-            analysis_project.add_experiment(experiment)
+        # search for input data created with expDoc
+        try:
+            with open(
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.p"), "rb",
+            ) as myfile:
+                experiment = dill.load(myfile)
+        except:
+            print(
+                f"""
+            Warning:
+            No documentation data found for {test_dir}!
+            Document your experiments properly using expDoc before using expAna.
+            """
+            )
+            assert False
+        # search for expAna data
+        try:
+            with open(
+                os.path.join(vis_export_dir, test_dir + "_expAna.p"), "rb",
+            ) as myfile:
+                experiment = dill.load(myfile)
+        except:
+            pass
 
     # compile list of different values for key or just filter experiments for given key
     if filter_value is None:
@@ -71,69 +87,43 @@ def main(
 
     # expAna.calculate average curves for every filter_value
     for filter_value in filter_values:
-        true_strains = []
-        true_stresses = []
-        vol_strains = []
+        displacements = []
+        forces = []
         # create list of arrays with x and y values
         for experiment_name in analysis_dict[filter_value]["experiment_list"]:
-            true_strains.append(
+            displacements.append(
                 analysis_project.experiments[experiment_name]
-                .gauge_results["true_strain_image_x"]
+                .data_instron["displacement_in_mm"]
                 .to_numpy()
             )
-            true_stresses.append(
+            forces.append(
                 analysis_project.experiments[experiment_name]
-                .gauge_results["true_stress_in_MPa"]
-                .to_numpy()
-            )
-            vol_strains.append(
-                analysis_project.experiments[experiment_name]
-                .gauge_results["volume_strain"]
+                .data_instron["force_in_kN"]
                 .to_numpy()
             )
 
-        # mean_strain, mean_stress = expAna.calc.get_mean_curves(true_strains, true_stresses)
-        # mean_strain, mean_vol_strain = expAna.calc.get_mean_curves(true_strains, vol_strains)
-
-        # interpolate every stress strain curve to an x-axis with equally spaced points
+        # interpolate every force displacement curve to an x-axis with equally spaced points
         # set spacing dependent on maximum x-value found in all x arrays
 
-        max_x = max([max(true_strains[i]) for i in range(len(true_strains))])
+        max_x = max([max(displacements[i]) for i in range(len(displacements))])
         interval = max_x / 500
-        mean_strain = np.arange(start=0.0, stop=max_x, step=interval)
-        for i, strain in enumerate(true_strains):
-            true_strains[i], true_stresses[i] = expAna.calc.interpolate_curve(
-                strain, true_stresses[i], interval
+        mean_disp = np.arange(start=0.0, stop=max_x, step=interval)
+        for i, strain in enumerate(displacements):
+            displacements[i], forces[i] = expAna.calc.interpolate_curve(
+                strain, forces[i], interval
             )
-            foo, vol_strains[i] = expAna.calc.interpolate_curve(
-                strain, vol_strains[i], interval
-            )
+
         # compute the mean curve as long as at least three values are available
-        mean_stress, stress_indices = expAna.calc.get_mean_axis(true_stresses)
-        mean_vol_strain, vol_strain_indices = expAna.calc.get_mean_axis(vol_strains)
+        mean_force, force_indices = expAna.calc.get_mean_axis(forces)
 
-        analysis_dict[filter_value]["mean_strain"] = mean_strain
-        analysis_dict[filter_value]["mean_stress"] = mean_stress
-        analysis_dict[filter_value]["stress_indices"] = stress_indices
-        analysis_dict[filter_value]["mean_vol_strain"] = mean_vol_strain
-        analysis_dict[filter_value]["vol_strain_indices"] = vol_strain_indices
-        analysis_dict[filter_value]["strains"] = true_strains
-        analysis_dict[filter_value]["stresses"] = true_stresses
-        analysis_dict[filter_value]["vol_strains"] = vol_strains
+        analysis_dict[filter_value]["mean_disp"] = mean_disp
+        analysis_dict[filter_value]["mean_force"] = mean_force
+        analysis_dict[filter_value]["force_indices"] = force_indices
+        analysis_dict[filter_value]["displacements"] = displacements
+        analysis_dict[filter_value]["forces"] = forces
 
         analysis_dict[filter_value].update(
-            {
-                "max_stress": np.array(true_stresses, dtype=object)[stress_indices][
-                    -1
-                ].max()
-            }
-        )
-        analysis_dict[filter_value].update(
-            {
-                "max_vol_strain": np.array(vol_strains, dtype=object)[
-                    vol_strain_indices
-                ][-1].max()
-            }
+            {"max_force": np.array(forces, dtype=object)[force_indices][-1].max()}
         )
     # some string replacement for underscores in filenames
     title_key = filter_key.replace("_", " ")
@@ -144,26 +134,25 @@ def main(
 
     # plot individual curves and averaged curves in one plot for each analysis value
     for filter_value in filter_values:
-        # stress strain behaviour
-        fig_1, axes_1 = expAna.plot.style_true_stress(
+        fig_1, axes_1 = expAna.vis.plot.style_force_disp(
             x_lim=1.0,
-            y_lim=1.5 * analysis_dict[filter_value]["max_stress"],
+            y_lim=1.5 * analysis_dict[filter_value]["max_force"],
             width=6,
             height=4,
         )
 
-        expAna.plot.add_curves_same_value(
+        expAna.vis.plot.add_curves_same_value(
             fig=fig_1,
             axes=axes_1,
-            x_mean=analysis_dict[filter_value]["mean_strain"][
-                : len(analysis_dict[filter_value]["mean_stress"])
+            x_mean=analysis_dict[filter_value]["mean_disp"][
+                : len(analysis_dict[filter_value]["mean_force"])
             ],
-            y_mean=analysis_dict[filter_value]["mean_stress"],
-            xs=np.array(analysis_dict[filter_value]["strains"], dtype=object)[
-                analysis_dict[filter_value]["stress_indices"]
+            y_mean=analysis_dict[filter_value]["mean_force"],
+            xs=np.array(analysis_dict[filter_value]["displacements"], dtype=object)[
+                analysis_dict[filter_value]["force_indices"]
             ],
-            ys=np.array(analysis_dict[filter_value]["stresses"], dtype=object)[
-                analysis_dict[filter_value]["stress_indices"]
+            ys=np.array(analysis_dict[filter_value]["forces"], dtype=object)[
+                analysis_dict[filter_value]["force_indices"]
             ],
             value=filter_value,
         )
@@ -177,13 +166,13 @@ def main(
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_material}_stress_{filter_key}_{export_value}.pgf",
+                f"{export_material}_force_disp_{filter_key}_{export_value}.pgf",
             )
         )
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_material}_stress_{filter_key}_{export_value}_small.png",
+                f"{export_material}_force_disp_{filter_key}_{export_value}_small.png",
             )
         )
 
@@ -193,90 +182,32 @@ def main(
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_material}_stress_{filter_key}_{export_value}_large.png",
+                f"{export_material}_force_disp_{filter_key}_{export_value}_large.png",
             )
         )
         plt.close()
 
-        # volume strain behaviour
-        fig_2, axes_2 = expAna.plot.style_vol_strain(
-            x_lim=1.0,
-            y_lim=1.5 * analysis_dict[filter_value]["max_vol_strain"],
-            width=6,
-            height=4,
-        )
-
-        expAna.plot.add_curves_same_value(
-            fig=fig_2,
-            axes=axes_2,
-            x_mean=analysis_dict[filter_value]["mean_strain"][
-                : len(analysis_dict[filter_value]["mean_vol_strain"])
-            ],
-            y_mean=analysis_dict[filter_value]["mean_vol_strain"],
-            xs=np.array(analysis_dict[filter_value]["strains"], dtype=object)[
-                analysis_dict[filter_value]["vol_strain_indices"]
-            ],
-            ys=np.array(analysis_dict[filter_value]["vol_strains"], dtype=object)[
-                analysis_dict[filter_value]["vol_strain_indices"]
-            ],
-            value=filter_value,
-        )
-
-        axes_2.legend(loc="upper left")
-
-        # remove spaces in string before export
-        export_value = filter_value.replace(" ", "_")
-
-        fig_2.tight_layout()
-        plt.savefig(
-            os.path.join(
-                vis_export_dir,
-                f"{export_material}_vol_strain_{filter_key}_{export_value}.pgf",
-            )
-        )
-        plt.savefig(
-            os.path.join(
-                vis_export_dir,
-                f"{export_material}_vol_strain_{filter_key}_{export_value}_small.png",
-            )
-        )
-
-        fig_2.set_size_inches(12, 9)
-        fig_2.suptitle(f"{material}, {title_key}: {filter_value}", fontsize=12)
-        fig_2.tight_layout()
-        plt.savefig(
-            os.path.join(
-                vis_export_dir,
-                f"{export_material}_vol_strain_{filter_key}_{export_value}_large.png",
-            )
-        )
-        plt.close()
-
-    max_stress = max(
-        analysis_dict[filter_value]["max_stress"] for filter_value in filter_values
-    )
-    max_vol_strain = max(
-        analysis_dict[filter_value]["max_vol_strain"] for filter_value in filter_values
-    )
     # comparison plot
-    # stress strain behaviour
-    fig_3, axes_3 = expAna.plot.style_true_stress(
-        x_lim=1.0, y_lim=1.5 * max_stress, width=6, height=4,
+    max_force = max(
+        analysis_dict[filter_value]["max_force"] for filter_value in filter_values
+    )
+    fig_3, axes_3 = expAna.vis.plot.style_force_disp(
+        x_lim=1.0, y_lim=1.5 * max_force, width=6, height=4,
     )
 
     for filter_value in filter_values:
-        expAna.plot.add_curves_same_value(
+        expAna.vis.plot.add_curves_same_value(
             fig=fig_3,
             axes=axes_3,
-            x_mean=analysis_dict[filter_value]["mean_strain"][
-                : len(analysis_dict[filter_value]["mean_stress"])
+            x_mean=analysis_dict[filter_value]["mean_disp"][
+                : len(analysis_dict[filter_value]["mean_force"])
             ],
-            y_mean=analysis_dict[filter_value]["mean_stress"],
-            xs=np.array(analysis_dict[filter_value]["strains"], dtype=object)[
-                analysis_dict[filter_value]["stress_indices"]
+            y_mean=analysis_dict[filter_value]["mean_force"],
+            xs=np.array(analysis_dict[filter_value]["displacements"], dtype=object)[
+                analysis_dict[filter_value]["force_indices"]
             ],
-            ys=np.array(analysis_dict[filter_value]["stresses"], dtype=object)[
-                analysis_dict[filter_value]["stress_indices"]
+            ys=np.array(analysis_dict[filter_value]["forces"], dtype=object)[
+                analysis_dict[filter_value]["force_indices"]
             ],
             value=filter_value,
         )
@@ -286,13 +217,13 @@ def main(
     fig_3.tight_layout()
     plt.savefig(
         os.path.join(
-            vis_export_dir, f"{export_material}_stress_{filter_key}_comparison.pgf"
+            vis_export_dir, f"{export_material}_force_disp_{filter_key}_comparison.pgf"
         )
     )
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_material}_stress_{filter_key}_comparison_small.png",
+            f"{export_material}_force_disp_{filter_key}_comparison_small.png",
         )
     )
     fig_3.set_size_inches(12, 9)
@@ -301,54 +232,7 @@ def main(
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_material}_stress_{filter_key}_comparison_large.png",
-        )
-    )
-    plt.close()
-
-    # volume strain behaviour
-    fig_4, axes_4 = expAna.plot.style_vol_strain(
-        x_lim=1.0, y_lim=1.5 * max_vol_strain, width=6, height=4,
-    )
-
-    for filter_value in filter_values:
-        expAna.plot.add_curves_same_value(
-            fig=fig_4,
-            axes=axes_4,
-            x_mean=analysis_dict[filter_value]["mean_strain"][
-                : len(analysis_dict[filter_value]["mean_vol_strain"])
-            ],
-            y_mean=analysis_dict[filter_value]["mean_vol_strain"],
-            xs=np.array(analysis_dict[filter_value]["strains"], dtype=object)[
-                analysis_dict[filter_value]["vol_strain_indices"]
-            ],
-            ys=np.array(analysis_dict[filter_value]["vol_strains"], dtype=object)[
-                analysis_dict[filter_value]["vol_strain_indices"]
-            ],
-            value=filter_value,
-        )
-
-    axes_4.legend(loc="upper left")
-
-    fig_4.tight_layout()
-    plt.savefig(
-        os.path.join(
-            vis_export_dir, f"{export_material}_vol_strain_{filter_key}_comparison.pgf",
-        )
-    )
-    plt.savefig(
-        os.path.join(
-            vis_export_dir,
-            f"{export_material}_vol_strain_{filter_key}_comparison_small.png",
-        )
-    )
-    fig_4.set_size_inches(12, 9)
-    fig_4.suptitle(f"{material}, comparison: {title_key}", fontsize=12)
-    fig_4.tight_layout()
-    plt.savefig(
-        os.path.join(
-            vis_export_dir,
-            f"{export_material}_vol_strain_{filter_key}_comparison_large.png",
+            f"{export_material}_force_disp_{filter_key}_comparison_large.png",
         )
     )
     plt.close()

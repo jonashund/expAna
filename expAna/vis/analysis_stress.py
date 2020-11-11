@@ -55,7 +55,7 @@ def main(
     # load the experiments
     for test_dir in experiment_list:
         with open(
-            os.path.join(exp_data_dir, test_dir, test_dir + "_experiment_data.p"), "rb",
+            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.p"), "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
@@ -156,14 +156,14 @@ def main(
     # plot individual curves and averaged curves in one plot for each analysis value
     for filter_value in filter_values:
         # stress strain behaviour
-        fig_1, axes_1 = expAna.plot.style_true_stress(
+        fig_1, axes_1 = expAna.vis.plot.style_true_stress(
             x_lim=1.0,
             y_lim=1.5 * analysis_dict[filter_value]["max_stress"],
             width=6,
             height=4,
         )
 
-        expAna.plot.add_curves_same_value(
+        expAna.vis.plot.add_curves_same_value(
             fig=fig_1,
             axes=axes_1,
             x_mean=analysis_dict[filter_value]["mean_strain"][
@@ -210,14 +210,14 @@ def main(
         plt.close()
 
         # volume strain behaviour
-        fig_2, axes_2 = expAna.plot.style_vol_strain(
+        fig_2, axes_2 = expAna.vis.plot.style_vol_strain(
             x_lim=1.0,
             y_lim=1.5 * analysis_dict[filter_value]["max_vol_strain"],
             width=6,
             height=4,
         )
 
-        expAna.plot.add_curves_same_value(
+        expAna.vis.plot.add_curves_same_value(
             fig=fig_2,
             axes=axes_2,
             x_mean=analysis_dict[filter_value]["mean_strain"][
@@ -271,12 +271,12 @@ def main(
     )
     # comparison plot
     # stress strain behaviour
-    fig_3, axes_3 = expAna.plot.style_true_stress(
+    fig_3, axes_3 = expAna.vis.plot.style_true_stress(
         x_lim=1.0, y_lim=1.5 * max_stress, width=6, height=4,
     )
 
     for filter_value in filter_values:
-        expAna.plot.add_curves_same_value(
+        expAna.vis.plot.add_curves_same_value(
             fig=fig_3,
             axes=axes_3,
             x_mean=analysis_dict[filter_value]["mean_strain"][
@@ -318,12 +318,12 @@ def main(
     plt.close()
 
     # volume strain behaviour
-    fig_4, axes_4 = expAna.plot.style_vol_strain(
+    fig_4, axes_4 = expAna.vis.plot.style_vol_strain(
         x_lim=1.0, y_lim=1.5 * max_vol_strain, width=6, height=4,
     )
 
     for filter_value in filter_values:
-        expAna.plot.add_curves_same_value(
+        expAna.vis.plot.add_curves_same_value(
             fig=fig_4,
             axes=axes_4,
             x_mean=analysis_dict[filter_value]["mean_strain"][

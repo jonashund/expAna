@@ -1,7 +1,8 @@
 import os
+import math
+import numpy as np
 import matplotlib.pyplot as plt
 import istra2py
-import numpy as np
 
 import expAna
 
@@ -133,7 +134,7 @@ class Experiment(object):
         x_data = self.gauge_results["true_strain_image_x"]
         y_data = self.gauge_results["true_stress_in_MPa"]
 
-        fig_1, axes_1 = expAna.plot.style_true_stress(
+        fig_1, axes_1 = expAna.vis.plot.style_true_stress(
             x_lim=1.0, y_lim=1.1 * y_data.max()
         )
 
@@ -161,7 +162,7 @@ class Experiment(object):
         x_data = self.gauge_results["true_strain_image_x"]
         y_data = self.gauge_results["volume_strain"]
 
-        fig_1, axes_1 = expAna.plot.style_vol_strain(
+        fig_1, axes_1 = expAna.vis.plot.style_vol_strain(
             x_lim=1.0, y_lim=1.1 * y_data.max()
         )
 
@@ -174,5 +175,33 @@ class Experiment(object):
         fig_1.suptitle(f"{self.name}", fontsize=12)
         fig_1.tight_layout()
         plt.savefig(os.path.join(out_dir, self.name + "_vol_strain.png",))
+
+        plt.close()
+
+    def plot_force_disp(
+        self,
+        out_dir=os.path.join(
+            os.path.abspath(os.path.dirname(__file__)), "..", "visualisation"
+        ),
+    ):
+
+        os.makedirs(out_dir, exist_ok=True)
+
+        x_data = self.data_instron["displacement_in_mm"]
+        y_data = self.data_instron["force_in_kN"]
+
+        fig_1, axes_1 = expAna.vis.plot.style_force_disp(
+            x_lim=math.ceil(x_data.max()), y_lim=1.1 * y_data.max()
+        )
+
+        axes_1.plot(
+            x_data, y_data, label=f"{self.name}", linewidth=1.0, zorder=1,
+        )
+        fig_1.tight_layout()
+        plt.savefig(os.path.join(out_dir, self.name + "_force_disp.pgf",))
+        fig_1.set_size_inches(12, 9)
+        fig_1.suptitle(f"{self.name}", fontsize=12)
+        fig_1.tight_layout()
+        plt.savefig(os.path.join(out_dir, self.name + "_force_disp.png",))
 
         plt.close()

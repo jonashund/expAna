@@ -4,31 +4,26 @@ import argparse
 import dill
 
 import expAna
-from expAna.misc import InputError
 
 from natsort import natsorted
 
 
-def main(experiment_list=None, keep_offset=True, set_failure=False, dic_system="istra"):
-    work_dir = os.getcwd()
+def main(
+    experiment_list=None, keep_offset=True, set_failure=False,
+):
 
-    if dic_system == "istra":
-        exp_data_dir = os.path.join(work_dir, "data_istra_evaluation")
-        vis_export_dir = os.path.join(work_dir, "visualisation", "istra")
-    elif dic_system == "muDIC":
-        exp_data_dir = os.path.join(work_dir, "data_muDIC")
-        vis_export_dir = os.path.join(work_dir, "visualisation", "muDIC")
-    else:
-        raise InputError(
-            "-dic", f"`{dic_system}` is not a valid value for argument `-dic`"
-        )
+    work_dir = os.getcwd()
+    expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
+    instron_data_dir = os.path.join(work_dir, "data_instron")
+    vis_export_dir = os.path.join(work_dir, "visualisation")
+    os.makedirs(vis_export_dir, exist_ok=True)
 
     if experiment_list is None:
         experiment_list = list()
         print(
-            f"No experiments passed. Will search for folders named `Test*` in {exp_data_dir}."
+            f"No experiments passed. Will search for folders named `Test*` in {instron_data_dir}."
         )
-        for path, directories, files in os.walk(exp_data_dir):
+        for path, directories, files in os.walk(instron_data_dir):
             for test_dir in directories:
                 if str(test_dir[:5] == "Test"):
                     experiment_list.append(test_dir)
@@ -37,12 +32,34 @@ def main(experiment_list=None, keep_offset=True, set_failure=False, dic_system="
 
     experiment_list = natsorted(experiment_list)
 
-    # prepare plotting to file, avoid switching matplotlib backends (buggy)
     for test_dir in experiment_list:
-        with open(
-            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.p"), "rb",
-        ) as myfile:
-            experiment = dill.load(myfile)
+        # search for input data created with expDoc
+        try:
+            with open(
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.p"), "rb",
+            ) as myfile:
+                experiment = dill.load(myfile)
+        except:
+            print(
+                f"""
+            Warning:
+            No documentation data found for {test_dir}!
+            Document your experiments properly using expDoc before using expAna.
+            """
+            )
+            assert False
+
+        # search for expAna data
+        try:
+            with open(
+                os.path.join(vis_export_dir, test_dir + "_expAna.p"), "rb",
+            ) as myfile:
+                experiment = dill.load(myfile)
+        except:
+            with open(
+                os.path.join(vis_export_dir, test_dir + "_expAna.p"), "wb",
+            ) as myfile:
+                dill.dump(experiment, myfile)
 
         if not keep_offset:
             expAna.vis.plot.remove_offsets(experiment)
@@ -54,7 +71,7 @@ def main(experiment_list=None, keep_offset=True, set_failure=False, dic_system="
             fail_location.__gui__(experiment)
             # export truncated data
             with open(
-                os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.p"), "wb",
+                os.path.join(vis_export_dir, test_dir + "_expAna.p"), "wb",
             ) as myfile:
                 dill.dump(experiment, myfile)
         else:
@@ -64,12 +81,11 @@ def main(experiment_list=None, keep_offset=True, set_failure=False, dic_system="
 
     for test_dir in experiment_list:
         with open(
-            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.p"), "rb",
+            os.path.join(vis_export_dir, test_dir + "_expAna.p"), "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
-        experiment.plot_true_stress(out_dir=vis_export_dir)
-        experiment.plot_volume_strain(out_dir=vis_export_dir)
+        experiment.plot_force_disp(out_dir=vis_export_dir)
 
 
 if __name__ == "__main__":
