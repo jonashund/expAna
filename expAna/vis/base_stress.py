@@ -23,6 +23,8 @@ def main(experiment_list=None, keep_offset=True, set_failure=False, dic_system="
             "-dic", f"`{dic_system}` is not a valid value for argument `-dic`"
         )
 
+    os.makedirs(vis_export_dir, exist_ok=True)
+
     if experiment_list is None:
         experiment_list = list()
         print(

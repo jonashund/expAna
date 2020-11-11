@@ -19,6 +19,8 @@ def main(
     instron_data_dir = os.path.join(work_dir, "data_instron")
     vis_export_dir = os.path.join(work_dir, "visualisation")
 
+    os.makedirs(vis_export_dir, exist_ok=True)
+
     if experiment_list is None:
         experiment_list = list()
         print(
@@ -66,6 +68,8 @@ def main(
         except:
             pass
 
+        analysis_project.add_experiment(experiment)
+
     # compile list of different values for key or just filter experiments for given key
     if filter_value is None:
         filter_values = []
@@ -73,6 +77,13 @@ def main(
             filter_values.append(experiment_data.documentation_data[filter_key])
         # remove experiments with no value for given key
         filter_values = list(filter(None, filter_values))
+        for filter_value in set(filter_values):
+            value_count = filter_values.count(filter_value)
+            if value_count < 3:
+                for i in range(value_count):
+                    filter_values.remove(filter_value)
+            else:
+                pass
         # remove duplicates from list
         filter_values = set(filter_values)
     else:
@@ -114,7 +125,7 @@ def main(
             )
 
         # compute the mean curve as long as at least three values are available
-        mean_force, force_indices = expAna.calc.get_mean_axis(forces)
+        mean_force, force_indices = expAna.calc.mean_curve(forces)
 
         analysis_dict[filter_value]["mean_disp"] = mean_disp
         analysis_dict[filter_value]["mean_force"] = mean_force
@@ -135,7 +146,7 @@ def main(
     # plot individual curves and averaged curves in one plot for each analysis value
     for filter_value in filter_values:
         fig_1, axes_1 = expAna.vis.plot.style_force_disp(
-            x_lim=1.0,
+            x_lim=5.0,
             y_lim=1.5 * analysis_dict[filter_value]["max_force"],
             width=6,
             height=4,
@@ -192,7 +203,7 @@ def main(
         analysis_dict[filter_value]["max_force"] for filter_value in filter_values
     )
     fig_3, axes_3 = expAna.vis.plot.style_force_disp(
-        x_lim=1.0, y_lim=1.5 * max_force, width=6, height=4,
+        x_lim=5.0, y_lim=1.5 * max_force, width=6, height=4,
     )
 
     for filter_value in filter_values:

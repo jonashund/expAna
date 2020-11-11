@@ -22,10 +22,10 @@ def main(
 ):
     if dic_system == "istra":
         exp_data_dir = os.path.join(work_dir, "data_istra_evaluation")
-        vis_export_dir = os.path.join(work_dir, "visualisation_istra")
+        vis_export_dir = os.path.join(work_dir, "visualisation", "istra")
     elif dic_system == "muDIC":
         exp_data_dir = os.path.join(work_dir, "data_muDIC")
-        vis_export_dir = os.path.join(work_dir, "visualisation_muDIC")
+        vis_export_dir = os.path.join(work_dir, "visualisation", "muDIC")
     else:
         raise InputError(
             "-dic", f"`{dic_system}` is not a valid value for argument `dic_system`"
@@ -68,6 +68,13 @@ def main(
             filter_values.append(experiment_data.documentation_data[filter_key])
         # remove experiments with no value for given key
         filter_values = list(filter(None, filter_values))
+        for filter_value in set(filter_values):
+            value_count = filter_values.count(filter_value)
+            if value_count < 3:
+                for i in range(value_count):
+                    filter_values.remove(filter_value)
+            else:
+                pass
         # remove duplicates from list
         filter_values = set(filter_values)
     else:
