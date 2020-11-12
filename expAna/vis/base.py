@@ -1,7 +1,9 @@
 import expAna
 
 
-def stress(experiment_list=None, keep_offset=True, set_failure=False, dic_system=None):
+def stress(
+    experiment_list=None, keep_offset=True, set_failure=False, dic_system="istra"
+):
     expAna.vis.base_stress.main(
         experiment_list=experiment_list,
         keep_offset=keep_offset,
