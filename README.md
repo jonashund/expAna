@@ -20,7 +20,7 @@ Process raw DIC images or evaluation data exported from Istra4D to gain true str
 
 ## Installation
 ### Create the environment
-**1. manually:** 
+**1. manually using conda and pip (tested on CentOS):** 
   - based on current Python version with ipython and numpy:   
     `conda create --name <my_env_name> ipython numpy`
   - activate created environment:   
@@ -28,9 +28,29 @@ Process raw DIC images or evaluation data exported from Istra4D to gain true str
   - install scipy v1.2.1 (requirement of muDIC_ifm):   
     `pip install scipy==1.2.1`
     
-**2. from environmental.yml:**
+**2. using conda and environmental.yml (tested on CentOS):**
   - execute in directory with `environmental.yml` (after cloning [`expDoc`](https://git.scc.kit.edu/ifm/labor/exputil/expDoc) or [`expAna`](https://git.scc.kit.edu/ifm/labor/exputil/expAna) )   
     `conda env create -f environmental.yml`
+    
+**3. using pyenv virtualenv (on macOS):**
+  - install `pyenv virtualenv` via homebrew
+  - install `miniconda-latest`:   
+    `pyenv install miniconda-latest`
+  - create a new virtualenv based on `miniconda-latest`:   
+    `pyenv virtualenv miniconda-latest <my_env_name>`
+  - in a directory (with one of the packages below) set the local environment:   
+    `pyenv local <my_env_name>`
+  - downgrade to Python v3.7 in the environment:   
+    `conda install python=3.7`
+  - install scipy v1.2.1 (requirement of muDIC_ifm):   
+    `conda install scipy=1.2.1`
+  - install ipython:   
+    `conda install ipython`
+  - install packages listed below, the local environment has to be set in each directory unless it's made the global environment (temporarily)
+
+**4. manually using conda (on macOS):**
+  - create environment:
+    `conda create --name <my_env_name> python=3.7 scipy=1.2.1 numpy ipython`
 
 ### Cloning the repositories and installing
 Clone from [gitlab](https://git.scc.kit.edu/) into a local repository and install in the following order from within the corresponding repository:
