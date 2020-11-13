@@ -36,7 +36,8 @@ def main(
         # load or create experiment object
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.p"), "rb",
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.p"),
+                "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -68,7 +69,7 @@ def main(
         true_strain[:, :, :, :][experiment.mask[:, :, :, 0] == 0] = np.nan
 
         strain_gauge = expAna.gui.RectangleCoordinates(
-            input_image=true_strain[int(0.75 * experiment.image_count), :, :, x_idx]
+            input_image=true_strain[int(0.8 * experiment.image_count), :, :, x_idx]
         )
         strain_gauge.__gui__()
 
@@ -134,7 +135,8 @@ def main(
         if eco_mode is True:
             experiment.slenderise()
         with open(
-            os.path.join(test_results_dir, experiment.name + "CORN1_expAna.p"), "wb",
+            os.path.join(test_results_dir, experiment.name + "CORN1_expAna.p"),
+            "wb",
         ) as myfile:
             dill.dump(experiment, myfile)
 
