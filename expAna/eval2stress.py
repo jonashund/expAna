@@ -135,7 +135,7 @@ def main(
         if eco_mode is True:
             experiment.slenderise()
         with open(
-            os.path.join(test_results_dir, experiment.name + "CORN1_expAna.p"),
+            os.path.join(test_results_dir, experiment.name + "CORN1_expAna.pkl"),
             "wb",
         ) as myfile:
             dill.dump(experiment, myfile)

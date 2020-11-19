@@ -60,7 +60,7 @@ def main(experiment_list=None):
 
     # export project
     with open(
-        os.path.join(export2tif_dir, current_project.name + "_expAna.p"), "wb",
+        os.path.join(export2tif_dir, current_project.name + "_expAna.pkl"), "wb",
     ) as myfile:
         dill.dump(current_project, myfile)
 

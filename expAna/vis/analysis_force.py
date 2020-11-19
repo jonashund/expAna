@@ -66,7 +66,7 @@ def main(
         # search for expAna data
         try:
             with open(
-                os.path.join(vis_export_dir, test_dir + "_expAna.p"),
+                os.path.join(vis_export_dir, test_dir + "_expAna.pkl"),
                 "rb",
             ) as myfile:
                 experiment = dill.load(myfile)

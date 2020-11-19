@@ -20,14 +20,14 @@ def main(project_name="project", experiment_list=None):
 
     # open project file located in export2tif_dir
     with open(
-        os.path.join(export2tif_dir, project_name + "_expAna.p"), "rb",
+        os.path.join(export2tif_dir, project_name + "_expAna.pkl"), "rb",
     ) as myfile:
         current_project = dill.load(myfile)
 
     if experiment_list is None:
         experiment_list = list()
         print(
-            f"No experiments passed. Performing DIC analysis for all experiments in project_expAna.p located in {export2tif_dir}."
+            f"No experiments passed. Performing DIC analysis for all experiments in project_expAna.pkl located in {export2tif_dir}."
         )
         for experiment_name in current_project.experiments.keys():
             experiment_list.append(experiment_name)
@@ -93,7 +93,7 @@ def main(project_name="project", experiment_list=None):
 
             # save experiment data
             with open(
-                os.path.join(test_results_dir, experiment.name + "_expAna.p"), "wb",
+                os.path.join(test_results_dir, experiment.name + "_expAna.pkl"), "wb",
             ) as myfile:
                 dill.dump(experiment, myfile)
 
