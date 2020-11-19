@@ -13,9 +13,11 @@ names = natsorted(names)
 file1 = h5py.File(names[0], "r")
 file2 = h5py.File(names[400], "r")
 
-ref_dir = (
-    "/Users/jonas/PhD/17_experiments/010_Bayblend_JH/simple_tension_t85_Test8CORN1"
-)
+
+work_dir = os.getcwd()
+
+ref_dir = os.path.join(work_dir, "..", "..", "data_istra_export/Test8CORN1")
+
 ref_file1 = h5py.File(os.path.join(ref_dir, "series_step_0.hdf5"), "r")
 ref_file2 = h5py.File(os.path.join(ref_dir, "series_step_400.hdf5"), "r")
 
@@ -161,82 +163,82 @@ fig = plt.figure(figsize=[12, 8])
 
 axes1 = fig.add_subplot(4, 4, 1)
 imgplot = plt.imshow(ref_displ_x, cmap="gist_rainbow_r")
-axes1.set_title("istra displacement_x")
+axes1.set_title("istra displ. x")
 plt.colorbar(orientation="horizontal")
 
 axes2 = fig.add_subplot(4, 4, 2)
 imgplot = plt.imshow(pix_displ_x, cmap="gist_rainbow_r")
-axes2.set_title("displacement_x")
+axes2.set_title("pixel displ. x")
 plt.colorbar(orientation="horizontal")
 
 axes3 = fig.add_subplot(4, 4, 3)
 imgplot = plt.imshow(ref_displ_y, cmap="gist_rainbow_r")
-axes3.set_title("istra displacement_y")
+axes3.set_title("istra displ. y")
 plt.colorbar(orientation="horizontal")
 
 axes4 = fig.add_subplot(4, 4, 4)
 imgplot = plt.imshow(pix_displ_y, cmap="gist_rainbow_r")
-axes4.set_title("displacement_y")
+axes4.set_title("pixel displ. y")
 plt.colorbar(orientation="horizontal")
 
 axes5 = fig.add_subplot(4, 4, 5)
 imgplot = plt.imshow(file2_dxdgx, cmap="gist_rainbow_r")
-axes5.set_title("coordinate_dxdgx")
+axes5.set_title("def grad coord based (dxdgx)")
 plt.colorbar(orientation="horizontal")
 
 axes6 = fig.add_subplot(4, 4, 6)
 imgplot = plt.imshow(file2_pix_dxdx, cmap="gist_rainbow_r")
-axes6.set_title("file2_pix_dxdx")
+axes6.set_title("def grad pixel based (dxdx)")
 plt.colorbar(orientation="horizontal")
 
 axes7 = fig.add_subplot(4, 4, 7)
 imgplot = plt.imshow(file2_dydgy, cmap="gist_rainbow_r")
-axes7.set_title("coordinate_dydgy")
+axes7.set_title("file2_coord_dydgy")
 plt.colorbar(orientation="horizontal")
 
 axes8 = fig.add_subplot(4, 4, 8)
 imgplot = plt.imshow(grads_coords_y[0], cmap="gist_rainbow_r")
-axes8.set_title("numpy grads_coords_y[0]")
+axes8.set_title("numpy file2_coord_dydgy")
 plt.colorbar(orientation="horizontal")
 
 axes9 = fig.add_subplot(4, 4, 9)
 imgplot = plt.imshow(ref_file2_eps_xx, cmap="gist_rainbow_r")
-axes9.set_title("istra eps_xx")
+axes9.set_title("istra file2_eps_xx")
 plt.colorbar(orientation="horizontal")
 
 axes10 = fig.add_subplot(4, 4, 10)
 imgplot = plt.imshow(file2_eps_xx, cmap="gist_rainbow_r")
-axes10.set_title("file2_eps_xx")
+axes10.set_title("pixel based file2_eps_xx")
 plt.colorbar(orientation="horizontal")
 
 axes11 = fig.add_subplot(4, 4, 11)
 imgplot = plt.imshow(ref_file2_eps_yy, cmap="gist_rainbow_r")
-axes11.set_title("istra eps_yy")
+axes11.set_title("istra file2_eps_yy")
 plt.colorbar(orientation="horizontal")
 
 axes12 = fig.add_subplot(4, 4, 12)
 imgplot = plt.imshow(file2_eps_yy, cmap="gist_rainbow_r")
-axes12.set_title("file2_eps_yy")
+axes12.set_title("pixel based file2_eps_yy")
 plt.colorbar(orientation="horizontal")
 
 axes13 = fig.add_subplot(4, 4, 13)
-imgplot = plt.imshow(file1_eps_xx, cmap="gist_rainbow_r")
-axes13.set_title("file1_eps_xx")
+imgplot = plt.imshow(ref_file1_eps_xx, cmap="gist_rainbow_r")
+axes13.set_title("istra file1_eps_xx")
 plt.colorbar(orientation="horizontal")
 
 axes14 = fig.add_subplot(4, 4, 14)
-imgplot = plt.imshow(file1_dxdgx + dxdgx_norm, cmap="gist_rainbow_r")
-axes14.set_title("file1_dxdgx + dxdgx_norm")
+imgplot = plt.imshow(file1_eps_xx, cmap="gist_rainbow_r")
+axes14.set_title("pixel based file1_eps_xx")
 plt.colorbar(orientation="horizontal")
 
 axes15 = fig.add_subplot(4, 4, 15)
-imgplot = plt.imshow(file1_eps_yy, cmap="gist_rainbow_r")
-axes15.set_title("file1_eps_yy")
+imgplot = plt.imshow(file1_pix_dxdx, cmap="gist_rainbow_r")
+axes15.set_title("def grad_0 pixel based (dxdx)")
 plt.colorbar(orientation="horizontal")
 
 axes16 = fig.add_subplot(4, 4, 16)
-imgplot = plt.imshow(file1_dydgy, cmap="gist_rainbow_r")
-axes16.set_title("file1_dydgy")
+imgplot = plt.imshow(file1_dxdgx, cmap="gist_rainbow_r")
+axes16.set_title("def grad_0 coord based (dxdgx)")
 plt.colorbar(orientation="horizontal")
 
 plt.subplots_adjust(left=0.05, bottom=0.05, right=0.975, top=0.975)
