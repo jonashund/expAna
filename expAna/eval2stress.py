@@ -36,7 +36,7 @@ def main(
         # load or create experiment object
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.p"),
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pkl"),
                 "rb",
             ) as myfile:
                 experiment = dill.load(myfile)

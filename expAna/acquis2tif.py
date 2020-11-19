@@ -39,7 +39,7 @@ def main(experiment_list=None):
     for test_dir in experiment_list:
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.p"), "rb",
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pkl"), "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
