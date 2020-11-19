@@ -55,7 +55,8 @@ def main(
     # load the experiments
     for test_dir in experiment_list:
         with open(
-            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.p"), "rb",
+            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.p"),
+            "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
@@ -187,9 +188,11 @@ def main(
         )
 
         axes_1.legend(loc="upper left")
-
         # remove spaces in string before export
-        export_value = filter_value.replace(" ", "_")
+        if type(filter_value) == str:
+            export_value = filter_value.replace(" ", "_")
+        else:
+            export_value = str(filter_value)
 
         fig_1.tight_layout()
         plt.savefig(
@@ -279,7 +282,10 @@ def main(
     # comparison plot
     # stress strain behaviour
     fig_3, axes_3 = expAna.vis.plot.style_true_stress(
-        x_lim=1.0, y_lim=1.5 * max_stress, width=6, height=4,
+        x_lim=1.0,
+        y_lim=1.5 * max_stress,
+        width=6,
+        height=4,
     )
 
     for filter_value in filter_values:
@@ -326,7 +332,10 @@ def main(
 
     # volume strain behaviour
     fig_4, axes_4 = expAna.vis.plot.style_vol_strain(
-        x_lim=1.0, y_lim=1.5 * max_vol_strain, width=6, height=4,
+        x_lim=1.0,
+        y_lim=1.5 * max_vol_strain,
+        width=6,
+        height=4,
     )
 
     for filter_value in filter_values:
@@ -351,7 +360,8 @@ def main(
     fig_4.tight_layout()
     plt.savefig(
         os.path.join(
-            vis_export_dir, f"{export_material}_vol_strain_{filter_key}_comparison.pgf",
+            vis_export_dir,
+            f"{export_material}_vol_strain_{filter_key}_comparison.pgf",
         )
     )
     plt.savefig(
