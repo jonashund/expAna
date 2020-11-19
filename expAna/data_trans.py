@@ -84,35 +84,15 @@ class Experiment(object):
 
     def set_documentation_data(self, experiment_data):
 
-        if experiment_data[r"\dic"] == 1:
-            experiment_data[r"\dic"] = "yes"
+        if experiment_data["dic"] == 1:
+            experiment_data["dic"] = "yes"
         else:
-            experiment_data[r"\dic"] = "no"
+            experiment_data["dic"] = "no"
 
-        self.documentation_data = {
-            "tester": experiment_data[r"\tester"],
-            "test_number": experiment_data[r"\testNumber"],
-            "test_time": experiment_data[r"\testTime"].strftime("%H:%M"),
-            "test_date": experiment_data[r"\testDate"].strftime("%d.%m.%Y"),
-            "dic": experiment_data[r"\dic"],
-            "crosshead_speed": experiment_data[r"\crossheadSpeed"],
-            "testing_method": r"\_".join(
-                experiment_data[r"\waveMatrixMethod"].split(r"_")
-            ),
-            "clamping_length": experiment_data[r"\clampingLength"],
-            "clamping_torque": experiment_data[r"\clampingTorque"],
-            "testing_machine": experiment_data[r"\testingMachine"],
-            "specimen_type": experiment_data[r"\specimenType"],
-            "material": experiment_data[r"\material"],
-            "specimen_thickness": experiment_data[r"\specimenThickness"],
-            "specimen_length": experiment_data[r"\specimenLength"],
-            "specimen_width": experiment_data[r"\specimenWidth"],
-            "specimen_orientation": experiment_data[r"\specimenOrientation"],
-            "specimen_position": experiment_data[r"\specimenPosition"],
-            "notch_width": experiment_data[r"\notchWidth"],
-            "notch_depth": experiment_data[r"\notchDepth"],
-            "load_cell": experiment_data[r"\loadCell"],
-        }
+        self.documentation_data = {}
+
+        for feature in experiment_data.index:
+            self.documentation_data.update({feature: experiment_data[feature]})
 
     def slenderise(self):
         keep = ["documentation_data", "name", "gauge_results"]
@@ -139,14 +119,28 @@ class Experiment(object):
         )
 
         axes_1.plot(
-            x_data, y_data, label=f"{self.name}", linewidth=1.0, zorder=1,
+            x_data,
+            y_data,
+            label=f"{self.name}",
+            linewidth=1.0,
+            zorder=1,
         )
         fig_1.tight_layout()
-        plt.savefig(os.path.join(out_dir, self.name + "_stress_strain.pgf",))
+        plt.savefig(
+            os.path.join(
+                out_dir,
+                self.name + "_stress_strain.pgf",
+            )
+        )
         fig_1.set_size_inches(12, 9)
         fig_1.suptitle(f"{self.name}", fontsize=12)
         fig_1.tight_layout()
-        plt.savefig(os.path.join(out_dir, self.name + "_stress_strain.png",))
+        plt.savefig(
+            os.path.join(
+                out_dir,
+                self.name + "_stress_strain.png",
+            )
+        )
 
         plt.close()
 
@@ -167,14 +161,28 @@ class Experiment(object):
         )
 
         axes_1.plot(
-            x_data, y_data, label=f"{self.name}", linewidth=1.0, zorder=1,
+            x_data,
+            y_data,
+            label=f"{self.name}",
+            linewidth=1.0,
+            zorder=1,
         )
         fig_1.tight_layout()
-        plt.savefig(os.path.join(out_dir, self.name + "_vol_strain.pgf",))
+        plt.savefig(
+            os.path.join(
+                out_dir,
+                self.name + "_vol_strain.pgf",
+            )
+        )
         fig_1.set_size_inches(12, 9)
         fig_1.suptitle(f"{self.name}", fontsize=12)
         fig_1.tight_layout()
-        plt.savefig(os.path.join(out_dir, self.name + "_vol_strain.png",))
+        plt.savefig(
+            os.path.join(
+                out_dir,
+                self.name + "_vol_strain.png",
+            )
+        )
 
         plt.close()
 
@@ -195,13 +203,27 @@ class Experiment(object):
         )
 
         axes_1.plot(
-            x_data, y_data, label=f"{self.name}", linewidth=1.0, zorder=1,
+            x_data,
+            y_data,
+            label=f"{self.name}",
+            linewidth=1.0,
+            zorder=1,
         )
         fig_1.tight_layout()
-        plt.savefig(os.path.join(out_dir, self.name + "_force_disp.pgf",))
+        plt.savefig(
+            os.path.join(
+                out_dir,
+                self.name + "_force_disp.pgf",
+            )
+        )
         fig_1.set_size_inches(12, 9)
         fig_1.suptitle(f"{self.name}", fontsize=12)
         fig_1.tight_layout()
-        plt.savefig(os.path.join(out_dir, self.name + "_force_disp.png",))
+        plt.savefig(
+            os.path.join(
+                out_dir,
+                self.name + "_force_disp.png",
+            )
+        )
 
         plt.close()
