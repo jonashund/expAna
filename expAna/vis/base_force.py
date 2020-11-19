@@ -36,7 +36,7 @@ def main(
         # search for input data created with expDoc
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pkl"), "rb",
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"), "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -52,12 +52,12 @@ def main(
         # search for expAna data
         try:
             with open(
-                os.path.join(vis_export_dir, test_dir + "_expAna.pkl"), "rb",
+                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"), "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
             with open(
-                os.path.join(vis_export_dir, test_dir + "_expAna.pkl"), "wb",
+                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"), "wb",
             ) as myfile:
                 dill.dump(experiment, myfile)
 
@@ -71,7 +71,7 @@ def main(
             fail_location.__gui__(experiment)
             # export truncated data
             with open(
-                os.path.join(vis_export_dir, test_dir + "_expAna.pkl"), "wb",
+                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"), "wb",
             ) as myfile:
                 dill.dump(experiment, myfile)
         else:
@@ -81,7 +81,7 @@ def main(
 
     for test_dir in experiment_list:
         with open(
-            os.path.join(vis_export_dir, test_dir + "_expAna.pkl"), "rb",
+            os.path.join(vis_export_dir, test_dir + "_expAna.pickle"), "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 

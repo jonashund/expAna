@@ -55,7 +55,7 @@ def main(
     # load the experiments
     for test_dir in experiment_list:
         with open(
-            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pkl"),
+            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"),
             "rb",
         ) as myfile:
             experiment = dill.load(myfile)

@@ -50,7 +50,7 @@ def main(
         # search for input data created with expDoc
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pkl"),
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"),
                 "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
@@ -66,7 +66,7 @@ def main(
         # search for expAna data
         try:
             with open(
-                os.path.join(vis_export_dir, test_dir + "_expAna.pkl"),
+                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"),
                 "rb",
             ) as myfile:
                 experiment = dill.load(myfile)

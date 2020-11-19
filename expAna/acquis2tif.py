@@ -39,7 +39,7 @@ def main(experiment_list=None):
     for test_dir in experiment_list:
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pkl"), "rb",
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"), "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -60,7 +60,7 @@ def main(experiment_list=None):
 
     # export project
     with open(
-        os.path.join(export2tif_dir, current_project.name + "_expAna.pkl"), "wb",
+        os.path.join(export2tif_dir, current_project.name + "_expAna.pickle"), "wb",
     ) as myfile:
         dill.dump(current_project, myfile)
 

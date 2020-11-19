@@ -42,7 +42,7 @@ def main(experiment_list=None, keep_offset=True, set_failure=False, dic_system="
     # prepare plotting to file, avoid switching matplotlib backends (buggy)
     for test_dir in experiment_list:
         with open(
-            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pkl"), "rb",
+            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"), "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
@@ -56,7 +56,7 @@ def main(experiment_list=None, keep_offset=True, set_failure=False, dic_system="
             fail_location.__gui__(experiment)
             # export truncated data
             with open(
-                os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pkl"), "wb",
+                os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"), "wb",
             ) as myfile:
                 dill.dump(experiment, myfile)
         else:
@@ -66,7 +66,7 @@ def main(experiment_list=None, keep_offset=True, set_failure=False, dic_system="
 
     for test_dir in experiment_list:
         with open(
-            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pkl"), "rb",
+            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"), "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 

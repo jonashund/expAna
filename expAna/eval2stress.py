@@ -36,7 +36,7 @@ def main(
         # load or create experiment object
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pkl"),
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"),
                 "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
@@ -135,7 +135,7 @@ def main(
         if eco_mode is True:
             experiment.slenderise()
         with open(
-            os.path.join(test_results_dir, experiment.name + "CORN1_expAna.pkl"),
+            os.path.join(test_results_dir, experiment.name + "CORN1_expAna.pickle"),
             "wb",
         ) as myfile:
             dill.dump(experiment, myfile)
