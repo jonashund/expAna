@@ -11,6 +11,22 @@ def get_true_stress(
     return true_stress
 
 
+def get_true_stress_2(
+    force_in_N,
+    true_strain_parallel,
+    true_strain_perpendicular,
+    poissons_ratio_through_thickness,
+    specimen_cross_section_in_mm2,
+):
+    true_stress = force_in_N / (
+        specimen_cross_section_in_mm2
+        * np.exp(true_strain_perpendicular)
+        * np.exp(-poissons_ratio_through_thickness * true_strain_parallel)
+    )
+
+    return true_stress
+
+
 def get_true_strain(def_grad):
     """
     calculation of the elements of the true strain tensor

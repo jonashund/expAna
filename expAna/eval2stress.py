@@ -11,7 +11,12 @@ from natsort import natsorted
 
 
 def main(
-    experiment_list=None, eco_mode=True, specimen_width=12.0, specimen_thickness=3.0
+    experiment_list=None,
+    eco_mode=True,
+    specimen_width=12.0,
+    specimen_thickness=3.0,
+    use_poissons_ratio=False,
+    poissons_ratio_through_thickness=0.35,
 ):
     work_dir = os.getcwd()
     expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
@@ -36,8 +41,7 @@ def main(
         # load or create experiment object
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"),
-                "rb",
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"), "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -81,13 +85,33 @@ def main(
 
         true_strain_mean = np.nanmean(true_strain_gauge, axis=(1, 2))
 
-        true_stress_in_MPa = expAna.gauge.get_true_stress(
-            force_in_N=experiment.reaction_force * 1000.0,
-            true_strain_perpendicular=true_strain_mean[:, y_idx].reshape(
-                (experiment.image_count, 1)
-            ),
-            specimen_cross_section_in_mm2=specimen_width * specimen_thickness,
-        )
+        if use_poissons_ratio is True:
+            true_stress_in_MPa = expAna.gauge.get_true_stress_2(
+                force_in_N=experiment.reaction_force * 1000.0,
+                true_strain_parallel=true_strain_mean[:, x_idx].reshape(
+                    (experiment.image_count, 1)
+                ),
+                true_strain_perpendicular=true_strain_mean[:, y_idx].reshape(
+                    (experiment.image_count, 1)
+                ),
+                poissons_ratio_through_thickness=poissons_ratio_through_thickness,
+                specimen_cross_section_in_mm2=specimen_width * specimen_thickness,
+            )
+            volume_strain = (
+                (1.0 - poissons_ratio_through_thickness) * true_strain_mean[:, x_idx]
+                + true_strain_mean[:, y_idx]
+            ).reshape(experiment.image_count, 1)
+        else:
+            true_stress_in_MPa = expAna.gauge.get_true_stress(
+                force_in_N=experiment.reaction_force * 1000.0,
+                true_strain_perpendicular=true_strain_mean[:, y_idx].reshape(
+                    (experiment.image_count, 1)
+                ),
+                specimen_cross_section_in_mm2=specimen_width * specimen_thickness,
+            )
+            volume_strain = (
+                true_strain_mean[:, x_idx] + 2.0 * true_strain_mean[:, y_idx]
+            ).reshape(experiment.image_count, 1)
 
         poissons_ratio = np.vstack(
             [
@@ -97,10 +121,6 @@ def main(
                 ),
             ]
         )
-
-        volume_strain = (
-            true_strain_mean[:, x_idx] + 2.0 * true_strain_mean[:, y_idx]
-        ).reshape(experiment.image_count, 1)
 
         experiment.gauge_results = pd.DataFrame(
             data=np.concatenate(
@@ -169,6 +189,16 @@ if __name__ == "__main__":
         help="Specimen width and thickness in mm to compute cross section in DIC area.",
     )
 
+    arg_parser.add_argument(
+        "--use-poissons_ratio",
+        default=True,
+        help="Use the specified Poisson's ratio for the through thickness direction instead of the assumption of equal in-plane and through-thickness Poisson's ratios.",
+    )
+
+    arg_parser.add_argument(
+        "--poissons_ratio", default=None, help="Through-thickness Poisson's ratio.",
+    )
+
     passed_args = arg_parser.parse_args()
 
     sys.exit(
@@ -177,5 +207,7 @@ if __name__ == "__main__":
             eco_mode=passed_args.eco,
             specimen_width=passed_args.geometry[0],
             specimen_thickness=passed_args.geometry[0],
+            use_poissons_ratio=passed_args.use_poissons_ratio,
+            poissons_ratio_through_thickness=passed_args.poissons_ratio,
         )
     )
