@@ -159,6 +159,29 @@ def style_vol_strain(width=None, height=None, x_lim=None, y_lim=None):
     return fig_1, axes_1
 
 
+def style_poissons_ratio(width=None, height=None, x_lim=None, y_lim=0.5):
+
+    if width and height:
+        fig_1, axes_1 = create_styled_figure(width=width, height=height)
+    else:
+        fig_1, axes_1 = create_styled_figure()
+
+    axes_1.set_xlabel(r"log. strain $\varepsilon$ [-]")
+    axes_1.set_ylabel(r"poissons_ratio $\varepsilon_{xx}/\varepsilon_{yy}$ [-]")
+
+    if x_lim:
+        axes_1.set_xlim(0, x_lim)
+    else:
+        pass
+
+    if y_lim:
+        axes_1.set_ylim(0, y_lim)
+    else:
+        pass
+
+    return fig_1, axes_1
+
+
 def style_force_disp(width=None, height=None, x_lim=None, y_lim=None):
 
     if width and height:
