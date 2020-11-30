@@ -90,7 +90,7 @@ def main(
     # expAna.calculate average curves for every filter_value
     for filter_value in filter_values:
         true_strains = []
-        true_stresses = []
+        vol_strains = []
         # create list of arrays with x and y values
         for experiment_name in analysis_dict[filter_value]["experiment_list"]:
             true_strains.append(
@@ -98,36 +98,36 @@ def main(
                 .gauge_results["true_strain_image_x"]
                 .to_numpy()
             )
-            true_stresses.append(
+            vol_strains.append(
                 analysis_project.experiments[experiment_name]
-                .gauge_results["true_stress_in_MPa"]
+                .gauge_results["volume_strain"]
                 .to_numpy()
             )
 
-        # interpolate every stress strain curve to an x-axis with equally spaced points
+        # interpolate every curve to an x-axis with equally spaced points
         # set spacing dependent on maximum x-value found in all x arrays
 
         max_x = max([max(true_strains[i]) for i in range(len(true_strains))])
         interval = max_x / 500
         mean_strain = np.arange(start=0.0, stop=max_x, step=interval)
         for i, strain in enumerate(true_strains):
-            true_strains[i], true_stresses[i] = expAna.calc.interpolate_curve(
-                strain, true_stresses[i], interval
+            foo, vol_strains[i] = expAna.calc.interpolate_curve(
+                true_strains[i], vol_strains[i], interval
             )
         # compute the mean curve as long as at least three values are available
-        mean_stress, stress_indices = expAna.calc.mean_curve(true_stresses)
+        mean_vol_strain, vol_strain_indices = expAna.calc.mean_curve(vol_strains)
 
         analysis_dict[filter_value]["mean_strain"] = mean_strain
-        analysis_dict[filter_value]["mean_stress"] = mean_stress
-        analysis_dict[filter_value]["stress_indices"] = stress_indices
+        analysis_dict[filter_value]["mean_vol_strain"] = mean_vol_strain
+        analysis_dict[filter_value]["vol_strain_indices"] = vol_strain_indices
         analysis_dict[filter_value]["strains"] = true_strains
-        analysis_dict[filter_value]["stresses"] = true_stresses
+        analysis_dict[filter_value]["vol_strains"] = vol_strains
 
         analysis_dict[filter_value].update(
             {
-                "max_stress": np.array(true_stresses, dtype=object)[stress_indices][
-                    -1
-                ].max()
+                "max_vol_strain": np.array(vol_strains, dtype=object)[
+                    vol_strain_indices
+                ][-1].max()
             }
         )
     # some string replacement for underscores in filenames
@@ -139,109 +139,107 @@ def main(
 
     # plot individual curves and averaged curves in one plot for each analysis value
     for filter_value in filter_values:
-        # stress strain behaviour
-        fig_1, axes_1 = expAna.vis.plot.style_true_stress(
+        # volume strain behaviour
+        fig_2, axes_2 = expAna.vis.plot.style_vol_strain(
             x_lim=1.0,
-            y_lim=1.5 * analysis_dict[filter_value]["max_stress"],
+            y_lim=1.5 * analysis_dict[filter_value]["max_vol_strain"],
             width=6,
             height=4,
         )
 
         expAna.vis.plot.add_curves_same_value(
-            fig=fig_1,
-            axes=axes_1,
+            fig=fig_2,
+            axes=axes_2,
             x_mean=analysis_dict[filter_value]["mean_strain"][
-                : len(analysis_dict[filter_value]["mean_stress"])
+                : len(analysis_dict[filter_value]["mean_vol_strain"])
             ],
-            y_mean=analysis_dict[filter_value]["mean_stress"],
+            y_mean=analysis_dict[filter_value]["mean_vol_strain"],
             xs=np.array(analysis_dict[filter_value]["strains"], dtype=object)[
-                analysis_dict[filter_value]["stress_indices"]
+                analysis_dict[filter_value]["vol_strain_indices"]
             ],
-            ys=np.array(analysis_dict[filter_value]["stresses"], dtype=object)[
-                analysis_dict[filter_value]["stress_indices"]
+            ys=np.array(analysis_dict[filter_value]["vol_strains"], dtype=object)[
+                analysis_dict[filter_value]["vol_strain_indices"]
             ],
             value=filter_value,
         )
 
-        axes_1.legend(loc="upper left")
+        axes_2.legend(loc="upper left")
+
         # remove spaces in string before export
-        if type(filter_value) == str:
-            export_value = filter_value.replace(" ", "_")
-        else:
-            export_value = str(filter_value)
+        export_value = filter_value.replace(" ", "_")
 
-        fig_1.tight_layout()
+        fig_2.tight_layout()
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_material}_stress_{filter_key}_{export_value}.pgf",
+                f"{export_material}_vol_strain_{filter_key}_{export_value}.pgf",
             )
         )
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_material}_stress_{filter_key}_{export_value}_small.png",
+                f"{export_material}_vol_strain_{filter_key}_{export_value}_small.png",
             )
         )
 
-        fig_1.set_size_inches(12, 9)
-        fig_1.suptitle(f"{material}, {title_key}: {filter_value}", fontsize=12)
-        fig_1.tight_layout()
+        fig_2.set_size_inches(12, 9)
+        fig_2.suptitle(f"{material}, {title_key}: {filter_value}", fontsize=12)
+        fig_2.tight_layout()
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_material}_stress_{filter_key}_{export_value}_large.png",
+                f"{export_material}_vol_strain_{filter_key}_{export_value}_large.png",
             )
         )
         plt.close()
 
-    max_stress = max(
-        analysis_dict[filter_value]["max_stress"] for filter_value in filter_values
+    max_vol_strain = max(
+        analysis_dict[filter_value]["max_vol_strain"] for filter_value in filter_values
     )
     # comparison plot
-    # stress strain behaviour
-    fig_3, axes_3 = expAna.vis.plot.style_true_stress(
-        x_lim=1.0, y_lim=1.5 * max_stress, width=6, height=4,
+    # volume strain behaviour
+    fig_4, axes_4 = expAna.vis.plot.style_vol_strain(
+        x_lim=1.0, y_lim=1.5 * max_vol_strain, width=6, height=4,
     )
 
     for filter_value in filter_values:
         expAna.vis.plot.add_curves_same_value(
-            fig=fig_3,
-            axes=axes_3,
+            fig=fig_4,
+            axes=axes_4,
             x_mean=analysis_dict[filter_value]["mean_strain"][
-                : len(analysis_dict[filter_value]["mean_stress"])
+                : len(analysis_dict[filter_value]["mean_vol_strain"])
             ],
-            y_mean=analysis_dict[filter_value]["mean_stress"],
+            y_mean=analysis_dict[filter_value]["mean_vol_strain"],
             xs=np.array(analysis_dict[filter_value]["strains"], dtype=object)[
-                analysis_dict[filter_value]["stress_indices"]
+                analysis_dict[filter_value]["vol_strain_indices"]
             ],
-            ys=np.array(analysis_dict[filter_value]["stresses"], dtype=object)[
-                analysis_dict[filter_value]["stress_indices"]
+            ys=np.array(analysis_dict[filter_value]["vol_strains"], dtype=object)[
+                analysis_dict[filter_value]["vol_strain_indices"]
             ],
             value=filter_value,
         )
 
-    axes_3.legend(loc="upper left")
+    axes_4.legend(loc="upper left")
 
-    fig_3.tight_layout()
+    fig_4.tight_layout()
     plt.savefig(
         os.path.join(
-            vis_export_dir, f"{export_material}_stress_{filter_key}_comparison.pgf"
+            vis_export_dir, f"{export_material}_vol_strain_{filter_key}_comparison.pgf",
         )
     )
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_material}_stress_{filter_key}_comparison_small.png",
+            f"{export_material}_vol_strain_{filter_key}_comparison_small.png",
         )
     )
-    fig_3.set_size_inches(12, 9)
-    fig_3.suptitle(f"{material}, comparison: {title_key}", fontsize=12)
-    fig_3.tight_layout()
+    fig_4.set_size_inches(12, 9)
+    fig_4.suptitle(f"{material}, comparison: {title_key}", fontsize=12)
+    fig_4.tight_layout()
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_material}_stress_{filter_key}_comparison_large.png",
+            f"{export_material}_vol_strain_{filter_key}_comparison_large.png",
         )
     )
     plt.close()
@@ -249,7 +247,7 @@ def main(
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
-        description="This utility makes plots of stress strain curves of experiment files in the corresponding directory filtered by a criterion."
+        description="This utility makes plots of volume strain curves of experiment files in the corresponding directory filtered by a criterion."
     )
     arg_parser.add_argument(
         "-e",
