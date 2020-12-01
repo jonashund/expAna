@@ -55,14 +55,11 @@ def main(
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
-            print(
-                f"""
-            Warning:
-            No documentation data found for {test_dir}!
-            Document your experiments properly using expDoc before using expAna.
-            """
-            )
-            assert False
+            assert False, f"""
+        Warning:
+        No documentation data found for {test_dir}!
+        Document your experiments properly using expDoc before using expAna.
+        """
         # search for expAna data
         try:
             with open(
@@ -93,6 +90,8 @@ def main(
         filter_values = set(filter_values)
     else:
         filter_values = [filter_value[0]]
+
+    filter_values = natsorted(filter_values)
 
     for filter_value in filter_values:
         analysis_dict[filter_value] = {}

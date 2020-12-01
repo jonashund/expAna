@@ -31,6 +31,8 @@ def main(
             "-dic", f"`{dic_system}` is not a valid value for argument `dic_system`"
         )
 
+    os.makedirs(vis_export_dir, exist_ok=True)
+
     if experiment_list is None:
         experiment_list = list()
         print(
@@ -55,7 +57,8 @@ def main(
     # load the experiments
     for test_dir in experiment_list:
         with open(
-            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"), "rb",
+            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"),
+            "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
@@ -79,6 +82,8 @@ def main(
         filter_values = set(filter_values)
     else:
         filter_values = [filter_value[0]]
+
+    filter_values = natsorted(filter_values)
 
     for filter_value in filter_values:
         analysis_dict[filter_value] = {}
@@ -201,7 +206,10 @@ def main(
     # comparison plot
     # stress strain behaviour
     fig_3, axes_3 = expAna.vis.plot.style_true_stress(
-        x_lim=1.0, y_lim=1.5 * max_stress, width=6, height=4,
+        x_lim=1.0,
+        y_lim=1.5 * max_stress,
+        width=6,
+        height=4,
     )
 
     for filter_value in filter_values:
