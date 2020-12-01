@@ -31,6 +31,8 @@ def main(
             "-dic", f"`{dic_system}` is not a valid value for argument `dic_system`"
         )
 
+    os.makedirs(vis_export_dir, exist_ok=True)
+
     if experiment_list is None:
         experiment_list = list()
         print(
@@ -55,7 +57,8 @@ def main(
     # load the experiments
     for test_dir in experiment_list:
         with open(
-            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"), "rb",
+            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"),
+            "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
@@ -79,6 +82,8 @@ def main(
         filter_values = set(filter_values)
     else:
         filter_values = [filter_value[0]]
+
+    filter_values = natsorted(filter_values)
 
     for filter_value in filter_values:
         analysis_dict[filter_value] = {}
@@ -111,8 +116,8 @@ def main(
         interval = max_x / 500
         mean_strain = np.arange(start=0.0, stop=max_x, step=interval)
         for i, strain in enumerate(true_strains):
-            foo, vol_strains[i] = expAna.calc.interpolate_curve(
-                true_strains[i], vol_strains[i], interval
+            true_strains[i], vol_strains[i] = expAna.calc.interpolate_curve(
+                strain, vol_strains[i], interval
             )
         # compute the mean curve as long as at least three values are available
         mean_vol_strain, vol_strain_indices = expAna.calc.mean_curve(vol_strains)
@@ -199,7 +204,10 @@ def main(
     # comparison plot
     # volume strain behaviour
     fig_4, axes_4 = expAna.vis.plot.style_vol_strain(
-        x_lim=1.0, y_lim=1.5 * max_vol_strain, width=6, height=4,
+        x_lim=1.0,
+        y_lim=1.5 * max_vol_strain,
+        width=6,
+        height=4,
     )
 
     for filter_value in filter_values:
@@ -224,7 +232,8 @@ def main(
     fig_4.tight_layout()
     plt.savefig(
         os.path.join(
-            vis_export_dir, f"{export_material}_vol_strain_{filter_key}_comparison.pgf",
+            vis_export_dir,
+            f"{export_material}_vol_strain_{filter_key}_comparison.pgf",
         )
     )
     plt.savefig(
