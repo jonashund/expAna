@@ -11,10 +11,7 @@ from natsort import natsorted
 
 
 def main(
-    filter_key,
-    filter_value=None,
-    experiment_list=None,
-    ignore_list=None,
+    filter_key, filter_value=None, experiment_list=None, ignore_list=None, x_lim=5.0
 ):
 
     work_dir = os.getcwd()
@@ -50,8 +47,7 @@ def main(
         # search for input data created with expDoc
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"),
-                "rb",
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"), "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -63,8 +59,7 @@ def main(
         # search for expAna data
         try:
             with open(
-                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"),
-                "rb",
+                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"), "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -117,6 +112,13 @@ def main(
                 .to_numpy()
             )
 
+        # TO DO:
+        # for each experiment
+        # get index of last positive value in "force_in_kN"
+        # cut "displacement_in_mm" and "force_in_kN" at this index
+        # WHY:
+        # do not plot curves after specimen failure
+
         # interpolate every force displacement curve to an x-axis with equally spaced points
         # set spacing dependent on maximum x-value found in all x arrays
 
@@ -148,9 +150,10 @@ def main(
     export_material = material.replace(" ", "_")
 
     # plot individual curves and averaged curves in one plot for each analysis value
+
     for filter_value in filter_values:
         fig_1, axes_1 = expAna.vis.plot.style_force_disp(
-            x_lim=5.0,
+            x_lim=x_lim,
             y_lim=1.5 * analysis_dict[filter_value]["max_force"],
             width=6,
             height=4,
@@ -210,10 +213,7 @@ def main(
         analysis_dict[filter_value]["max_force"] for filter_value in filter_values
     )
     fig_3, axes_3 = expAna.vis.plot.style_force_disp(
-        x_lim=5.0,
-        y_lim=1.5 * max_force,
-        width=6,
-        height=4,
+        x_lim=x_lim, y_lim=1.5 * max_force, width=6, height=4,
     )
 
     for filter_value in filter_values:
@@ -300,6 +300,15 @@ if __name__ == "__main__":
         help="Value for given --key argument of dictionary experiment.documentation_data.",
     )
 
+    arg_parser.add_argument(
+        "-x",
+        "--x-lim",
+        metavar="Max. x axis value in plots",
+        nargs=1,
+        default=None,
+        help="",
+    )
+
     #   - plot original curves (boolean)
     # arg_parser.add_argument(
     #     "-a",
@@ -318,5 +327,6 @@ if __name__ == "__main__":
             filter_value=passed_args.value,
             experiment_list=passed_args.experiments,
             ignore_list=passed_args.ignore,
+            x_lim=passed_args.x_lim,
         )
     )
