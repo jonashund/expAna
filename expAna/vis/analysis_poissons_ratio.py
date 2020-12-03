@@ -168,7 +168,7 @@ def main(
             value=filter_value,
         )
 
-        axes_1.legend(loc="upper left")
+        axes_1.legend(loc="lower right")
         # remove spaces in string before export
         if type(filter_value) == str:
             export_value = filter_value.replace(" ", "_")
@@ -229,7 +229,7 @@ def main(
             value=filter_value,
         )
 
-    axes_3.legend(loc="upper left")
+    axes_3.legend(loc="lower right")
 
     fig_3.tight_layout()
     plt.savefig(
