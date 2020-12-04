@@ -1,6 +1,8 @@
 import os
 import math
+import dill
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import istra2py
 
@@ -227,3 +229,30 @@ class Experiment(object):
         )
 
         plt.close()
+
+
+def export_curve(x_vals, y_vals, out_dir=".", out_filename="curve.pickle"):
+
+    dataframe = pd.DataFrame(
+        data=np.ma.concatenate(
+            (x_vals.reshape(len(x_vals), 1), y_vals.reshape(len(y_vals), 1)), axis=1
+        ),
+        columns=["x_vals", "y_vals"],
+    )
+
+    with open(
+        os.path.join(out_dir, out_filename),
+        "wb",
+    ) as myfile:
+        dill.dump(dataframe, myfile)
+
+
+def import_curve(data_dir, filename):
+
+    with open(
+        os.path.join(data_dir, filename),
+        "rb",
+    ) as myfile:
+        dataframe = dill.load(myfile)
+
+    return dataframe["x_vals"].to_numpy(), dataframe["y_vals"].to_numpy()

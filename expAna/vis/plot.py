@@ -6,7 +6,7 @@ import matplotlib.ticker as mtick
 
 def plt_style():
     """
-        Set custom style parameters for plots.
+    Set custom style parameters for plots.
     """
 
     matplotlib.use("pgf")  # use the pgf backend
