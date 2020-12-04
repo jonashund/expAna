@@ -47,7 +47,8 @@ def main(
         # search for input data created with expDoc
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"), "rb",
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"),
+                "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -59,7 +60,8 @@ def main(
         # search for expAna data
         try:
             with open(
-                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"), "rb",
+                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"),
+                "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -152,6 +154,21 @@ def main(
     # plot individual curves and averaged curves in one plot for each analysis value
 
     for filter_value in filter_values:
+        # remove spaces in string before export
+        if type(filter_value) == str:
+            export_value = filter_value.replace(" ", "_")
+        else:
+            export_value = str(filter_value)
+
+        expAna.data_trans.export_curve(
+            x_vals=analysis_dict[filter_value]["mean_disp"][
+                : len(analysis_dict[filter_value]["mean_force"])
+            ],
+            y_vals=analysis_dict[filter_value]["mean_force"],
+            out_dir=vis_export_dir,
+            out_filename=f"curve_{export_material}_force_disp_{filter_key}_{export_value}.pickle",
+        )
+
         fig_1, axes_1 = expAna.vis.plot.style_force_disp(
             x_lim=x_lim,
             y_lim=1.5 * analysis_dict[filter_value]["max_force"],
@@ -176,12 +193,6 @@ def main(
         )
 
         axes_1.legend(loc="upper left")
-
-        # remove spaces in string before export
-        if type(filter_value) == str:
-            export_value = filter_value.replace(" ", "_")
-        else:
-            export_value = str(filter_value)
 
         fig_1.tight_layout()
         plt.savefig(
@@ -213,7 +224,10 @@ def main(
         analysis_dict[filter_value]["max_force"] for filter_value in filter_values
     )
     fig_3, axes_3 = expAna.vis.plot.style_force_disp(
-        x_lim=x_lim, y_lim=1.5 * max_force, width=6, height=4,
+        x_lim=x_lim,
+        y_lim=1.5 * max_force,
+        width=6,
+        height=4,
     )
 
     for filter_value in filter_values:

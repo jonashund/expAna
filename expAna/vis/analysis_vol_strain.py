@@ -152,6 +152,21 @@ def main(
             height=4,
         )
 
+        # remove spaces in string before export
+        if type(filter_value) == str:
+            export_value = filter_value.replace(" ", "_")
+        else:
+            export_value = str(filter_value)
+
+        expAna.data_trans.export_curve(
+            x_vals=analysis_dict[filter_value]["mean_strain"][
+                : len(analysis_dict[filter_value]["mean_vol_strain"])
+            ],
+            y_vals=analysis_dict[filter_value]["mean_vol_strain"],
+            out_dir=vis_export_dir,
+            out_filename=f"curve_{export_material}_vol_strain_{filter_key}_{export_value}.pickle",
+        )
+
         expAna.vis.plot.add_curves_same_value(
             fig=fig_2,
             axes=axes_2,
@@ -169,9 +184,6 @@ def main(
         )
 
         axes_2.legend(loc="upper left")
-
-        # remove spaces in string before export
-        export_value = filter_value.replace(" ", "_")
 
         fig_2.tight_layout()
         plt.savefig(
