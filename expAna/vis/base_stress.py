@@ -9,7 +9,13 @@ from expAna.misc import InputError
 from natsort import natsorted
 
 
-def main(experiment_list=None, keep_offset=True, set_failure=False, dic_system="istra"):
+def main(
+    experiment_list=None,
+    ignore_list=None,
+    keep_offset=True,
+    set_failure=False,
+    dic_system="istra",
+):
     work_dir = os.getcwd()
 
     if dic_system == "istra":
@@ -37,12 +43,17 @@ def main(experiment_list=None, keep_offset=True, set_failure=False, dic_system="
     else:
         pass
 
+    if ignore_list is not None:
+        for experiment in ignore_list:
+            experiment_list.remove(experiment)
+
     experiment_list = natsorted(experiment_list)
 
     # prepare plotting to file, avoid switching matplotlib backends (buggy)
     for test_dir in experiment_list:
         with open(
-            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"), "rb",
+            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"),
+            "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
@@ -56,7 +67,8 @@ def main(experiment_list=None, keep_offset=True, set_failure=False, dic_system="
             fail_location.__gui__(experiment)
             # export truncated data
             with open(
-                os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"), "wb",
+                os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"),
+                "wb",
             ) as myfile:
                 dill.dump(experiment, myfile)
         else:
@@ -66,7 +78,8 @@ def main(experiment_list=None, keep_offset=True, set_failure=False, dic_system="
 
     for test_dir in experiment_list:
         with open(
-            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"), "rb",
+            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"),
+            "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
@@ -85,6 +98,14 @@ if __name__ == "__main__":
         nargs="*",
         default=None,
         help="experiment folder name(s) located in ../data_istra_acquisition/",
+    )
+
+    arg_parser.add_argument(
+        "-i",
+        "--ignore",
+        nargs="*",
+        default=None,
+        help="experiment folder name(s) to ignore",
     )
 
     arg_parser.add_argument(
@@ -113,6 +134,7 @@ if __name__ == "__main__":
     sys.exit(
         main(
             experiment_list=passed_args.experiments,
+            ignore_list=passed_args.ignore,
             keep_offset=passed_args.offset,
             set_failure=passed_args.fail,
             dic_system=passed_args.dic,

@@ -12,6 +12,7 @@ from natsort import natsorted
 
 def main(
     experiment_list=None,
+    ignore_list=None,
     eco_mode=True,
     specimen_width=12.0,
     specimen_thickness=3.0,
@@ -35,13 +36,18 @@ def main(
     else:
         pass
 
+    if ignore_list is not None:
+        for experiment in ignore_list:
+            experiment_list.remove(experiment)
+
     experiment_list = natsorted(experiment_list)
 
     for test_dir in experiment_list:
         # load or create experiment object
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"), "rb",
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"),
+                "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -174,6 +180,14 @@ if __name__ == "__main__":
     )
 
     arg_parser.add_argument(
+        "-i",
+        "--ignore",
+        nargs="*",
+        default=None,
+        help="experiment folder name(s) to ignore",
+    )
+
+    arg_parser.add_argument(
         "-eco",
         default=True,
         help="Save space through not exporting the local strain fields but only the mean results from the gauge element.",
@@ -196,7 +210,9 @@ if __name__ == "__main__":
     )
 
     arg_parser.add_argument(
-        "--poissons_ratio", default=None, help="Through-thickness Poisson's ratio.",
+        "--poissons_ratio",
+        default=None,
+        help="Through-thickness Poisson's ratio.",
     )
 
     passed_args = arg_parser.parse_args()
@@ -204,6 +220,7 @@ if __name__ == "__main__":
     sys.exit(
         main(
             experiment_list=passed_args.experiments,
+            ignore_list=passed_args.ignore,
             eco_mode=passed_args.eco,
             specimen_width=passed_args.geometry[0],
             specimen_thickness=passed_args.geometry[0],
