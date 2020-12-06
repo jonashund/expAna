@@ -182,7 +182,7 @@ def style_poissons_ratio(width=None, height=None, x_lim=None, y_lim=0.5):
     return fig_1, axes_1
 
 
-def style_force_disp(width=None, height=None, x_lim=None, y_lim=None):
+def style_force_displ(width=None, height=None, x_lim=None, y_lim=None):
 
     if width and height:
         fig_1, axes_1 = create_styled_figure(width=width, height=height)

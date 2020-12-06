@@ -200,7 +200,7 @@ class Experiment(object):
         x_data = self.data_instron["displacement_in_mm"]
         y_data = self.data_instron["force_in_kN"]
 
-        fig_1, axes_1 = expAna.vis.plot.style_force_disp(
+        fig_1, axes_1 = expAna.vis.plot.style_force_displ(
             x_lim=math.ceil(x_data.max()), y_lim=1.1 * y_data.max()
         )
 

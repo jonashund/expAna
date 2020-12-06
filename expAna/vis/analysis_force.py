@@ -169,7 +169,7 @@ def main(
             out_filename=f"curve_{export_material}_force_disp_{filter_key}_{export_value}.pickle",
         )
 
-        fig_1, axes_1 = expAna.vis.plot.style_force_disp(
+        fig_1, axes_1 = expAna.vis.plot.style_force_displ(
             x_lim=x_lim,
             y_lim=1.5 * analysis_dict[filter_value]["max_force"],
             width=6,
@@ -223,7 +223,7 @@ def main(
     max_force = max(
         analysis_dict[filter_value]["max_force"] for filter_value in filter_values
     )
-    fig_3, axes_3 = expAna.vis.plot.style_force_disp(
+    fig_3, axes_3 = expAna.vis.plot.style_force_displ(
         x_lim=x_lim,
         y_lim=1.5 * max_force,
         width=6,
