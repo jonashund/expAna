@@ -264,6 +264,12 @@ def main(
     )
     plt.close()
 
+    expAna.data_trans.export_analysis(
+        analysis_dict,
+        out_dir=vis_export_dir,
+        out_filename=f"analysis_dict_{export_material}_stress_{filter_key}.pickle",
+    )
+
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(

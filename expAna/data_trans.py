@@ -247,6 +247,24 @@ def export_one_curve_as_df(x_vals, y_vals, out_dir=".", out_filename="curve.pick
         dill.dump(dataframe, myfile)
 
 
+def export_analysis(analysis_dict, out_dir=".", out_filename="analysis_dict.pickle"):
+    with open(
+        os.path.join(out_dir, out_filename),
+        "wb",
+    ) as myfile:
+        dill.dump(analysis_dict, myfile)
+
+
+def import_analysis(data_dir, filename):
+    with open(
+        os.path.join(data_dir, filename),
+        "rb",
+    ) as myfile:
+        analysis_dict = dill.load(myfile)
+
+    return analysis_dict
+
+
 def import_mean_curve(data_dir, filename):
 
     with open(

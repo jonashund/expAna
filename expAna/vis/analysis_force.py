@@ -166,7 +166,7 @@ def main(
             ],
             y_vals=analysis_dict[filter_value]["mean_force"],
             out_dir=vis_export_dir,
-            out_filename=f"curve_avg_{export_material}_force_disp_{filter_key}_{export_value}.pickle",
+            out_filename=f"curve_avg_{export_material}_force_displ_{filter_key}_{export_value}.pickle",
         )
 
         fig_1, axes_1 = expAna.vis.plot.style_force_displ(
@@ -191,20 +191,19 @@ def main(
             ],
             value=filter_value,
         )
-
         axes_1.legend(loc="upper left")
 
         fig_1.tight_layout()
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_material}_force_disp_{filter_key}_{export_value}.pgf",
+                f"{export_material}_force_displ_{filter_key}_{export_value}.pgf",
             )
         )
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_material}_force_disp_{filter_key}_{export_value}_small.png",
+                f"{export_material}_force_displ_{filter_key}_{export_value}_small.png",
             )
         )
 
@@ -214,7 +213,7 @@ def main(
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_material}_force_disp_{filter_key}_{export_value}_large.png",
+                f"{export_material}_force_displ_{filter_key}_{export_value}_large.png",
             )
         )
         plt.close()
@@ -252,13 +251,13 @@ def main(
     fig_3.tight_layout()
     plt.savefig(
         os.path.join(
-            vis_export_dir, f"{export_material}_force_disp_{filter_key}_comparison.pgf"
+            vis_export_dir, f"{export_material}_force_displ_{filter_key}_comparison.pgf"
         )
     )
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_material}_force_disp_{filter_key}_comparison_small.png",
+            f"{export_material}_force_displ_{filter_key}_comparison_small.png",
         )
     )
     fig_3.set_size_inches(12, 9)
@@ -267,10 +266,16 @@ def main(
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_material}_force_disp_{filter_key}_comparison_large.png",
+            f"{export_material}_force_displ_{filter_key}_comparison_large.png",
         )
     )
     plt.close()
+
+    expAna.data_trans.export_analysis(
+        analysis_dict,
+        out_dir=vis_export_dir,
+        out_filename=f"analysis_dict_{export_material}_force_displ_{filter_key}.pickle",
+    )
 
 
 # TO DO: write function that writes whole analysis_dict to file for visualisation purposes
