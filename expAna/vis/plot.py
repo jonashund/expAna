@@ -222,7 +222,6 @@ def create_styled_figure(width=4, height=3):
 
 
 def add_curves_same_value(fig, axes, x_mean, y_mean, xs=[], ys=[], value=None):
-    from cycler import cycler
 
     current_color = next(axes._get_lines.prop_cycler)["color"]
     axes.plot(
