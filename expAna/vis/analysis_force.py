@@ -160,13 +160,13 @@ def main(
         else:
             export_value = str(filter_value)
 
-        expAna.data_trans.export_curve(
+        expAna.data_trans.export_one_curve_as_df(
             x_vals=analysis_dict[filter_value]["mean_disp"][
                 : len(analysis_dict[filter_value]["mean_force"])
             ],
             y_vals=analysis_dict[filter_value]["mean_force"],
             out_dir=vis_export_dir,
-            out_filename=f"curve_{export_material}_force_disp_{filter_key}_{export_value}.pickle",
+            out_filename=f"curve_avg_{export_material}_force_disp_{filter_key}_{export_value}.pickle",
         )
 
         fig_1, axes_1 = expAna.vis.plot.style_force_displ(
@@ -271,6 +271,15 @@ def main(
         )
     )
     plt.close()
+
+
+# TO DO: write function that writes whole analysis_dict to file for visualisation purposes
+# filename should include information on:
+#       - material
+#       - type of data (stress, vol_strain, force, poissons_ratio)
+#       - filter_key
+
+# TO DO: write import function for this kind of exported data
 
 
 if __name__ == "__main__":

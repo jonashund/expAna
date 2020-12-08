@@ -231,7 +231,7 @@ class Experiment(object):
         plt.close()
 
 
-def export_curve(x_vals, y_vals, out_dir=".", out_filename="curve.pickle"):
+def export_one_curve_as_df(x_vals, y_vals, out_dir=".", out_filename="curve.pickle"):
 
     dataframe = pd.DataFrame(
         data=np.ma.concatenate(
@@ -247,7 +247,7 @@ def export_curve(x_vals, y_vals, out_dir=".", out_filename="curve.pickle"):
         dill.dump(dataframe, myfile)
 
 
-def import_curve(data_dir, filename):
+def import_mean_curve(data_dir, filename):
 
     with open(
         os.path.join(data_dir, filename),

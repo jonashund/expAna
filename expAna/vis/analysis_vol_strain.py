@@ -158,13 +158,13 @@ def main(
         else:
             export_value = str(filter_value)
 
-        expAna.data_trans.export_curve(
+        expAna.data_trans.export_one_curve_as_df(
             x_vals=analysis_dict[filter_value]["mean_strain"][
                 : len(analysis_dict[filter_value]["mean_vol_strain"])
             ],
             y_vals=analysis_dict[filter_value]["mean_vol_strain"],
             out_dir=vis_export_dir,
-            out_filename=f"curve_{export_material}_vol_strain_{filter_key}_{export_value}.pickle",
+            out_filename=f"curve_avg_{export_material}_vol_strain_{filter_key}_{export_value}.pickle",
         )
 
         expAna.vis.plot.add_curves_same_value(

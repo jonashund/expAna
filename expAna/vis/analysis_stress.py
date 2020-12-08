@@ -150,13 +150,13 @@ def main(
         else:
             export_value = str(filter_value)
 
-        expAna.data_trans.export_curve(
+        expAna.data_trans.export_one_curve_as_df(
             x_vals=analysis_dict[filter_value]["mean_strain"][
                 : len(analysis_dict[filter_value]["mean_stress"])
             ],
             y_vals=analysis_dict[filter_value]["mean_stress"],
             out_dir=vis_export_dir,
-            out_filename=f"curve_{export_material}_stress_{filter_key}_{export_value}.pickle",
+            out_filename=f"curve_avg_{export_material}_stress_{filter_key}_{export_value}.pickle",
         )
 
         # stress strain behaviour
