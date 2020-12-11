@@ -68,6 +68,8 @@ def main(
             pass
 
         analysis_project.add_experiment(experiment)
+    if not bool(analysis_project.experiments.items()):
+        assert False, "Experiment list is empty for filter_key specified."
 
     # compile list of different values for key or just filter experiments for given key
     if filter_value is None:
@@ -146,9 +148,9 @@ def main(
         )
     # some string replacement for underscores in filenames
     title_key = filter_key.replace("_", " ")
-    material = analysis_project.experiments[experiment_name].documentation_data[
-        "material"
-    ]
+    material = analysis_project.experiments[
+        list(analysis_project.experiments.keys())[0]
+    ].documentation_data["material"]
     export_material = material.replace(" ", "_")
 
     # plot individual curves and averaged curves in one plot for each analysis value
@@ -289,7 +291,7 @@ def main(
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
-        description="This utility force displacement curves of experiment files in the corresponding directory filtered by a criterion."
+        description="This utility plots force displacement curves of experiment files in the corresponding directory filtered by a criterion."
     )
     arg_parser.add_argument(
         "-e",
