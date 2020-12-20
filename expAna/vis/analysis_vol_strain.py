@@ -14,8 +14,8 @@ work_dir = os.getcwd()
 
 
 def main(
-    filter_key,
-    filter_value=None,
+    compare,
+    select=None,
     experiment_list=None,
     ignore_list=None,
     dic_system="istra",
@@ -33,78 +33,28 @@ def main(
 
     os.makedirs(vis_export_dir, exist_ok=True)
 
-    if experiment_list is None:
-        experiment_list = list()
-        print(
-            f"No experiments passed. Will search for folders named `Test*` in {exp_data_dir}."
-        )
-        for path, directories, files in os.walk(exp_data_dir):
-            for test_dir in directories:
-                if str(test_dir[:5] == "Test"):
-                    experiment_list.append(test_dir)
-    else:
-        pass
+    analysis = expAna.vis.analysis.Analysis(type="vol_strain")
+    analysis.setup(
+        exp_data_dir=exp_data_dir,
+        compare=compare,
+        select=select,
+        experiment_list=experiment_list,
+        ignore_list=ignore_list,
+    )
 
-    if ignore_list is not None:
-        for experiment in ignore_list:
-            experiment_list.remove(experiment)
-
-    experiment_list = natsorted(experiment_list)
-
-    analysis_dict = {}
-    analysis_project = expAna.data_trans.Project(name=f"analysis_{filter_key}")
-
-    # load the experiments
-    for test_dir in experiment_list:
-        with open(
-            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"),
-            "rb",
-        ) as myfile:
-            experiment = dill.load(myfile)
-
-            analysis_project.add_experiment(experiment)
-
-    # compile list of different values for key or just filter experiments for given key
-    if filter_value is None:
-        filter_values = []
-        for experiment_name, experiment_data in analysis_project.experiments.items():
-            filter_values.append(experiment_data.documentation_data[filter_key])
-        # remove experiments with no value for given key
-        filter_values = list(filter(None, filter_values))
-        for filter_value in set(filter_values):
-            value_count = filter_values.count(filter_value)
-            if value_count < 3:
-                for i in range(value_count):
-                    filter_values.remove(filter_value)
-            else:
-                pass
-        # remove duplicates from list
-        filter_values = set(filter_values)
-    else:
-        filter_values = [filter_value[0]]
-
-    filter_values = natsorted(filter_values)
-
-    for filter_value in filter_values:
-        analysis_dict[filter_value] = {}
-        analysis_dict[filter_value]["experiment_list"] = []
-        for experiment_name, experiment_data in analysis_project.experiments.items():
-            if experiment_data.documentation_data[filter_key] == filter_value:
-                analysis_dict[filter_value]["experiment_list"].append(experiment_name)
-
-    # expAna.calculate average curves for every filter_value
-    for filter_value in filter_values:
+    # expAna.calculate average curves for every compare_value
+    for compare_value in analysis.compare_values:
         true_strains = []
         vol_strains = []
         # create list of arrays with x and y values
-        for experiment_name in analysis_dict[filter_value]["experiment_list"]:
+        for experiment_name in analysis.dict[compare_value]["experiment_list"]:
             true_strains.append(
-                analysis_project.experiments[experiment_name]
+                analysis.project.experiments[experiment_name]
                 .gauge_results["true_strain_image_x"]
                 .to_numpy()
             )
             vol_strains.append(
-                analysis_project.experiments[experiment_name]
+                analysis.project.experiments[experiment_name]
                 .gauge_results["volume_strain"]
                 .to_numpy()
             )
@@ -122,13 +72,13 @@ def main(
         # compute the mean curve as long as at least three values are available
         mean_vol_strain, vol_strain_indices = expAna.calc.mean_curve(vol_strains)
 
-        analysis_dict[filter_value]["mean_strain"] = mean_strain
-        analysis_dict[filter_value]["mean_vol_strain"] = mean_vol_strain
-        analysis_dict[filter_value]["vol_strain_indices"] = vol_strain_indices
-        analysis_dict[filter_value]["strains"] = true_strains
-        analysis_dict[filter_value]["vol_strains"] = vol_strains
+        analysis.dict[compare_value]["mean_strain"] = mean_strain
+        analysis.dict[compare_value]["mean_vol_strain"] = mean_vol_strain
+        analysis.dict[compare_value]["vol_strain_indices"] = vol_strain_indices
+        analysis.dict[compare_value]["strains"] = true_strains
+        analysis.dict[compare_value]["vol_strains"] = vol_strains
 
-        analysis_dict[filter_value].update(
+        analysis.dict[compare_value].update(
             {
                 "max_vol_strain": np.array(vol_strains, dtype=object)[
                     vol_strain_indices
@@ -136,51 +86,56 @@ def main(
             }
         )
     # some string replacement for underscores in filenames
-    title_key = filter_key.replace("_", " ")
-    material = analysis_project.experiments[experiment_name].documentation_data[
-        "material"
-    ]
+    title_key = compare.replace("_", " ")
+    material = analysis.project.experiments[
+        list(analysis.project.experiments.keys())[0]
+    ].documentation_data["material"]
     export_material = material.replace(" ", "_")
 
+    if select is None:
+        export_prefix = f"{export_material}_{analysis.type}_{compare}"
+    else:
+        export_prefix = f"{export_material}_{analysis.type}_{analysis.select_key}_{analysis.select_value}_{compare}"
+
     # plot individual curves and averaged curves in one plot for each analysis value
-    for filter_value in filter_values:
+    for compare_value in analysis.compare_values:
         # volume strain behaviour
         fig_2, axes_2 = expAna.vis.plot.style_vol_strain(
             x_lim=1.0,
-            y_lim=1.5 * analysis_dict[filter_value]["max_vol_strain"],
+            y_lim=1.5 * analysis.dict[compare_value]["max_vol_strain"],
             width=6,
             height=4,
         )
 
         # remove spaces in string before export
-        if type(filter_value) == str:
-            export_value = filter_value.replace(" ", "_")
+        if type(compare_value) == str:
+            export_value = compare_value.replace(" ", "_")
         else:
-            export_value = str(filter_value)
+            export_value = str(compare_value)
 
         expAna.data_trans.export_one_curve_as_df(
-            x_vals=analysis_dict[filter_value]["mean_strain"][
-                : len(analysis_dict[filter_value]["mean_vol_strain"])
+            x_vals=analysis.dict[compare_value]["mean_strain"][
+                : len(analysis.dict[compare_value]["mean_vol_strain"])
             ],
-            y_vals=analysis_dict[filter_value]["mean_vol_strain"],
+            y_vals=analysis.dict[compare_value]["mean_vol_strain"],
             out_dir=vis_export_dir,
-            out_filename=f"curve_avg_{export_material}_vol_strain_{filter_key}_{export_value}.pickle",
+            out_filename=f"curve_avg_{export_prefix}_{export_value}.pickle",
         )
 
         expAna.vis.plot.add_curves_same_value(
             fig=fig_2,
             axes=axes_2,
-            x_mean=analysis_dict[filter_value]["mean_strain"][
-                : len(analysis_dict[filter_value]["mean_vol_strain"])
+            x_mean=analysis.dict[compare_value]["mean_strain"][
+                : len(analysis.dict[compare_value]["mean_vol_strain"])
             ],
-            y_mean=analysis_dict[filter_value]["mean_vol_strain"],
-            xs=np.array(analysis_dict[filter_value]["strains"], dtype=object)[
-                analysis_dict[filter_value]["vol_strain_indices"]
+            y_mean=analysis.dict[compare_value]["mean_vol_strain"],
+            xs=np.array(analysis.dict[compare_value]["strains"], dtype=object)[
+                analysis.dict[compare_value]["vol_strain_indices"]
             ],
-            ys=np.array(analysis_dict[filter_value]["vol_strains"], dtype=object)[
-                analysis_dict[filter_value]["vol_strain_indices"]
+            ys=np.array(analysis.dict[compare_value]["vol_strains"], dtype=object)[
+                analysis.dict[compare_value]["vol_strain_indices"]
             ],
-            value=filter_value,
+            value=compare_value,
         )
 
         axes_2.legend(loc="upper left")
@@ -189,29 +144,30 @@ def main(
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_material}_vol_strain_{filter_key}_{export_value}.pgf",
+                f"{export_prefix}_{export_value}.pgf",
             )
         )
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_material}_vol_strain_{filter_key}_{export_value}_small.png",
+                f"{export_prefix}_{export_value}_small.png",
             )
         )
 
         fig_2.set_size_inches(12, 9)
-        fig_2.suptitle(f"{material}, {title_key}: {filter_value}", fontsize=12)
+        fig_2.suptitle(f"{material}, {title_key}: {compare_value}", fontsize=12)
         fig_2.tight_layout()
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_material}_vol_strain_{filter_key}_{export_value}_large.png",
+                f"{export_prefix}_{export_value}_large.png",
             )
         )
         plt.close()
 
     max_vol_strain = max(
-        analysis_dict[filter_value]["max_vol_strain"] for filter_value in filter_values
+        analysis.dict[compare_value]["max_vol_strain"]
+        for compare_value in analysis.compare_values
     )
     # comparison plot
     # volume strain behaviour
@@ -222,21 +178,21 @@ def main(
         height=4,
     )
 
-    for filter_value in filter_values:
+    for compare_value in analysis.compare_values:
         expAna.vis.plot.add_curves_same_value(
             fig=fig_4,
             axes=axes_4,
-            x_mean=analysis_dict[filter_value]["mean_strain"][
-                : len(analysis_dict[filter_value]["mean_vol_strain"])
+            x_mean=analysis.dict[compare_value]["mean_strain"][
+                : len(analysis.dict[compare_value]["mean_vol_strain"])
             ],
-            y_mean=analysis_dict[filter_value]["mean_vol_strain"],
-            xs=np.array(analysis_dict[filter_value]["strains"], dtype=object)[
-                analysis_dict[filter_value]["vol_strain_indices"]
+            y_mean=analysis.dict[compare_value]["mean_vol_strain"],
+            xs=np.array(analysis.dict[compare_value]["strains"], dtype=object)[
+                analysis.dict[compare_value]["vol_strain_indices"]
             ],
-            ys=np.array(analysis_dict[filter_value]["vol_strains"], dtype=object)[
-                analysis_dict[filter_value]["vol_strain_indices"]
+            ys=np.array(analysis.dict[compare_value]["vol_strains"], dtype=object)[
+                analysis.dict[compare_value]["vol_strain_indices"]
             ],
-            value=filter_value,
+            value=compare_value,
         )
 
     axes_4.legend(loc="upper left")
@@ -245,13 +201,13 @@ def main(
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_material}_vol_strain_{filter_key}_comparison.pgf",
+            f"{export_prefix}_comparison.pgf",
         )
     )
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_material}_vol_strain_{filter_key}_comparison_small.png",
+            f"{export_prefix}_comparison_small.png",
         )
     )
     fig_4.set_size_inches(12, 9)
@@ -260,15 +216,15 @@ def main(
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_material}_vol_strain_{filter_key}_comparison_large.png",
+            f"{export_prefix}_comparison_large.png",
         )
     )
     plt.close()
 
     expAna.data_trans.export_analysis(
-        analysis_dict,
+        analysis.dict,
         out_dir=vis_export_dir,
-        out_filename=f"analysis_dict_{export_material}_vol_strain_{filter_key}.pickle",
+        out_filename=f"analysis.dict_{export_prefix}.pickle",
     )
 
 
@@ -294,8 +250,8 @@ if __name__ == "__main__":
 
     #   - selection feature (string) experiment.documentation_data[<key>], i.e. experiment.documentation_data["specimen_orientation"]
     arg_parser.add_argument(
-        "-k",
-        "--key",
+        "-c",
+        "--compare",
         metavar="experiment.documentation_data[<key>]",
         required=True,
         nargs=1,
@@ -305,12 +261,12 @@ if __name__ == "__main__":
 
     #   - selection criterion (string) value (or part of value) of experiment.documentation_data[<key>]
     arg_parser.add_argument(
-        "-v",
-        "--value",
+        "-s",
+        "--select",
         metavar="experiment.documentation_data[`key`]: <value>",
-        nargs=1,
+        nargs=2,
         default=None,
-        help="Value for given --key argument of dictionary experiment.documentation_data.",
+        help="List [key, value] from experiment.documentation_data.",
     )
 
     #   - plot original curves (boolean)
@@ -336,8 +292,8 @@ if __name__ == "__main__":
     passed_args = arg_parser.parse_args()
     sys.exit(
         main(
-            filter_key=passed_args.key[0],
-            filter_value=passed_args.value,
+            compare=passed_args.compare[0],
+            select=passed_args.select,
             experiment_list=passed_args.experiments,
             ignore_list=passed_args.ignore,
             dic_system=passed_args.dic,

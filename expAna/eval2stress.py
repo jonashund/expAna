@@ -11,6 +11,7 @@ from natsort import natsorted
 
 
 def main(
+    select=None,
     experiment_list=None,
     ignore_list=None,
     eco_mode=True,
@@ -59,6 +60,14 @@ def main(
             Document your experiments properly using the expDoc package.
             """
             )
+
+        if select is not None:
+            if str(experiment.documentation_data[select[0]]) == str(select[1]):
+                pass
+            else:
+                continue
+        else:
+            pass
 
         experiment.read_istra_evaluation(istra_acquisition_dir, istra_evaluation_dir)
 
@@ -187,6 +196,16 @@ if __name__ == "__main__":
         help="experiment folder name(s) to ignore",
     )
 
+    #   - selection criterion (string) value (or part of value) of experiment.documentation_data[<key>]
+    arg_parser.add_argument(
+        "-s",
+        "--select",
+        metavar="experiment.documentation_data[`key`]: <value>",
+        nargs=2,
+        default=None,
+        help="List [key, value] from experiment.documentation_data.",
+    )
+
     arg_parser.add_argument(
         "-eco",
         default=True,
@@ -219,6 +238,7 @@ if __name__ == "__main__":
 
     sys.exit(
         main(
+            select=passed_args.select,
             experiment_list=passed_args.experiments,
             ignore_list=passed_args.ignore,
             eco_mode=passed_args.eco,

@@ -10,6 +10,7 @@ from natsort import natsorted
 
 
 def main(
+    select=None,
     experiment_list=None,
     ignore_list=None,
     keep_offset=True,
@@ -56,6 +57,14 @@ def main(
             "rb",
         ) as myfile:
             experiment = dill.load(myfile)
+
+        if select is not None:
+            if str(experiment.documentation_data[select[0]]) == str(select[1]):
+                pass
+            else:
+                continue
+        else:
+            pass
 
         if not keep_offset:
             expAna.vis.plot.remove_offsets(experiment)
@@ -129,10 +138,21 @@ if __name__ == "__main__":
         help="If `False` the curve offsets in terms of force and displacement are removed automatically",
     )
 
+    #   - selection criterion (string) value (or part of value) of experiment.documentation_data[<key>]
+    arg_parser.add_argument(
+        "-s",
+        "--select",
+        metavar="experiment.documentation_data[`key`]: <value>",
+        nargs=2,
+        default=None,
+        help="List [key, value] from experiment.documentation_data.",
+    )
+
     passed_args = arg_parser.parse_args()
 
     sys.exit(
         main(
+            select=passed_args.select,
             experiment_list=passed_args.experiments,
             ignore_list=passed_args.ignore,
             keep_offset=passed_args.offset,

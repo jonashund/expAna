@@ -9,7 +9,10 @@ from natsort import natsorted
 
 
 def main(
-    experiment_list=None, keep_offset=True, set_failure=False,
+    select=None,
+    experiment_list=None,
+    keep_offset=True,
+    set_failure=False,
 ):
 
     work_dir = os.getcwd()
@@ -36,7 +39,8 @@ def main(
         # search for input data created with expDoc
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"), "rb",
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"),
+                "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -49,15 +53,25 @@ def main(
             )
             assert False
 
+        if select is not None:
+            if str(experiment.documentation_data[select[0]]) == str(select[1]):
+                pass
+            else:
+                continue
+        else:
+            pass
+
         # search for expAna data
         try:
             with open(
-                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"), "rb",
+                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"),
+                "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
             with open(
-                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"), "wb",
+                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"),
+                "wb",
             ) as myfile:
                 dill.dump(experiment, myfile)
 
@@ -71,7 +85,8 @@ def main(
             fail_location.__gui__(experiment)
             # export truncated data
             with open(
-                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"), "wb",
+                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"),
+                "wb",
             ) as myfile:
                 dill.dump(experiment, myfile)
         else:
@@ -81,7 +96,8 @@ def main(
 
     for test_dir in experiment_list:
         with open(
-            os.path.join(vis_export_dir, test_dir + "_expAna.pickle"), "rb",
+            os.path.join(vis_export_dir, test_dir + "_expAna.pickle"),
+            "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
@@ -122,10 +138,21 @@ if __name__ == "__main__":
         help="If `False` the curve offsets in terms of force and displacement are removed automatically",
     )
 
+    #   - selection criterion (string) value (or part of value) of experiment.documentation_data[<key>]
+    arg_parser.add_argument(
+        "-s",
+        "--select",
+        metavar="experiment.documentation_data[`key`]: <value>",
+        nargs=2,
+        default=None,
+        help="List [key, value] from experiment.documentation_data.",
+    )
+
     passed_args = arg_parser.parse_args()
 
     sys.exit(
         main(
+            select=passed_args.select,
             experiment_list=passed_args.experiments,
             keep_offset=passed_args.offset,
             set_failure=passed_args.fail,
