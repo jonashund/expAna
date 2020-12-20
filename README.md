@@ -125,28 +125,34 @@ Clone from [gitlab](https://git.scc.kit.edu/) into a local repository and instal
 -   for every function called below look into the code or call as script to gain insight into optional arguments
     #### Option 1: Use evaluated data from _Istra4D_
 -   `expAna.eval2stress.main()`
+-   experiments to consider can be selected via `experiment_list=["TestN","TestM","TestX"]` or through a selection criterion based on a key value pair passed on as a list via `select=[<key>, <value>]`
+    -    the key value pair provided must be part of the `documentation_data` dictionary that is created for every experiment by running `expDoc` and subsequently used by `expAna`
+    -   this dictionary is an attribute of every instance of the `Experiment` class and contains all the information for each experiment that is provided through the project's _Excel_ spreadsheet
+-   in the same manner a list of experiment to be ignored can be specified and passed on via `ignore_list=["TestY"."TestZ"]`
     #### Option 2: Use `muDIC` on _Istra4D_ acquisition data
 -   read an convert images: `expAna.acquis2tif.main()`
 -   digital image correlation with `muDIC`: `expAna.dic_with_muDIC.main()`
 -   true stress strain behaviour from DIC results: `expAna.muDIC2stress.main()`
+-   TO DO: expand the `muDIC` part of the analysis functions to also accept `experiment_list`, `ignore_list` and `select` parameters
 
 ### Basic visualisation
 
 -   plot stress strain curves: `expAna.vis.basic.stress()`
 -   plot force displacement curves: `expAna.vis.basic.force()`
+-   pass on `set_failure=True` to remove corrupted parts of the stress strain curves via a GUI
+-   experiments to consider can be selected via `experiment_list=["TestN","TestM","TestX"]` or through a selection criterion based on a `documentation_data` dictionary key value pair passed on as a list via `select=[<key>, <value>]`
 
 ### Results analysis
 
--   results can be filtered using a `<key>` of the `documentation_data` dictionary that is created for every experiment by running `expDoc` and subsequently read by `expAna`
--   this dictionary is an attribute of every instance of the `Experiment` class and contains all the information for each experiment that is provided through the project's _Excel_ spreadsheet
--   additionally a corresponding `<value>` can be provided such that only experiments matching both criteria are analysed
--   **remark**: by default at least three experiments matching each criterion are required in order to calculate a meaningful average of the behaviour
+-   experiments may be selected using a `<key>`,`<value>` pair passed on as a list via `select=[<key>, <value> ]`
+-   a non-optional input parameter for every analysis is `compare=<key>` where another `<key>` from the `documentation_data` dictionary must be passed on that is then used to compare the selected experiments
+-   **remark**: by default at least three experiments matching each criterion are required by the script
 
     #### Usage:
 
-    -   **example # 0:** calculate and visualise the mean behaviour for every `<value>` found for the provided `<key>` and also visualise the mean curves in a comparison plot: `expAna.vis.analysis.stress(filter_key="<key")` or `expAna.vis.analysis.force(filter_key="<key")`
-    -   **example # 1:** compare the experiments of the project regarding the different values for the key "specimen_orientation": `expAna.vis.analysis.stress(filter_key="specimen_orientation")`
-    -   **example # 2:** compare all experiments with a "specimen_orientation" (key) "parallel to flow" (value): `expAna.vis.analysis.stress(filter_key="specimen_orientation", filter_value="parallel to flow")`
+    -   **example # 0:** calculate and visualise the mean behaviour for every `<value>` found for the provided `<key>` and also visualise the mean curves in a comparison plot: `expAna.vis.analysis.stress(compare="<key")` or `expAna.vis.analysis.force(compare="<key")`
+    -   **example # 1:** compare the experiments of the project regarding the different values for the key "specimen_orientation": `expAna.vis.analysis.stress(compare="specimen_orientation")`
+    -   **example # 2:** select all experiments that were carried out at a "crosshead_speed" of 0.1 and compare them regarding "specimen_orientation"
 
 ## TO DO:
 
