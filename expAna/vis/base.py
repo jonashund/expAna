@@ -22,12 +22,12 @@ def stress(
 def force(
     select=None,
     experiment_list=None,
-    keep_offset=True,
+    displ_shift=None,
     set_failure=False,
 ):
     expAna.vis.base_force.main(
         select=select,
         experiment_list=experiment_list,
-        keep_offset=keep_offset,
+        displ_shift=displ_shift,
         set_failure=set_failure,
     )

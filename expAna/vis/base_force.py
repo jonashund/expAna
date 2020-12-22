@@ -11,7 +11,7 @@ from natsort import natsorted
 def main(
     select=None,
     experiment_list=None,
-    keep_offset=True,
+    displ_shift=None,
     set_failure=False,
 ):
 
@@ -75,8 +75,16 @@ def main(
             ) as myfile:
                 dill.dump(experiment, myfile)
 
-        if not keep_offset:
-            expAna.vis.plot.remove_offsets(experiment)
+        if displ_shift is not None:
+            experiment.data_instron = expAna.vis.plot.shift_columns(
+                experiment.data_instron, "displacement_in_mm", displ_shift
+            )
+            # export truncated data
+            with open(
+                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"),
+                "wb",
+            ) as myfile:
+                dill.dump(experiment, myfile)
         else:
             pass
 
@@ -102,60 +110,3 @@ def main(
             experiment = dill.load(myfile)
 
         experiment.plot_force_disp(out_dir=vis_export_dir)
-
-
-if __name__ == "__main__":
-
-    arg_parser = argparse.ArgumentParser(
-        description="plot utility for results obtained with istra2true_stress or muDIC2true_stress"
-    )
-    arg_parser.add_argument(
-        "-e",
-        "--experiments",
-        nargs="*",
-        default=None,
-        help="experiment folder name(s) located in ../data_istra_acquisition/",
-    )
-
-    arg_parser.add_argument(
-        "-d",
-        "--dic",
-        default="istra",
-        help="Specify DIC software with which the results were obtained. Options: `istra` (default) or `muDIC`.",
-    )
-
-    arg_parser.add_argument(
-        "-f",
-        "--fail",
-        default=False,
-        help="If `True` the option to graphically determine the failure strain of each curve will be called. If `False` all data points found in `experiment_data` will be plotted to files.",
-    )
-
-    arg_parser.add_argument(
-        "-o",
-        "--offset",
-        default=True,
-        help="If `False` the curve offsets in terms of force and displacement are removed automatically",
-    )
-
-    #   - selection criterion (string) value (or part of value) of experiment.documentation_data[<key>]
-    arg_parser.add_argument(
-        "-s",
-        "--select",
-        metavar="experiment.documentation_data[`key`]: <value>",
-        nargs=2,
-        default=None,
-        help="List [key, value] from experiment.documentation_data.",
-    )
-
-    passed_args = arg_parser.parse_args()
-
-    sys.exit(
-        main(
-            select=passed_args.select,
-            experiment_list=passed_args.experiments,
-            keep_offset=passed_args.offset,
-            set_failure=passed_args.fail,
-            dic_system=passed_args.dic,
-        )
-    )
