@@ -5,13 +5,21 @@ import expAna
 from natsort import natsorted
 
 
-def force(compare, select=None, experiment_list=None, ignore_list=None, x_lim=None):
+def force(
+    compare,
+    select=None,
+    experiment_list=None,
+    ignore_list=None,
+    x_lim=4.0,
+    displ_shift=None,
+):
     expAna.vis.analysis_force.main(
         compare,
         select=select,
         experiment_list=experiment_list,
         ignore_list=ignore_list,
         x_lim=x_lim,
+        displ_shift=displ_shift,
     )
 
 
@@ -108,6 +116,9 @@ class Analysis(object):
         # load the experiments
         for test_dir in experiment_list:
             if self.type == "force":
+                work_dir = os.getcwd()
+                expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
+                vis_export_dir = os.path.join(work_dir, "visualisation")
                 try:
                     with open(
                         os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"),
@@ -146,7 +157,7 @@ class Analysis(object):
                 analysis_project.add_experiment(experiment)
 
         if not bool(analysis_project.experiments.items()):
-            assert False, "Experiment list is empty for filter_key specified."
+            assert False, "Experiment list is empty for options specified."
 
         # compile list of different values for compare key
         compare_values = []
