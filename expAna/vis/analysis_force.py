@@ -10,7 +10,14 @@ import expAna
 from natsort import natsorted
 
 
-def main(compare, select=None, experiment_list=None, ignore_list=None, x_lim=5.0):
+def main(
+    compare,
+    select=None,
+    experiment_list=None,
+    ignore_list=None,
+    x_lim=None,
+    displ_shift=None,
+):
 
     work_dir = os.getcwd()
     expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
@@ -21,7 +28,7 @@ def main(compare, select=None, experiment_list=None, ignore_list=None, x_lim=5.0
 
     analysis = expAna.vis.analysis.Analysis(type="force")
     analysis.setup(
-        exp_data_dir=exp_data_dir,
+        exp_data_dir=instron_data_dir,
         compare=compare,
         select=select,
         experiment_list=experiment_list,
@@ -34,6 +41,16 @@ def main(compare, select=None, experiment_list=None, ignore_list=None, x_lim=5.0
         forces = []
         # create list of arrays with x and y values
         for experiment_name in analysis.dict[compare_value]["experiment_list"]:
+            if displ_shift is not None:
+                analysis.project.experiments[
+                    experiment_name
+                ].data_instron = expAna.vis.plot.shift_columns(
+                    analysis.project.experiments[experiment_name].data_instron,
+                    "displacement_in_mm",
+                    displ_shift,
+                )
+            else:
+                pass
             displacements.append(
                 analysis.project.experiments[experiment_name]
                 .data_instron["displacement_in_mm"]
@@ -208,66 +225,4 @@ def main(compare, select=None, experiment_list=None, ignore_list=None, x_lim=5.0
         analysis.dict,
         out_dir=vis_export_dir,
         out_filename=f"analysis.dict_{export_prefix}.pickle",
-    )
-
-
-# TO DO: write function that writes whole analysis.dict to file for visualisation purposes
-# filename should include information on:
-#       - material
-#       - type of data (stress, vol_strain, force, poissons_ratio)
-#       - filter_key
-
-# TO DO: write import function for this kind of exported data
-
-
-if __name__ == "__main__":
-    arg_parser = argparse.ArgumentParser(
-        description="This utility makes plots of force displacement curves of experiment files in the corresponding directory filtered by a criterion."
-    )
-    arg_parser.add_argument(
-        "-e",
-        "--experiments",
-        nargs="*",
-        default=None,
-        help="Include specified experiments in analysis., e.g. Test1CORN1 TEST9CORN1",
-    )
-
-    arg_parser.add_argument(
-        "-i",
-        "--ignore",
-        nargs="*",
-        default=None,
-        help="Ignore experiments specified in analysis, e.g. Test5CORN1",
-    )
-
-    #   - selection feature (string) experiment.documentation_data[<key>], i.e. experiment.documentation_data["specimen_orientation"]
-    arg_parser.add_argument(
-        "-c",
-        "--compare",
-        metavar="experiment.documentation_data[<key>]",
-        required=True,
-        nargs=1,
-        type=str,
-        help="Dictionary key of dictionary experiment.documentation_data.",
-    )
-
-    #   - selection criterion (string) value (or part of value) of experiment.documentation_data[<key>]
-    arg_parser.add_argument(
-        "-s",
-        "--select",
-        metavar="experiment.documentation_data[`key`]: <value>",
-        nargs=2,
-        default=None,
-        help="List [key, value] from experiment.documentation_data.",
-    )
-
-    passed_args = arg_parser.parse_args()
-    sys.exit(
-        main(
-            compare=passed_args.compare[0],
-            select=passed_args.select,
-            experiment_list=passed_args.experiments,
-            ignore_list=passed_args.ignore,
-            x_lim=passed_args.x_lim,
-        )
     )
