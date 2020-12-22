@@ -81,8 +81,18 @@ class Experiment(object):
         self.traverse_displ = image_reader.evaluation.traverse_displ * 10.0
         # save exported fields from evaluation
         self.coords = image_reader.evaluation.x
+        self.pix_coords = image_reader.evaluation.pix_x
         self.def_grad = image_reader.evaluation.def_grad
         self.mask = image_reader.evaluation.mask
+
+    def get_image(self, frame_no, istra_acquisition_dir):
+        image_reader = istra2py.Reader(
+            path_dir_acquisition=os.path.join(istra_acquisition_dir, self.name),
+            verbose=False,
+        )
+        image_reader.read()
+
+        return image_reader.acquisition.images[frame_no]
 
     def set_documentation_data(self, experiment_data):
 
