@@ -6,4 +6,5 @@ from . import analysis_poissons_ratio
 from . import base_force
 from . import base_stress
 from . import base
+from . import dic_strains
 from . import plot
