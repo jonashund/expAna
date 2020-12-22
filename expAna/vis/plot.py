@@ -87,6 +87,12 @@ def remove_column_offset(dataframe, column_name):
     return dataframe
 
 
+def shift_columns(dataframe, column_name, shift):
+    dataframe[column_name] = dataframe[column_name] - shift
+
+    return dataframe
+
+
 def remove_row_offset(dataframe, column_name, threshold):
     threshold_begin = dataframe[dataframe[column_name] > threshold].index[0]
 
@@ -103,9 +109,11 @@ def remove_fail_rows(dataframe, column_name, threshold):
     return dataframe
 
 
-def remove_offsets(experiment):
+def remove_offsets(experiment, row_threshold=None):
+    if row_threshold == None:
+        row_threshold = 0.015
     experiment.gauge_results = remove_row_offset(
-        experiment.gauge_results, "reaction_force_in_kN", 0.015
+        experiment.gauge_results, "reaction_force_in_kN", row_threshold
     )
 
     experiment.gauge_results = remove_column_offset(
@@ -249,3 +257,8 @@ def add_curves_same_value(fig, axes, x_mean, y_mean, xs=[], ys=[], value=None):
             )
 
     return fig, axes
+
+
+def plot_points(ax, x, y):
+    # x and y can be of vector or matrix shape
+    ax.plot(x, y, "ko ", markersize=0.4)

@@ -67,7 +67,7 @@ def main(
             pass
 
         if not keep_offset:
-            expAna.vis.plot.remove_offsets(experiment)
+            expAna.vis.plot.remove_offsets(experiment, row_threshold=0.015)
         else:
             pass
 
