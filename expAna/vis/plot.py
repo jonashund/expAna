@@ -472,13 +472,6 @@ def create_dic_vis(
     y_coords_flat = coords_to_plot[mask, 1]
     strain_flat = strain_to_plot[mask]
 
-    if False:
-        from scipy.signal import savgol_filter
-
-        strain_flat = savgol_filter(
-            strain_flat, 11, 5
-        )  # window size 51, polynomial order 3
-
     # cut image for overlay
     max_y = max(y_coords_flat)
     min_y = min(y_coords_flat)
@@ -533,44 +526,6 @@ def create_dic_vis(
         plt.triplot(points[:, 0], points[:, 1], triangles_small)
         plt.plot(points[:, 0], points[:, 1], "o")
 
-    if False:
-        from matplotlib.tri import Triangulation, TriAnalyzer, UniformTriRefiner
-
-        subdiv = 1
-        init_mask_frac = 0.0  # Float > 0. adjusting the proportion of
-        # (invalid) initial triangles which will be masked
-        # out. Enter 0 for no mask.
-
-        min_circle_ratio = 0.1  # Minimum circle ratio - border triangles with circle
-        # ratio below this will be masked if they touch a
-        # border. Suggested value 0.01; use -1 to keep
-        # all triangles.
-        # meshing with Delaunay triangulation
-        tri = Triangulation(x_coords_flat, y_coords_flat)
-        ntri = tri.triangles.shape[0]
-
-        # Some invalid data are masked out
-        random_gen = np.random.RandomState(seed=19680801)
-        mask_init = np.zeros(ntri, dtype=bool)
-        masked_tri = random_gen.randint(0, ntri, int(ntri * init_mask_frac))
-        mask_init[masked_tri] = True
-        tri.set_mask(mask_init)
-
-        # -----------------------------------------------------------------------------
-        # Improving the triangulation before high-res plots: removing flat triangles
-        # -----------------------------------------------------------------------------
-        # masking badly shaped triangles at the border of the triangular mesh.
-        mask = TriAnalyzer(tri).get_flat_tri_mask(min_circle_ratio)
-        tri.set_mask(mask)
-
-        # refining the data
-        refiner = UniformTriRefiner(tri)
-        tri_refi, strain_refi = refiner.refine_field(strain_flat, subdiv=subdiv)
-
-        # for the demo: loading the 'flat' triangles for plot
-        flat_tri = Triangulation(x_coords_flat, y_coords_flat)
-        flat_tri.set_mask(~mask)
-
     # determine levels for contourplot
     min_strain = min(strain_flat)
     max_strain = max(strain_flat)
@@ -592,61 +547,18 @@ def create_dic_vis(
     if key_extend is not None:
         extend = key_extend
 
-    if out_format == "eps":
-        # strain_plot = axes.tricontour(
-        #     x_coords_flat,
-        #     y_coords_flat,
-        #     triangles_small,
-        #     strain_flat,
-        #     levels,
-        #     zorder=10,
-        #     cmap="jet",
-        #     extend=extend,
-        #     linewidths=0.5,
-        # )
-
-        # strain_plot = axes.tricontourf(
-        #     tri_refi,
-        #     strain_refi,
-        #     50,
-        #     zorder=10,
-        #     cmap="jet",
-        #     extend=extend,
-        # )
-
-        # plot background in colour of lowest strain value
-        # create array similar in shape as strain_flat
-        # fill array with min(strain_flat) value
-        # background_flat = np.full_like(strain_flat, min(strain_flat))
-        # background_flat[np.argmax(strain_flat)] = max(strain_flat)
-
-        # background_plot = axes.tricontourf(
-        strain_plot = axes.tricontourf(
-            x_coords_flat,
-            y_coords_flat,
-            triangles_small,
-            strain_flat,
-            levels,
-            zorder=9,
-            cmap="jet",
-            extend=extend,
-        )
-        for c in strain_plot.collections:
-            c.set_edgecolor("face")
-
-    else:
-        # ax.tricontourf(X=x_flat, Y=y_flat, triangles=triangles_small, Z=z_flat, levels=10)
-        strain_plot = axes.tricontourf(
-            x_coords_flat,
-            y_coords_flat,
-            triangles_small,
-            strain_flat,
-            100,
-            alpha=0.7,
-            zorder=10,
-            cmap="jet",
-            extend=extend,
-        )
+    strain_plot = axes.tricontourf(
+        x_coords_flat,
+        y_coords_flat,
+        triangles_small,
+        strain_flat,
+        levels,
+        zorder=10,
+        cmap="jet",
+        extend=extend,
+    )
+    for c in strain_plot.collections:
+        c.set_edgecolor("face")
 
     if key is True:
         # add colorbar for strain_plot (vertical, on the right, optionally in range provided, legend title accoding to input)
