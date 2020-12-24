@@ -142,13 +142,40 @@ Clone from [gitlab](https://git.scc.kit.edu/) into a local repository and instal
 -   pass on `set_failure=True` to remove corrupted parts of the stress strain curves via a GUI
 -   experiments to consider can be selected via `experiment_list=["TestN","TestM","TestX"]` or through a selection criterion based on a `documentation_data` dictionary key value pair passed on as a list via `select=[<key>, <value>]`
 
+### DIC visualisation
+
+-   from experiments with _Istra4D_ evaluation files available plots with DIC strain field can be produced with the function   
+
+  `expAna.vis.plot.dic_strains(experiment_name="TestX", displacement=1,strain_component="x")`
+-   mandatory parameters:
+    -   `experiment_name` (string): name of the folder with results omitting "CORN1" at its end
+    -   `displacement` (float): traverse displacement where the results should be visualised in mm
+    -   `strain_component` (string): possible values are "x", "y" an "xy" describing the strain relative to the tensile direction (given in image coordinate system) such that "x" means in tensile direction
+- optional parameters:
+    -   `tensile_direction` (string): "x" or "y"; tensile direction in terms of image coordinate system (x: horizontal, y: vertical); if not specified GUI to enter direction via arrow key opens
+    -   'key' (bool): `True`(default) or `False`; colorbar or no colorbar right to plot of image
+    -   'key_min' (float): minimum value for colorbar, default: `None`
+    -   'key_max' (float): maximum value for colorbar, default: `None`
+    -   `key_extend` (string): "min", "max", "both", "neither", default: `None`
+    -   `max_triang_len` (integer): threshold of triangle length to be included in plot of Delaunay triangulation, default: 10
+    -   `out_format` (string): "eps" (default) or "pgf"
+
+    #### Examples:
+    
+    -   **example # 0:** `expAna.vis.plot.dic_strains(experiment_name="Test3", strain_component="x", tensile_direction="x", displacement=2.2, max_triang_len=25, key_min=0, key_max=0.5, key_extend="neither")`
+    -   **example # 1:** `expAna.vis.plot.dic_strains(experiment_name="Test3", strain_component="x", tensile_direction="x", displacement=1.5, no_key=True)`
+
+    #### Issues:
+    
+    -   `key = False` option only works when at least one previous command with `key = True` was executed
+ 
 ### Results analysis
 
 -   experiments may be selected using a `<key>`,`<value>` pair passed on as a list via `select=[<key>, <value> ]`
 -   a non-optional input parameter for every analysis is `compare=<key>` where another `<key>` from the `documentation_data` dictionary must be passed on that is then used to compare the selected experiments
 -   **remark**: by default at least three experiments matching each criterion are required by the script
 
-    #### Usage:
+    #### Examples:
 
     -   **example # 0:** calculate and visualise the mean behaviour for every `<value>` found for the provided `<key>` and also visualise the mean curves in a comparison plot: `expAna.vis.analysis.stress(compare="<key")` or `expAna.vis.analysis.force(compare="<key")`
     -   **example # 1:** compare the experiments of the project regarding the different values for the key "specimen_orientation": `expAna.vis.analysis.stress(compare="specimen_orientation")`
