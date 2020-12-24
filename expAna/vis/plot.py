@@ -1,7 +1,14 @@
+import os
+import dill
 import platform
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
+import numpy as np
+import scipy.spatial
+
+
+import expAna
 
 
 def plt_style():
@@ -262,3 +269,430 @@ def add_curves_same_value(fig, axes, x_mean, y_mean, xs=[], ys=[], value=None):
 def plot_points(ax, x, y):
     # x and y can be of vector or matrix shape
     ax.plot(x, y, "ko ", markersize=0.4)
+
+
+def dic_strains(
+    experiment_name,
+    displacement,
+    strain_component,
+    tensile_direction=None,
+    key=True,
+    key_min=None,
+    key_max=None,
+    key_extend=None,
+    max_triang_len=10,
+    out_format="eps",
+):
+    work_dir = os.getcwd()
+    vis_export_dir = os.path.join(work_dir, "visualisation")
+
+    if out_format == "eps":
+        set_latex_fonts = {
+            # Use LaTeX to write all text
+            "text.usetex": True,
+            "font.family": "serif",
+            # Use xxpt font in plots, to match xxpt font in document
+            "font.size": 12,
+            "axes.labelsize": 12,
+            # Make the legend/label fonts a little smaller
+            "legend.fontsize": 12,
+            "xtick.labelsize": 10,
+            "ytick.labelsize": 10,
+        }
+        matplotlib.rcParams.update(set_latex_fonts)
+    elif out_format == "pgf":
+        expAna.vis.plot.plt_style()
+    else:
+        pass
+
+    figsize = (4, 3)
+    fig_1, axes_1 = plt.subplots(1, 1, figsize=figsize)
+
+    name = (
+        f"{experiment_name}_dic_strain_{strain_component}_displ_{displacement:.1f}_mm"
+    )
+
+    expAna.vis.plot.create_dic_vis(
+        fig=fig_1,
+        axes=axes_1,
+        experiment_name=experiment_name,
+        displacement=displacement,
+        strain_component=strain_component,
+        tensile_direction=tensile_direction,
+        key=key,
+        key_min=key_min,
+        key_max=key_max,
+        key_extend=key_extend,
+        max_triang_len=max_triang_len,
+        out_format=out_format,
+    )
+
+    axes_1.text(
+        0.02,
+        0.98,
+        r"$u = $ " + f"{displacement:.1f}" + r"~mm",
+        verticalalignment="top",
+        horizontalalignment="left",
+        transform=axes_1.transAxes,
+        color="white",
+        fontsize=12,
+        zorder=11,
+    )
+
+    fig_1.tight_layout()
+
+    plt.savefig(
+        os.path.join(vis_export_dir, name + ".pdf"),
+        format="pdf",
+        bbox_inches="tight",
+        pad_inches=0,
+    )
+    if out_format == "eps":
+        plt.savefig(
+            os.path.join(vis_export_dir, name + ".eps"),
+            format="eps",
+            bbox_inches="tight",
+            pad_inches=0,
+        )
+    elif out_format == "pgf":
+        plt.savefig(
+            os.path.join(vis_export_dir, name + ".pgf"),
+        )
+    else:
+        pass
+    plt.close("all")
+
+
+def create_dic_vis(
+    fig,
+    axes,
+    experiment_name,
+    displacement,
+    strain_component,
+    tensile_direction=None,
+    key=True,
+    key_min=None,
+    key_max=None,
+    key_extend=None,
+    max_triang_len=10,
+    out_format="eps",
+):
+    work_dir = os.getcwd()
+    expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
+    istra_acquisition_dir = os.path.join(work_dir, "data_istra_acquisition")
+    istra_evaluation_dir = os.path.join(work_dir, "data_istra_evaluation")
+
+    try:
+        with open(
+            os.path.join(expDoc_data_dir, experiment_name + "_expDoc.pickle"),
+            "rb",
+        ) as myfile:
+            experiment = dill.load(myfile)
+    except:
+        print(
+            f"""
+        Warning:
+        No documentation data found for {experiment_name}!
+        Document your experiments properly using the expDoc package before analysis.
+        """
+        )
+        assert False
+
+    experiment.read_istra_evaluation(istra_acquisition_dir, istra_evaluation_dir)
+
+    if tensile_direction is None:
+        direction_selector = expAna.gui.TensileDirection(experiment.ref_image)
+        direction_selector.__gui__()
+        experiment.tensile_direction = direction_selector.direction
+    else:
+        experiment.tensile_direction = tensile_direction
+
+    if experiment.tensile_direction == "x":
+        x_idx = 0
+        y_idx = 1
+    else:
+        x_idx = 1
+        y_idx = 0
+
+    # get strains from evaluation
+    # pixel gradients are treated as elements of the deformation gradient
+    # true_strain[nbr_frames, x_pxl_pos, y_pxl_pos, component]
+    # component:{0:"xx", 1:"yy",2:"xy"}
+    true_strain = expAna.gauge.get_true_strain(experiment.def_grad)
+    true_strain[:, :, :, :][experiment.mask[:, :, :, 0] == 0] = np.nan
+
+    (nbr_frames, nbr_x_pxls, nbr_y_pxls, nbr_def_grad_comps) = experiment.def_grad.shape
+    true_strain_sorted = np.zeros(
+        (nbr_frames, nbr_x_pxls, nbr_y_pxls, 3), dtype=np.float64
+    )
+    true_strain_sorted[:, :, :, 0] = true_strain[:, :, :, x_idx]
+    true_strain_sorted[:, :, :, 1] = true_strain[:, :, :, y_idx]
+    true_strain_sorted[:, :, :, 2] = true_strain[:, :, :, 2]
+
+    true_strain = true_strain_sorted
+    traverse_displ = experiment.traverse_displ
+    # remove offset in traverse_displ
+    traverse_displ = experiment.traverse_displ - experiment.traverse_displ[0]
+
+    # search frame numbers for given displacements
+    frame_range = np.where(traverse_displ > displacement)[0]
+    frame_no = frame_range[0]
+
+    if strain_component == "x":
+        strain_idx = 0
+    if strain_component == "y":
+        strain_idx = 1
+    if strain_component == "xy":
+        strain_idx = 2
+
+    # strain in given direction for frame_no
+    strain_to_plot = true_strain[frame_no, :, :, strain_idx]
+
+    # manipulate strain_to_plot: contour smoothing
+
+    # coordinates of grid points [in px] for frame_no
+    # coords_to_plot = experiment.coords[frame_no, ...]
+    coords_to_plot = experiment.pix_coords[frame_no, ...]
+
+    # get image to frame no
+    image_to_plot = experiment.get_image(
+        frame_no=frame_no, istra_acquisition_dir=istra_acquisition_dir
+    )
+
+    # plot using JB's Delauney triangulation (code courtesy of Julian Bauer)
+    ###################################
+    # Create flat data
+
+    # Identify positions of DIC-grip-points where identification failed
+    # i.e. where coordinates are near zero
+    mask = np.linalg.norm(coords_to_plot, axis=-1) > 1e-12
+
+    # Select data loosing grid
+    x_coords_flat = coords_to_plot[mask, 0]
+    y_coords_flat = coords_to_plot[mask, 1]
+    strain_flat = strain_to_plot[mask]
+
+    if False:
+        from scipy.signal import savgol_filter
+
+        strain_flat = savgol_filter(
+            strain_flat, 11, 5
+        )  # window size 51, polynomial order 3
+
+    # cut image for overlay
+    max_y = max(y_coords_flat)
+    min_y = min(y_coords_flat)
+    y_center = (max_y + min_y) / 2.0
+    image_height = 1.25 * (max_y - min_y)
+    if image_height > image_to_plot.shape[0]:
+        image_height = image_to_plot.shape[0]
+    else:
+        pass
+
+    image_width = image_height
+    max_x = max(x_coords_flat)
+    min_x = min(x_coords_flat)
+    x_center = (max_x + min_x) / 2.0
+
+    if max_x - min_x > image_width:
+        image_width = 1.25 * (max_x - min_x)
+    if image_width > image_to_plot.shape[1]:
+        image_width = image_to_plot.shape[1]
+    else:
+        pass
+
+    image_masked = image_to_plot[
+        int(y_center - image_height / 2.0) : int(y_center + image_height / 2.0),
+        int(x_center - image_width / 2.0) : int(x_center + image_width / 2.0),
+    ]
+
+    # coordinate transformation for other values
+    x_coords_flat = x_coords_flat - int(x_center - image_width / 2.0)
+    y_coords_flat = y_coords_flat - int(y_center - image_height / 2.0)
+
+    points = np.concatenate((x_coords_flat[:, None], y_coords_flat[:, None]), axis=1)
+
+    delauney_triangulation = scipy.spatial.Delaunay(points)
+
+    # a 2-simplex is a triangle
+    triangles = delauney_triangulation.simplices
+
+    max_length = max_triang_len  # Todo: get this parameter algorithmically e.g. take mean of 100 random triangle edges
+    pairs_points_in_triangle = [[0, 1], [1, 2], [2, 0]]
+
+    mask_smaller = np.ones(len(triangles), dtype=np.bool)
+    for i, simplex in enumerate(triangles):
+        for pair in pairs_points_in_triangle:
+            diff = points[simplex[pair[0]]] - points[simplex[pair[1]]]
+            if np.linalg.norm(diff) > max_length:
+                mask_smaller[i] = False
+
+    triangles_small = triangles[mask_smaller]
+
+    if not triangles_small.size == 0:
+        plt.triplot(points[:, 0], points[:, 1], triangles_small)
+        plt.plot(points[:, 0], points[:, 1], "o")
+
+    if False:
+        from matplotlib.tri import Triangulation, TriAnalyzer, UniformTriRefiner
+
+        subdiv = 1
+        init_mask_frac = 0.0  # Float > 0. adjusting the proportion of
+        # (invalid) initial triangles which will be masked
+        # out. Enter 0 for no mask.
+
+        min_circle_ratio = 0.1  # Minimum circle ratio - border triangles with circle
+        # ratio below this will be masked if they touch a
+        # border. Suggested value 0.01; use -1 to keep
+        # all triangles.
+        # meshing with Delaunay triangulation
+        tri = Triangulation(x_coords_flat, y_coords_flat)
+        ntri = tri.triangles.shape[0]
+
+        # Some invalid data are masked out
+        random_gen = np.random.RandomState(seed=19680801)
+        mask_init = np.zeros(ntri, dtype=bool)
+        masked_tri = random_gen.randint(0, ntri, int(ntri * init_mask_frac))
+        mask_init[masked_tri] = True
+        tri.set_mask(mask_init)
+
+        # -----------------------------------------------------------------------------
+        # Improving the triangulation before high-res plots: removing flat triangles
+        # -----------------------------------------------------------------------------
+        # masking badly shaped triangles at the border of the triangular mesh.
+        mask = TriAnalyzer(tri).get_flat_tri_mask(min_circle_ratio)
+        tri.set_mask(mask)
+
+        # refining the data
+        refiner = UniformTriRefiner(tri)
+        tri_refi, strain_refi = refiner.refine_field(strain_flat, subdiv=subdiv)
+
+        # for the demo: loading the 'flat' triangles for plot
+        flat_tri = Triangulation(x_coords_flat, y_coords_flat)
+        flat_tri.set_mask(~mask)
+
+    # determine levels for contourplot
+    min_strain = min(strain_flat)
+    max_strain = max(strain_flat)
+    # from given min/max values
+    if key_min is not None and key_max is None:
+        levels = np.linspace(key_min, max_strain, 1000)
+        extend = "min"
+    elif key_min is None and key_max is not None:
+        levels = np.linspace(min_strain, key_max, 1000)
+        extend = "max"
+    elif key_min is not None and key_max is not None:
+        levels = np.linspace(key_min, key_max, 1000)
+        extend = "both"
+    else:
+        # from minimum and maximum strain values
+        levels = np.linspace(min_strain, max_strain, 1000)
+        extend = "neither"
+
+    if key_extend is not None:
+        extend = key_extend
+
+    if out_format == "eps":
+        # strain_plot = axes.tricontour(
+        #     x_coords_flat,
+        #     y_coords_flat,
+        #     triangles_small,
+        #     strain_flat,
+        #     levels,
+        #     zorder=10,
+        #     cmap="jet",
+        #     extend=extend,
+        #     linewidths=0.5,
+        # )
+
+        # strain_plot = axes.tricontourf(
+        #     tri_refi,
+        #     strain_refi,
+        #     50,
+        #     zorder=10,
+        #     cmap="jet",
+        #     extend=extend,
+        # )
+
+        # plot background in colour of lowest strain value
+        # create array similar in shape as strain_flat
+        # fill array with min(strain_flat) value
+        # background_flat = np.full_like(strain_flat, min(strain_flat))
+        # background_flat[np.argmax(strain_flat)] = max(strain_flat)
+
+        # background_plot = axes.tricontourf(
+        strain_plot = axes.tricontourf(
+            x_coords_flat,
+            y_coords_flat,
+            triangles_small,
+            strain_flat,
+            levels,
+            zorder=9,
+            cmap="jet",
+            extend=extend,
+        )
+        for c in strain_plot.collections:
+            c.set_edgecolor("face")
+
+    else:
+        # ax.tricontourf(X=x_flat, Y=y_flat, triangles=triangles_small, Z=z_flat, levels=10)
+        strain_plot = axes.tricontourf(
+            x_coords_flat,
+            y_coords_flat,
+            triangles_small,
+            strain_flat,
+            100,
+            alpha=0.7,
+            zorder=10,
+            cmap="jet",
+            extend=extend,
+        )
+
+    if key is True:
+        # add colorbar for strain_plot (vertical, on the right, optionally in range provided, legend title accoding to input)
+        clrbar = fig.colorbar(
+            strain_plot,
+            orientation="vertical",
+            ax=axes,
+            # fraction=0.05,
+            # pad=0.05,
+            shrink=0.8,
+            format="%0.2f",
+        )
+        # set legend title
+        if strain_component == "x":
+            lgnd_title = r"$\varepsilon_{xx}$ [~-~]"
+        elif strain_component == "y":
+            lgnd_title = r"$\varepsilon_{yy}$ [~-~]"
+        elif strain_component == "xy":
+            lgnd_title = r"$\varepsilon_{xy}$ [~-~]"
+        else:
+            lgnd_title = ""
+
+        # clrbar.ax.set_title(lgnd_title)
+        clrbar.ax.set_ylabel(lgnd_title, labelpad=10)
+    else:
+        pass
+
+    image_plot = axes.imshow(image_masked, alpha=1, zorder=8, cmap="gray")
+    # grid_plot = expAna.vis.plot.plot_points(ax=ax, x=x_coords_flat, y=y_coords_flat)
+
+    # remove tick labels
+    axes.tick_params(
+        axis="x",  # changes apply to the x-axis
+        which="both",  # both major and minor ticks are affected
+        bottom=False,  # ticks along the bottom edge are off
+        top=False,  # ticks along the top edge are off
+        labelbottom=False,
+    )  # labels along the bottom edge are off
+    # add colorbar for strain_plot (vertical, on the right, optionally in range provided, legend title accoding to input)
+
+    axes.tick_params(
+        axis="y",
+        which="both",
+        left=False,
+        right=False,
+        labelleft=False,
+    )
+
+    return fig, axes
