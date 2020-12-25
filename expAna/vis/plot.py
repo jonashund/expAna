@@ -336,18 +336,18 @@ def dic_strains(
         transform=axes_1.transAxes,
         color="white",
         fontsize=12,
-        zorder=11,
+        zorder=12,
     )
 
     fig_1.tight_layout()
-
-    plt.savefig(
-        os.path.join(vis_export_dir, name + ".pdf"),
-        format="pdf",
-        bbox_inches="tight",
-        pad_inches=0,
-    )
-    if out_format == "eps":
+    if out_dir == "pdf":
+        plt.savefig(
+            os.path.join(vis_export_dir, name + ".pdf"),
+            format="pdf",
+            bbox_inches="tight",
+            pad_inches=0,
+        )
+    elif out_format == "eps":
         plt.savefig(
             os.path.join(vis_export_dir, name + ".eps"),
             format="eps",
@@ -359,7 +359,8 @@ def dic_strains(
             os.path.join(vis_export_dir, name + ".pgf"),
         )
     else:
-        pass
+        plt.show()
+
     plt.close("all")
 
 
@@ -553,7 +554,7 @@ def create_dic_vis(
         triangles_small,
         strain_flat,
         levels,
-        zorder=10,
+        zorder=11,
         cmap="jet",
         extend=extend,
     )
@@ -586,7 +587,7 @@ def create_dic_vis(
     else:
         pass
 
-    image_plot = axes.imshow(image_masked, alpha=1, zorder=8, cmap="gray")
+    image_plot = axes.imshow(image_masked, alpha=1, zorder=10, cmap="gray")
     # grid_plot = expAna.vis.plot.plot_points(ax=ax, x=x_coords_flat, y=y_coords_flat)
 
     # remove tick labels
