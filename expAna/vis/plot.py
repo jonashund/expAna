@@ -281,7 +281,7 @@ def dic_strains(
     key_max=None,
     key_extend=None,
     max_triang_len=10,
-    out_format="eps",
+    out_format="pdf",
 ):
     work_dir = os.getcwd()
     vis_export_dir = os.path.join(work_dir, "visualisation")

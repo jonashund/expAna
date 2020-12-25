@@ -158,7 +158,7 @@ Clone from [gitlab](https://git.scc.kit.edu/) into a local repository and instal
     -   'key_max' (float): maximum value for colorbar, default: `None`
     -   `key_extend` (string): "min", "max", "both", "neither", default: `None`
     -   `max_triang_len` (integer): threshold of triangle length to be included in plot of Delaunay triangulation, default: 10
-    -   `out_format` (string): "eps" (default) or "pgf"
+    -   `out_format` (string): "pdf" (default), "eps" or "pgf"
 
     #### Examples:
     
