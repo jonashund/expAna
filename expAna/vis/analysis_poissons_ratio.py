@@ -224,7 +224,7 @@ def main(
     expAna.data_trans.export_analysis(
         analysis.dict,
         out_dir=vis_export_dir,
-        out_filename=f"analysis.dict_{export_prefix}.pickle",
+        out_filename=f"analysis_dict_{export_prefix}.pickle",
     )
 
 
