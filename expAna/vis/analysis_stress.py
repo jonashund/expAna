@@ -10,8 +10,6 @@ from expAna.misc import InputError
 
 from natsort import natsorted
 
-work_dir = os.getcwd()
-
 
 def main(
     compare,
@@ -20,6 +18,7 @@ def main(
     ignore_list=None,
     dic_system="istra",
 ):
+    work_dir = os.getcwd()
     if dic_system == "istra":
         exp_data_dir = os.path.join(work_dir, "data_istra_evaluation")
         vis_export_dir = os.path.join(work_dir, "visualisation", "istra")
@@ -41,7 +40,9 @@ def main(
         experiment_list=experiment_list,
         ignore_list=ignore_list,
     )
-
+    ####################################################################################
+    # COMPUTE AVERAGE CURVES, ETC.
+    ####################################################################################
     # expAna.calculate average curves for every compare_value
     for compare_value in analysis.compare_values:
         true_strains = []
@@ -70,10 +71,13 @@ def main(
                 strain, true_stresses[i], interval
             )
         # compute the mean curve as long as at least three values are available
-        mean_stress, stress_indices = expAna.calc.mean_curve(true_stresses)
+        mean_stress, sem_stress, stress_indices = expAna.calc.get_mean_and_sem(
+            true_stresses
+        )
 
         analysis.dict[compare_value]["mean_strain"] = mean_strain
         analysis.dict[compare_value]["mean_stress"] = mean_stress
+        analysis.dict[compare_value]["sem_stress"] = sem_stress
         analysis.dict[compare_value]["stress_indices"] = stress_indices
         analysis.dict[compare_value]["strains"] = true_strains
         analysis.dict[compare_value]["stresses"] = true_stresses
@@ -85,6 +89,10 @@ def main(
                 ].max()
             }
         )
+
+    ####################################################################################
+    # PREPARE FOR EXPORT
+    ####################################################################################
     # some string replacement for underscores in filenames
     title_key = compare.replace("_", " ")
     material = analysis.project.experiments[
@@ -97,6 +105,9 @@ def main(
     else:
         export_prefix = f"{export_material}_{analysis.type}_{analysis.select_key}_{analysis.select_value}_{compare}"
 
+    ####################################################################################
+    # PLOT
+    ####################################################################################
     # plot individual curves and averaged curves in one plot for each analysis value
     for compare_value in analysis.compare_values:
         # remove spaces in string before export
@@ -164,7 +175,73 @@ def main(
             )
         )
         plt.close()
+    ####################################################################################
+    # plot mean and std curves in one plot for each "compare_value"
+    for compare_value in analysis.compare_values:
+        fig_2, axes_2 = expAna.vis.plot.style_true_stress(
+            x_lim=1.0,
+            y_lim=1.5 * analysis.dict[compare_value]["max_stress"],
+            width=6,
+            height=4,
+        )
 
+        # remove spaces in string before export
+        if type(compare_value) == str:
+            export_value = compare_value.replace(" ", "_")
+        else:
+            export_value = str(compare_value)
+
+        expAna.data_trans.export_one_curve_as_df(
+            x_vals=analysis.dict[compare_value]["mean_strain"][
+                : len(analysis.dict[compare_value]["sem_stress"])
+            ],
+            y_vals=analysis.dict[compare_value]["sem_stress"],
+            out_dir=vis_export_dir,
+            out_filename=f"curve_sem_{export_prefix}_{export_value}.pickle",
+        )
+
+        expAna.vis.plot.add_mean_and_sem(
+            fig=fig_2,
+            axes=axes_2,
+            x_mean=analysis.dict[compare_value]["mean_strain"][
+                : len(analysis.dict[compare_value]["mean_stress"])
+            ],
+            y_mean=analysis.dict[compare_value]["mean_stress"],
+            y_sem=analysis.dict[compare_value]["sem_stress"],
+            value=compare_value,
+        )
+
+        axes_2.legend(loc="upper left")
+
+        fig_2.tight_layout()
+        plt.savefig(
+            os.path.join(
+                vis_export_dir,
+                f"{export_prefix}_{export_value}_with_sem.pgf",
+            )
+        )
+        plt.savefig(
+            os.path.join(
+                vis_export_dir,
+                f"{export_prefix}_{export_value}_with_sem_small.png",
+            )
+        )
+
+        fig_2.set_size_inches(12, 9)
+        fig_2.suptitle(f"{material}, {title_key}: {compare_value}", fontsize=12)
+        fig_2.tight_layout()
+        plt.savefig(
+            os.path.join(
+                vis_export_dir,
+                f"{export_prefix}_{export_value}_with_sem_large.png",
+            )
+        )
+        plt.close()
+
+    ####################################################################################
+    # comparison plot with mean and individual curves
+
+    # get maximum y value for upper y-axis limit
     max_stress = max(
         analysis.dict[compare_value]["max_stress"]
         for compare_value in analysis.compare_values
@@ -216,11 +293,69 @@ def main(
     )
     plt.close()
 
+    ####################################################################################
+    # comparison plot with mean and std curve
+    fig_4, axes_4 = expAna.vis.plot.style_true_stress(
+        x_lim=1.0,
+        y_lim=1.5 * max_stress,
+        width=6,
+        height=4,
+    )
+
+    for compare_value in analysis.compare_values:
+        expAna.vis.plot.add_mean_and_sem(
+            fig=fig_4,
+            axes=axes_4,
+            x_mean=analysis.dict[compare_value]["mean_strain"][
+                : len(analysis.dict[compare_value]["mean_stress"])
+            ],
+            y_mean=analysis.dict[compare_value]["mean_stress"],
+            y_sem=analysis.dict[compare_value]["sem_stress"],
+            value=compare_value,
+        )
+
+    axes_4.legend(loc="upper left")
+
+    fig_4.tight_layout()
+    plt.savefig(
+        os.path.join(
+            vis_export_dir,
+            f"{export_prefix}_comparison_with_sem.pgf",
+        )
+    )
+    plt.savefig(
+        os.path.join(
+            vis_export_dir,
+            f"{export_prefix}_comparison_with_sem_small.png",
+        )
+    )
+    fig_4.set_size_inches(12, 9)
+    fig_4.suptitle(f"{material}, comparison: {title_key}", fontsize=12)
+    fig_4.tight_layout()
+    plt.savefig(
+        os.path.join(
+            vis_export_dir,
+            f"{export_prefix}_comparison_with_sem_large.png",
+        )
+    )
+    plt.close()
+
     expAna.data_trans.export_analysis(
         analysis.dict,
         out_dir=vis_export_dir,
         out_filename=f"analysis_dict_{export_prefix}.pickle",
     )
+
+    ####################################################################################
+    # EXPORT ANALYSIS
+    ####################################################################################
+
+    expAna.data_trans.export_analysis(
+        analysis.dict,
+        out_dir=vis_export_dir,
+        out_filename=f"analysis_dict_{export_prefix}.pickle",
+    )
+    ####################################################################################
 
 
 if __name__ == "__main__":
