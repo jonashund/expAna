@@ -20,7 +20,7 @@ def plt_style():
 
     # Include user defined 'phd.mplstyle' located in
     # print(matplotlib.get_configdir())
-    #   * MacBook Air: ./Users/jonas/.matplolib/stylelib
+    #   * MacBook Air: ./Users/jonas/.matplotlib/stylelib
     #   * ifmpc84: /home/jonas/.config/matplotlib/stylelib
     # The style file can also be located in any directory.
     # For invoking it the path has to be specified then.
@@ -223,17 +223,16 @@ def style_force_displ(width=None, height=None, x_lim=None, y_lim=None):
 def create_styled_figure(width=4, height=3):
     plt_style()
 
-    fig_1, axes_1 = plt.subplots(figsize=[width, height])
-    # axes styling
-    axes_1.xaxis.set_minor_locator(mtick.AutoMinorLocator(2))
-    # axes_1.xaxis.set_major_formatter(mtick.PercentFormatter(1.0))
-    axes_1.yaxis.set_minor_locator(mtick.AutoMinorLocator(2))
-    axes_1.grid(color="lightgrey", linewidth=0.33, linestyle="-")
+    fig, axes = plt.subplots(figsize=[width, height])
+    axes.xaxis.set_minor_locator(mtick.AutoMinorLocator(2))
+    # axes.xaxis.set_major_formatter(mtick.PercentFormatter(1.0))
+    axes.yaxis.set_minor_locator(mtick.AutoMinorLocator(2))
+    axes.grid(color="lightgrey", linewidth=0.33, linestyle="-")
 
-    axes_1.tick_params(direction="out", pad=5)
-    axes_1.tick_params(bottom=True, left=True, top=False, right=False)
+    axes.tick_params(direction="out", pad=5)
+    axes.tick_params(bottom=True, left=True, top=False, right=False)
 
-    return fig_1, axes_1
+    return fig, axes
 
 
 def add_curves_same_value(fig, axes, x_mean, y_mean, xs=[], ys=[], value=None):
@@ -262,6 +261,24 @@ def add_curves_same_value(fig, axes, x_mean, y_mean, xs=[], ys=[], value=None):
             axes.plot(
                 xs[i], ys[i], linewidth=0.5, zorder=1, alpha=0.33, color=current_color
             )
+
+    return fig, axes
+
+
+def add_mean_and_sem(fig, axes, x_mean, y_mean, y_sem, value=None):
+
+    current_color = next(axes._get_lines.prop_cycler)["color"]
+    axes.plot(
+        x_mean,
+        y_mean,
+        label=f"average {value}",
+        linewidth=2,
+        zorder=10,
+        color=current_color,
+    )
+    axes.fill_between(
+        x_mean, y_mean - y_sem, y_mean + y_sem, alpha=0.2, facecolor=current_color
+    )
 
     return fig, axes
 
@@ -364,6 +381,54 @@ def dic_strains(
     plt.close("all")
 
 
+def hex_to_rgb(value):
+    """
+    Converts hex to rgb colours
+    value: string of 6 characters representing a hex colour.
+    Returns: list length 3 of RGB values"""
+    value = value.strip("#")  # removes hash symbol if present
+    lv = len(value)
+    return tuple(int(value[i : i + lv // 3], 16) for i in range(0, lv, lv // 3))
+
+
+def rgb_to_dec(value):
+    """
+    Converts rgb to decimal colours (i.e. divides each value by 256)
+    value: list (length 3) of RGB values
+    Returns: list (length 3) of decimal values"""
+    return [v / 256 for v in value]
+
+
+def get_continuous_cmap(hex_list, float_list=None):
+    """creates and returns a color map that can be used in heat map figures.
+    If float_list is not provided, colour map graduates linearly between each color in hex_list.
+    If float_list is provided, each color in hex_list is mapped to the respective location in float_list.
+
+    Parameters
+    ----------
+    hex_list: list of hex code strings
+    float_list: list of floats between 0 and 1, same length as hex_list. Must start with 0 and end with 1.
+
+    Returns
+    ----------
+    colour map"""
+    rgb_list = [rgb_to_dec(hex_to_rgb(i)) for i in hex_list]
+    if float_list:
+        pass
+    else:
+        float_list = list(np.linspace(0, 1, len(rgb_list)))
+
+    cdict = dict()
+    for num, col in enumerate(["red", "green", "blue"]):
+        col_list = [
+            [float_list[i], rgb_list[i][num], rgb_list[i][num]]
+            for i in range(len(float_list))
+        ]
+        cdict[col] = col_list
+    cmp = matplotlib.colors.LinearSegmentedColormap("my_cmp", segmentdata=cdict, N=256)
+    return cmp
+
+
 def create_dic_vis(
     fig,
     axes,
@@ -377,6 +442,7 @@ def create_dic_vis(
     key_extend=None,
     max_triang_len=10,
     out_format="eps",
+    cmap=None,
 ):
     work_dir = os.getcwd()
     expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
@@ -548,6 +614,11 @@ def create_dic_vis(
     if key_extend is not None:
         extend = key_extend
 
+    if cmap is not None:
+        cmap = cmap
+    else:
+        cmap = "jet"
+
     strain_plot = axes.tricontourf(
         x_coords_flat,
         y_coords_flat,
@@ -555,7 +626,7 @@ def create_dic_vis(
         strain_flat,
         levels,
         zorder=11,
-        cmap="jet",
+        cmap=cmap,
         extend=extend,
     )
     for c in strain_plot.collections:
