@@ -220,7 +220,7 @@ def style_force_displ(width=None, height=None, x_lim=None, y_lim=None):
     return fig_1, axes_1
 
 
-def create_styled_figure(width=4, height=3):
+def create_styled_figure(width=5, height=3.75):
     plt_style()
 
     fig, axes = plt.subplots(figsize=[width, height])
@@ -241,7 +241,7 @@ def add_curves_same_value(fig, axes, x_mean, y_mean, xs=[], ys=[], value=None):
     axes.plot(
         x_mean,
         y_mean,
-        label=f"average {value}",
+        label=f"{value} (mean)",
         linewidth=2,
         zorder=10,
         color=current_color,
@@ -251,33 +251,42 @@ def add_curves_same_value(fig, axes, x_mean, y_mean, xs=[], ys=[], value=None):
             axes.plot(
                 xs[i],
                 ys[i],
-                linewidth=0.33,
+                linewidth=0.75,
+                linestyle="--",
+                dashes=(7, 7),
                 zorder=1,
-                alpha=0.33,
                 color=current_color,
-                label=f"experiments {value}",
+                label=f"{value} (raw data)",
+                # alpha=0.33,
             )
         else:
             axes.plot(
-                xs[i], ys[i], linewidth=0.5, zorder=1, alpha=0.33, color=current_color
+                xs[i],
+                ys[i],
+                linewidth=0.75,
+                linestyle="--",
+                dashes=(7, 7),
+                zorder=1,
+                color=current_color,
+                # alpha=0.33,
             )
 
     return fig, axes
 
 
-def add_mean_and_sem(fig, axes, x_mean, y_mean, y_sem, value=None):
+def add_mean_and_sem(fig, axes, x_mean, y_mean, y_error, value=None):
 
     current_color = next(axes._get_lines.prop_cycler)["color"]
     axes.plot(
         x_mean,
         y_mean,
-        label=f"average {value}",
+        label=f"{value} (mean)",
         linewidth=2,
         zorder=10,
         color=current_color,
     )
     axes.fill_between(
-        x_mean, y_mean - y_sem, y_mean + y_sem, alpha=0.2, facecolor=current_color
+        x_mean, y_mean - y_error, y_mean + y_error, alpha=0.2, facecolor=current_color
     )
 
     return fig, axes
