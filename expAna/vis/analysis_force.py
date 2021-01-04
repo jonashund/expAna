@@ -1,13 +1,8 @@
 import os
-import sys
-import argparse
-import dill
 import numpy as np
 import matplotlib.pyplot as plt
 
 import expAna
-
-from natsort import natsorted
 
 
 def main(
@@ -20,7 +15,6 @@ def main(
 ):
 
     work_dir = os.getcwd()
-    expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
     instron_data_dir = os.path.join(work_dir, "data_instron")
     vis_export_dir = os.path.join(work_dir, "visualisation")
 
@@ -37,79 +31,14 @@ def main(
     ####################################################################################
     # COMPUTE AVERAGE CURVES, ETC.
     ####################################################################################
-    # expAna.calculate average curves for every compare_value
-    for compare_value in analysis.compare_values:
-        displacements = []
-        forces = []
-        # create list of arrays with x and y values
-        for experiment_name in analysis.dict[compare_value]["experiment_list"]:
-            if displ_shift is not None:
-                analysis.project.experiments[
-                    experiment_name
-                ].data_instron = expAna.vis.plot.shift_columns(
-                    analysis.project.experiments[experiment_name].data_instron,
-                    "displacement_in_mm",
-                    displ_shift,
-                )
-            else:
-                pass
-            displacements.append(
-                analysis.project.experiments[experiment_name]
-                .data_instron["displacement_in_mm"]
-                .to_numpy()
-            )
-            forces.append(
-                analysis.project.experiments[experiment_name]
-                .data_instron["force_in_kN"]
-                .to_numpy()
-            )
 
-        # TO DO:
-        # for each experiment
-        # get index of last positive value in "force_in_kN"
-        # cut "displacement_in_mm" and "force_in_kN" at this index
-        # WHY:
-        # do not plot curves after specimen failure
+    analysis.compute_data_force(displ_shift)
 
-        # interpolate every force displacement curve to an x-axis with equally spaced points
-        # set spacing dependent on maximum x-value found in all x arrays
-
-        max_x = max([max(displacements[i]) for i in range(len(displacements))])
-        interval = max_x / 500
-        mean_displ = np.arange(start=0.0, stop=max_x, step=interval)
-        for i, strain in enumerate(displacements):
-            displacements[i], forces[i] = expAna.calc.interpolate_curve(
-                strain, forces[i], interval
-            )
-
-        # compute the mean curve as long as at least three values are available
-        mean_force, sem_force, force_indices = expAna.calc.get_mean_and_sem(forces)
-
-        analysis.dict[compare_value]["mean_displ"] = mean_displ
-        analysis.dict[compare_value]["mean_force"] = mean_force
-        analysis.dict[compare_value]["sem_force"] = sem_force
-        analysis.dict[compare_value]["force_indices"] = force_indices
-        analysis.dict[compare_value]["displacements"] = displacements
-        analysis.dict[compare_value]["forces"] = forces
-
-        analysis.dict[compare_value].update(
-            {"max_force": np.array(forces, dtype=object)[force_indices][-1].max()}
-        )
-
-    ####################################################################################
-    # PREPARE FOR EXPORT
-    ####################################################################################
-    # some string replacement for underscores in filenames
-    title_key = compare.replace("_", " ")
-    material = analysis.project.experiments[
-        list(analysis.project.experiments.keys())[0]
-    ].documentation_data["material"]
-    export_material = material.replace(" ", "_")
-
-    if select is None:
-        export_prefix = f"{export_material}_{analysis.type}_{compare}"
-    else:
-        export_prefix = f"{export_material}_{analysis.type}_{analysis.select_key}_{analysis.select_value}_{compare}"
+    expAna.data_trans.export_analysis(
+        analysis.dict,
+        out_dir=vis_export_dir,
+        out_filename=f"analysis_dict_{analysis.export_prefix}.pickle",
+    )
 
     ####################################################################################
     # PLOT
@@ -129,7 +58,7 @@ def main(
             ],
             y_vals=analysis.dict[compare_value]["mean_force"],
             out_dir=vis_export_dir,
-            out_filename=f"curve_avg_{export_prefix}_{export_value}.pickle",
+            out_filename=f"curve_avg_{analysis.export_prefix}_{export_value}.pickle",
         )
 
         fig_1, axes_1 = expAna.vis.plot.style_force_displ(
@@ -154,35 +83,38 @@ def main(
             ],
             value=compare_value,
         )
+
         axes_1.legend(loc="upper left")
 
         fig_1.tight_layout()
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_prefix}_{export_value}.pgf",
+                f"{analysis.export_prefix}_{export_value}.pgf",
             )
         )
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_prefix}_{export_value}_small.png",
+                f"{analysis.export_prefix}_{export_value}_small.png",
             )
         )
 
         fig_1.set_size_inches(12, 9)
-        fig_1.suptitle(f"{material}, {title_key}: {compare_value}", fontsize=12)
+        fig_1.suptitle(
+            f"{analysis.material}, {analysis.title_key}: {compare_value}", fontsize=12
+        )
         fig_1.tight_layout()
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_prefix}_{export_value}_large.png",
+                f"{analysis.export_prefix}_{export_value}_large.png",
             )
         )
         plt.close()
 
     ####################################################################################
-    # plot mean and std curves in one plot for each "compare_value"
+    # plot mean and CI curves in one plot for each "compare_value"
     for compare_value in analysis.compare_values:
         # remove spaces in string before export
         if type(compare_value) == str:
@@ -196,7 +128,7 @@ def main(
             ],
             y_vals=analysis.dict[compare_value]["sem_force"],
             out_dir=vis_export_dir,
-            out_filename=f"curve_sem_{export_prefix}_{export_value}.pickle",
+            out_filename=f"curve_sem_{analysis.export_prefix}_{export_value}.pickle",
         )
 
         fig_2, axes_2 = expAna.vis.plot.style_force_displ(
@@ -213,32 +145,35 @@ def main(
                 : len(analysis.dict[compare_value]["mean_force"])
             ],
             y_mean=analysis.dict[compare_value]["mean_force"],
-            y_sem=analysis.dict[compare_value]["sem_force"],
+            y_error=1.96 * analysis.dict[compare_value]["sem_force"],
             value=compare_value,
         )
+
         axes_2.legend(loc="upper left")
 
         fig_2.tight_layout()
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_prefix}_{export_value}_with_sem.pgf",
+                f"{analysis.export_prefix}_{export_value}_with_error.pgf",
             )
         )
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_prefix}_{export_value}_with_sem_small.png",
+                f"{analysis.export_prefix}_{export_value}_with_error_small.png",
             )
         )
 
         fig_2.set_size_inches(12, 9)
-        fig_2.suptitle(f"{material}, {title_key}: {compare_value}", fontsize=12)
+        fig_2.suptitle(
+            f"{analysis.material}, {analysis.title_key}: {compare_value}", fontsize=12
+        )
         fig_2.tight_layout()
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_prefix}_{export_value}_with_sem_large.png",
+                f"{analysis.export_prefix}_{export_value}_with_error_large.png",
             )
         )
         plt.close()
@@ -278,20 +213,24 @@ def main(
     axes_3.legend(loc="upper left")
 
     fig_3.tight_layout()
-    plt.savefig(os.path.join(vis_export_dir, f"{export_prefix}_comparison.pgf"))
+    plt.savefig(
+        os.path.join(vis_export_dir, f"{analysis.export_prefix}_comparison.pgf")
+    )
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_prefix}_comparison_small.png",
+            f"{analysis.export_prefix}_comparison_small.png",
         )
     )
     fig_3.set_size_inches(12, 9)
-    fig_3.suptitle(f"{material}, comparison: {title_key}", fontsize=12)
+    fig_3.suptitle(
+        f"{analysis.material}, comparison: {analysis.title_key}", fontsize=12
+    )
     fig_3.tight_layout()
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_prefix}_comparison_large.png",
+            f"{analysis.export_prefix}_comparison_large.png",
         )
     )
     plt.close()
@@ -299,7 +238,7 @@ def main(
     expAna.data_trans.export_analysis(
         analysis.dict,
         out_dir=vis_export_dir,
-        out_filename=f"analysis_dict_{export_prefix}.pickle",
+        out_filename=f"analysis_dict_{analysis.export_prefix}.pickle",
     )
 
     ####################################################################################
@@ -320,7 +259,7 @@ def main(
                 : len(analysis.dict[compare_value]["mean_force"])
             ],
             y_mean=analysis.dict[compare_value]["mean_force"],
-            y_sem=analysis.dict[compare_value]["sem_force"],
+            y_error=1.96 * analysis.dict[compare_value]["sem_force"],
             value=compare_value,
         )
 
@@ -330,28 +269,24 @@ def main(
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_prefix}_comparison_with_sem.pgf",
+            f"{analysis.export_prefix}_comparison_with_error.pgf",
         )
     )
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_prefix}_comparison_with_sem_small.png",
+            f"{analysis.export_prefix}_comparison_with_error_small.png",
         )
     )
     fig_4.set_size_inches(12, 9)
-    fig_4.suptitle(f"{material}, comparison: {title_key}", fontsize=12)
+    fig_4.suptitle(
+        f"{analysis.material}, comparison: {analysis.title_key}", fontsize=12
+    )
     fig_4.tight_layout()
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_prefix}_comparison_with_sem_large.png",
+            f"{analysis.export_prefix}_comparison_with_error_large.png",
         )
     )
     plt.close()
-
-    expAna.data_trans.export_analysis(
-        analysis.dict,
-        out_dir=vis_export_dir,
-        out_filename=f"analysis_dict_{export_prefix}.pickle",
-    )

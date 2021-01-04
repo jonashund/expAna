@@ -1,14 +1,9 @@
 import os
-import sys
-import argparse
-import dill
 import numpy as np
 import matplotlib.pyplot as plt
 
 import expAna
 from expAna.misc import InputError
-
-from natsort import natsorted
 
 
 def main(
@@ -44,69 +39,18 @@ def main(
     ####################################################################################
     # COMPUTE AVERAGE CURVES, ETC.
     ####################################################################################
-    # calculate average curves for every "compare_value"
-    for compare_value in analysis.compare_values:
-        true_strains = []
-        vol_strains = []
-        # create list of arrays with x and y values
-        for experiment_name in analysis.dict[compare_value]["experiment_list"]:
-            true_strains.append(
-                analysis.project.experiments[experiment_name]
-                .gauge_results["true_strain_image_x"]
-                .to_numpy()
-            )
-            vol_strains.append(
-                analysis.project.experiments[experiment_name]
-                .gauge_results["volume_strain"]
-                .to_numpy()
-            )
 
-        # interpolate every curve to an x-axis with equally spaced points
-        # set spacing dependent on maximum x-value found in all x arrays
-
-        max_x = max([max(true_strains[i]) for i in range(len(true_strains))])
-        interval = max_x / 500
-        mean_strain = np.arange(start=0.0, stop=max_x, step=interval)
-        for i, strain in enumerate(true_strains):
-            true_strains[i], vol_strains[i] = expAna.calc.interpolate_curve(
-                strain, vol_strains[i], interval
-            )
-        # compute the mean curve as long as at least three values are available
-        (
-            mean_vol_strain,
-            sem_vol_strain,
-            vol_strain_indices,
-        ) = expAna.calc.get_mean_and_sem(vol_strains)
-
-        analysis.dict[compare_value]["mean_strain"] = mean_strain
-        analysis.dict[compare_value]["mean_vol_strain"] = mean_vol_strain
-        analysis.dict[compare_value]["sem_vol_strain"] = sem_vol_strain
-        analysis.dict[compare_value]["vol_strain_indices"] = vol_strain_indices
-        analysis.dict[compare_value]["strains"] = true_strains
-        analysis.dict[compare_value]["vol_strains"] = vol_strains
-
-        analysis.dict[compare_value].update(
-            {
-                "max_vol_strain": np.array(vol_strains, dtype=object)[
-                    vol_strain_indices
-                ][-1].max()
-            }
-        )
+    analysis.compute_data_vol_strain()
 
     ####################################################################################
-    # PREPARE FOR EXPORT
+    # EXPORT ANALYSIS
     ####################################################################################
-    # some string replacement for underscores in filenames
-    title_key = compare.replace("_", " ")
-    material = analysis.project.experiments[
-        list(analysis.project.experiments.keys())[0]
-    ].documentation_data["material"]
-    export_material = material.replace(" ", "_")
 
-    if select is None:
-        export_prefix = f"{export_material}_{analysis.type}_{compare}"
-    else:
-        export_prefix = f"{export_material}_{analysis.type}_{analysis.select_key}_{analysis.select_value}_{compare}"
+    expAna.data_trans.export_analysis(
+        analysis.dict,
+        out_dir=vis_export_dir,
+        out_filename=f"analysis_dict_{analysis.analysis.export_prefix}.pickle",
+    )
 
     ####################################################################################
     # PLOT
@@ -133,7 +77,7 @@ def main(
             ],
             y_vals=analysis.dict[compare_value]["mean_vol_strain"],
             out_dir=vis_export_dir,
-            out_filename=f"curve_avg_{export_prefix}_{export_value}.pickle",
+            out_filename=f"curve_avg_{analysis.export_prefix}_{export_value}.pickle",
         )
 
         expAna.vis.plot.add_curves_same_value(
@@ -158,23 +102,25 @@ def main(
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_prefix}_{export_value}.pgf",
+                f"{analysis.export_prefix}_{export_value}.pgf",
             )
         )
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_prefix}_{export_value}_small.png",
+                f"{analysis.export_prefix}_{export_value}_small.png",
             )
         )
 
         fig_2.set_size_inches(12, 9)
-        fig_2.suptitle(f"{material}, {title_key}: {compare_value}", fontsize=12)
+        fig_2.suptitle(
+            f"{analysis.material}, {analysis.title_key}: {compare_value}", fontsize=12
+        )
         fig_2.tight_layout()
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_prefix}_{export_value}_large.png",
+                f"{analysis.export_prefix}_{export_value}_large.png",
             )
         )
         plt.close()
@@ -202,7 +148,7 @@ def main(
             ],
             y_vals=analysis.dict[compare_value]["sem_vol_strain"],
             out_dir=vis_export_dir,
-            out_filename=f"curve_sem_{export_prefix}_{export_value}.pickle",
+            out_filename=f"curve_sem_{analysis.export_prefix}_{export_value}.pickle",
         )
 
         expAna.vis.plot.add_mean_and_sem(
@@ -212,7 +158,7 @@ def main(
                 : len(analysis.dict[compare_value]["mean_vol_strain"])
             ],
             y_mean=analysis.dict[compare_value]["mean_vol_strain"],
-            y_sem=analysis.dict[compare_value]["sem_vol_strain"],
+            y_error=1.96 * analysis.dict[compare_value]["sem_vol_strain"],
             value=compare_value,
         )
 
@@ -222,23 +168,25 @@ def main(
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_prefix}_{export_value}_with_sem.pgf",
+                f"{analysis.export_prefix}_{export_value}_with_error.pgf",
             )
         )
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_prefix}_{export_value}_with_sem_small.png",
+                f"{analysis.export_prefix}_{export_value}_with_error_small.png",
             )
         )
 
         fig_3.set_size_inches(12, 9)
-        fig_3.suptitle(f"{material}, {title_key}: {compare_value}", fontsize=12)
+        fig_3.suptitle(
+            f"{analysis.material}, {analysis.title_key}: {compare_value}", fontsize=12
+        )
         fig_3.tight_layout()
         plt.savefig(
             os.path.join(
                 vis_export_dir,
-                f"{export_prefix}_{export_value}_with_sem_large.png",
+                f"{analysis.export_prefix}_{export_value}_with_error_large.png",
             )
         )
         plt.close()
@@ -282,22 +230,24 @@ def main(
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_prefix}_comparison.pgf",
+            f"{analysis.export_prefix}_comparison.pgf",
         )
     )
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_prefix}_comparison_small.png",
+            f"{analysis.export_prefix}_comparison_small.png",
         )
     )
     fig_4.set_size_inches(12, 9)
-    fig_4.suptitle(f"{material}, comparison: {title_key}", fontsize=12)
+    fig_4.suptitle(
+        f"{analysis.material}, comparison: {analysis.title_key}", fontsize=12
+    )
     fig_4.tight_layout()
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_prefix}_comparison_large.png",
+            f"{analysis.export_prefix}_comparison_large.png",
         )
     )
     plt.close()
@@ -319,7 +269,7 @@ def main(
                 : len(analysis.dict[compare_value]["mean_vol_strain"])
             ],
             y_mean=analysis.dict[compare_value]["mean_vol_strain"],
-            y_sem=analysis.dict[compare_value]["sem_vol_strain"],
+            y_error=1.96 * analysis.dict[compare_value]["sem_vol_strain"],
             value=compare_value,
         )
 
@@ -329,33 +279,24 @@ def main(
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_prefix}_comparison_with_sem.pgf",
+            f"{analysis.export_prefix}_comparison_with_error.pgf",
         )
     )
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_prefix}_comparison_with_sem_small.png",
+            f"{analysis.export_prefix}_comparison_with_error_small.png",
         )
     )
     fig_5.set_size_inches(12, 9)
-    fig_5.suptitle(f"{material}, comparison: {title_key}", fontsize=12)
+    fig_5.suptitle(
+        f"{analysis.material}, comparison: {analysis.title_key}", fontsize=12
+    )
     fig_5.tight_layout()
     plt.savefig(
         os.path.join(
             vis_export_dir,
-            f"{export_prefix}_comparison_with_sem_large.png",
+            f"{analysis.export_prefix}_comparison_with_error_large.png",
         )
     )
     plt.close()
-
-    ####################################################################################
-    # EXPORT ANALYSIS
-    ####################################################################################
-
-    expAna.data_trans.export_analysis(
-        analysis.dict,
-        out_dir=vis_export_dir,
-        out_filename=f"analysis_dict_{export_prefix}.pickle",
-    )
-    ####################################################################################
