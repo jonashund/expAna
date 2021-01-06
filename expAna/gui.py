@@ -185,7 +185,7 @@ class FailureLocator(object):
                     )
                 plt.close()
 
-        experiment.gauge_results = expAna.vis.plot.remove_fail_rows(
+        experiment.gauge_results = expAna.plot.remove_fail_rows(
             experiment.gauge_results, "reaction_force_in_kN", 0.0
         )
 

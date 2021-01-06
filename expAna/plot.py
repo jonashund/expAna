@@ -327,7 +327,7 @@ def dic_strains(
         }
         matplotlib.rcParams.update(set_latex_fonts)
     elif out_format == "pgf":
-        expAna.vis.plot.plt_style()
+        expAna.plot.plt_style()
     else:
         pass
 
@@ -338,7 +338,7 @@ def dic_strains(
         f"{experiment_name}_dic_strain_{strain_component}_displ_{displacement:.1f}_mm"
     )
 
-    expAna.vis.plot.create_dic_vis(
+    expAna.plot.create_dic_vis(
         fig=fig_1,
         axes=axes_1,
         experiment_name=experiment_name,
@@ -668,7 +668,7 @@ def create_dic_vis(
         pass
 
     image_plot = axes.imshow(image_masked, alpha=1, zorder=10, cmap="gray")
-    # grid_plot = expAna.vis.plot.plot_points(ax=ax, x=x_coords_flat, y=y_coords_flat)
+    # grid_plot = expAna.plot.plot_points(ax=ax, x=x_coords_flat, y=y_coords_flat)
 
     # remove tick labels
     axes.tick_params(

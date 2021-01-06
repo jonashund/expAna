@@ -146,7 +146,7 @@ Clone from [gitlab](https://git.scc.kit.edu/) into a local repository and instal
 
 -   from experiments with _Istra4D_ evaluation files available plots with DIC strain field can be produced with the function   
 
-  `expAna.vis.plot.dic_strains(experiment_name="TestX", displacement=1,strain_component="x")`
+  `expAna.plot.dic_strains(experiment_name="TestX", displacement=1,strain_component="x")`
 -   mandatory parameters:
     -   `experiment_name` (string): name of the folder with results omitting "CORN1" at its end
     -   `displacement` (float): traverse displacement where the results should be visualised in mm
@@ -162,8 +162,8 @@ Clone from [gitlab](https://git.scc.kit.edu/) into a local repository and instal
 
     #### Examples:
     
-    -   **example # 0:** `expAna.vis.plot.dic_strains(experiment_name="Test3", strain_component="x", tensile_direction="x", displacement=2.2, max_triang_len=25, key_min=0, key_max=0.5, key_extend="neither")`
-    -   **example # 1:** `expAna.vis.plot.dic_strains(experiment_name="Test3", strain_component="x", tensile_direction="x", displacement=1.5, no_key=True)`
+    -   **example # 0:** `expAna.plot.dic_strains(experiment_name="Test3", strain_component="x", tensile_direction="x", displacement=2.2, max_triang_len=25, key_min=0, key_max=0.5, key_extend="neither")`
+    -   **example # 1:** `expAna.plot.dic_strains(experiment_name="Test3", strain_component="x", tensile_direction="x", displacement=1.5, no_key=True)`
 
     #### Issues:
     
@@ -177,8 +177,8 @@ Clone from [gitlab](https://git.scc.kit.edu/) into a local repository and instal
 
     #### Examples:
 
-    -   **example # 0:** calculate and visualise the mean behaviour for every `<value>` found for the provided `<key>` and also visualise the mean curves in a comparison plot: `expAna.vis.analysis.stress(compare="<key")` or `expAna.vis.analysis.force(compare="<key")`
-    -   **example # 1:** compare the experiments of the project regarding the different values for the key "specimen_orientation": `expAna.vis.analysis.stress(compare="specimen_orientation")`
+    -   **example # 0:** calculate and visualise the mean behaviour for every `<value>` found for the provided `<key>` and also visualise the mean curves in a comparison plot: `expAna.analysis.stress(compare="<key")` or `expAna.analysis.force(compare="<key")`
+    -   **example # 1:** compare the experiments of the project regarding the different values for the key "specimen_orientation": `expAna.analysis.stress(compare="specimen_orientation")`
     -   **example # 2:** select all experiments that were carried out at a "crosshead_speed" of 0.1 and compare them regarding "specimen_orientation"
 
 ## TO DO:

@@ -1,3 +1,4 @@
+from . import analysis
 from . import acquis2tif
 from . import calc
 from . import data_trans
@@ -7,4 +8,5 @@ from . import gauge
 from . import gui
 from . import misc
 from . import muDIC2stress
-from . import vis
+from . import plot
+from . import review

@@ -126,7 +126,7 @@ class Experiment(object):
         x_data = self.gauge_results["true_strain_image_x"]
         y_data = self.gauge_results["true_stress_in_MPa"]
 
-        fig_1, axes_1 = expAna.vis.plot.style_true_stress(
+        fig_1, axes_1 = expAna.plot.style_true_stress(
             x_lim=1.0, y_lim=1.1 * y_data.max()
         )
 
@@ -168,7 +168,7 @@ class Experiment(object):
         x_data = self.gauge_results["true_strain_image_x"]
         y_data = self.gauge_results["volume_strain"]
 
-        fig_1, axes_1 = expAna.vis.plot.style_vol_strain(
+        fig_1, axes_1 = expAna.plot.style_vol_strain(
             x_lim=1.0, y_lim=1.1 * y_data.max()
         )
 
@@ -210,7 +210,7 @@ class Experiment(object):
         x_data = self.data_instron["displacement_in_mm"]
         y_data = self.data_instron["force_in_kN"]
 
-        fig_1, axes_1 = expAna.vis.plot.style_force_displ(
+        fig_1, axes_1 = expAna.plot.style_force_displ(
             x_lim=math.ceil(x_data.max()), y_lim=1.1 * y_data.max()
         )
 
