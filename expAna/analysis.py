@@ -406,6 +406,8 @@ class Analysis(object):
             # compute the mean curve as long as at least three values are available
             y_mean, y_sem, y_indices = expAna.calc.get_mean_and_sem(forces)
 
+            x_mean = x_mean[: len(y_mean)]
+
             self.dict[compare_value]["x_mean"] = x_mean
             self.dict[compare_value]["y_mean"] = y_mean
             self.dict[compare_value]["y_sem"] = y_sem
@@ -448,6 +450,8 @@ class Analysis(object):
                 )
             # compute the mean curve as long as at least three values are available
             y_mean, y_sem, y_indices = expAna.calc.get_mean_and_sem(true_stresses)
+
+            x_mean = x_mean[: len(y_mean)]
 
             self.dict[compare_value]["x_mean"] = x_mean
             self.dict[compare_value]["y_mean"] = y_mean
@@ -495,6 +499,8 @@ class Analysis(object):
                 y_sem,
                 y_indices,
             ) = expAna.calc.get_mean_and_sem(vol_strains)
+
+            x_mean = x_mean[: len(y_mean)]
 
             self.dict[compare_value]["x_mean"] = x_mean
             self.dict[compare_value]["y_mean"] = y_mean
@@ -544,6 +550,8 @@ class Analysis(object):
                 y_indices,
             ) = expAna.calc.get_mean_and_sem(poissons_ratios)
 
+            x_mean = x_mean[: len(y_mean)]
+
             self.dict[compare_value]["x_mean"] = x_mean
             self.dict[compare_value]["y_mean"] = y_mean
             self.dict[compare_value]["y_sem"] = y_sem
@@ -571,9 +579,7 @@ class Analysis(object):
                 export_value = str(compare_value)
 
             expAna.data_trans.export_one_curve_as_df(
-                x_vals=self.dict[compare_value]["x_mean"][
-                    : len(self.dict[compare_value]["y_mean"])
-                ],
+                x_vals=self.dict[compare_value]["x_mean"],
                 y_vals=self.dict[compare_value]["y_mean"],
                 out_dir=vis_export_dir,
                 out_filename=f"curve_avg_{self.export_prefix}_{export_value}.pickle",
@@ -594,9 +600,7 @@ class Analysis(object):
             expAna.plot.add_curves_same_value(
                 fig=fig_1,
                 axes=axes_1,
-                x_mean=self.dict[compare_value]["x_mean"][
-                    : len(self.dict[compare_value]["y_mean"])
-                ],
+                x_mean=self.dict[compare_value]["x_mean"],
                 y_mean=self.dict[compare_value]["y_mean"],
                 xs=np.array(self.dict[compare_value]["xs"], dtype=object)[
                     self.dict[compare_value]["y_indices"]
@@ -646,9 +650,7 @@ class Analysis(object):
                 export_value = str(compare_value)
 
             expAna.data_trans.export_one_curve_as_df(
-                x_vals=self.dict[compare_value]["x_mean"][
-                    : len(self.dict[compare_value]["y_sem"])
-                ],
+                x_vals=self.dict[compare_value]["x_mean"],
                 y_vals=self.dict[compare_value]["y_sem"],
                 out_dir=vis_export_dir,
                 out_filename=f"curve_sem_{self.export_prefix}_{export_value}.pickle",
@@ -669,9 +671,7 @@ class Analysis(object):
             expAna.plot.add_mean_and_sem(
                 fig=fig_2,
                 axes=axes_2,
-                x_mean=self.dict[compare_value]["x_mean"][
-                    : len(self.dict[compare_value]["y_mean"])
-                ],
+                x_mean=self.dict[compare_value]["x_mean"],
                 y_mean=self.dict[compare_value]["y_mean"],
                 y_error=1.96 * self.dict[compare_value]["y_sem"],
                 value=compare_value,
@@ -728,9 +728,7 @@ class Analysis(object):
             expAna.plot.add_curves_same_value(
                 fig=fig_3,
                 axes=axes_3,
-                x_mean=self.dict[compare_value]["x_mean"][
-                    : len(self.dict[compare_value]["y_mean"])
-                ],
+                x_mean=self.dict[compare_value]["x_mean"],
                 y_mean=self.dict[compare_value]["y_mean"],
                 xs=np.array(self.dict[compare_value]["xs"], dtype=object)[
                     self.dict[compare_value]["y_indices"]
@@ -778,9 +776,7 @@ class Analysis(object):
             expAna.plot.add_mean_and_sem(
                 fig=fig_4,
                 axes=axes_4,
-                x_mean=self.dict[compare_value]["x_mean"][
-                    : len(self.dict[compare_value]["y_mean"])
-                ],
+                x_mean=self.dict[compare_value]["x_mean"],
                 y_mean=self.dict[compare_value]["y_mean"],
                 y_error=1.96 * self.dict[compare_value]["y_sem"],
                 value=compare_value,
@@ -812,33 +808,6 @@ class Analysis(object):
         )
         plt.close()
 
-    def get_max_mean(self, compare_value=None, x_min=None, x_max=None):
-        """
-        Method to get the max value of the mean curve, the index of the max value, and the sem at the max value
-        The method takes three optional arguments:
-            compare_value (default=None)    one of analysis.compare_values
-                                            if None all compare_values are considered
-            x_min (default=None)            lower bound of the considered interval
-            x_max (default=None)            upper bound of the considered interval
-        """
-        if compare_value is None:
-            for compare_value in self.compare_values:
-                mean_max, idx_max = self.get_max(x, y, x_min=x_min, x_max=x_max)
-                sem_at_max = self.analysis_dict[compare_value]
-
-    def get_curve_max(x, y, x_min=None, x_max=None):
-        if x_min is not None:
-            x = x[x > x_min]
-            y = y[x > x_min]
-        if x_max is not None:
-            x = x[x < x_max]
-            y = y[x < x_max]
-
-        max = x.max()
-        idx = x.idxmax()
-
-        return max, idx
-
     def get_type_props(
         self,
     ):
@@ -859,3 +828,73 @@ class Analysis(object):
             },
         }
         return type_props[self.type]
+
+    def get_max_mean(self, compare_value=None, x_min=None, x_max=None):
+        """
+        Method to get the max value of the mean curve, the index of the max value, and the sem at the max value
+        The method takes three optional arguments:
+            compare_value (default=None)    one of analysis.compare_values
+                                            if None all compare_values are considered
+            x_min (default=None)            lower bound of the considered interval
+            x_max (default=None)            upper bound of the considered interval
+        """
+        out_dict = {}
+        if compare_value is None:
+            compare_values = self.compare_values
+        else:
+            compare_values = compare_value
+
+        for compare_value in compare_values:
+            mean_x_max, mean_y_max, idx_max = expAna.calc.curve_max(
+                x=self.dict[compare_value]["x_mean"],
+                y=self.dict[compare_value]["y_mean"],
+                x_min=x_min,
+                x_max=x_max,
+            )
+
+            out_dict.update(
+                {
+                    compare_value: {
+                        "x_max": mean_x_max,
+                        "y_max": mean_y_max,
+                        "y_sem": self.dict[compare_value]["y_sem"][idx_max],
+                        "idx": idx_max,
+                    }
+                }
+            )
+        return out_dict
+
+    def get_min_mean(self, compare_value=None, x_min=None, x_max=None):
+        """
+        Method to get the min value of the mean curve, the index of the min value, and the sem at the min value
+        The method takes three optional arguments:
+            compare_value (default=None)    one of analysis.compare_values
+                                            if None all compare_values are considered
+            x_min (default=None)            lower bound of the considered interval
+            x_min (default=None)            upper bound of the considered interval
+        """
+        out_dict = {}
+        if compare_value is None:
+            compare_values = self.compare_values
+        else:
+            compare_values = compare_value
+
+        for compare_value in compare_values:
+            mean_x_min, mean_y_min, idx_min = expAna.calc.curve_min(
+                x=self.dict[compare_value]["x_mean"],
+                y=self.dict[compare_value]["y_mean"],
+                x_min=x_min,
+                x_max=x_max,
+            )
+
+            out_dict.update(
+                {
+                    compare_value: {
+                        "x_min": mean_x_min,
+                        "y_min": mean_y_min,
+                        "y_sem": self.dict[compare_value]["y_sem"][idx_min],
+                        "idx": idx_min,
+                    }
+                }
+            )
+        return out_dict
