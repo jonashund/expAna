@@ -1,28 +1,41 @@
 import numpy as np
 
+# from scipy.interpolate import CubicSpline
+
 
 def get_mean_curves(list_of_x_arrays, list_of_y_arrays):
     # interpolation positions
     mean_x_array = np.linspace(
         0, max([max(list_of_x_arrays[i]) for i in range(len(list_of_x_arrays))]), 200
     )
-    interpolated_y_arrays = []
+    interp_ys = []
     for i in range(len(list_of_x_arrays)):
-        interpolated_y_arrays.append(
+        interp_ys.append(
             np.interp(mean_x_array, list_of_x_arrays[i], list_of_y_arrays[i])
         )
 
-    mean_y_array = np.mean(interpolated_y_arrays, axis=0)
-    # sem_y_array = np.std(interpolated_y_arrays, axis=0)
+    mean_y_array = np.mean(interp_ys, axis=0)
+    # sem_y_array = np.std(interp_ys, axis=0)
 
     return mean_x_array, mean_y_array
 
 
 def interpolate_curve(x_array, y_array, x_spacing):
     # interpolation positions
-    mean_x_array = np.arange(start=0.0, stop=max(x_array), step=x_spacing)
-    interpolated_y_array = np.interp(mean_x_array, x_array, y_array)
-    return mean_x_array, interpolated_y_array
+    reference_x = np.arange(start=0.0, stop=max(x_array), step=x_spacing)
+    # linear interpolation with numpy
+    interp_y = np.interp(reference_x, x_array, y_array)
+
+    # # cubic spline interpolation with scipy
+    # # x values must be strictly increasing sequence
+    # x_idx = x_array.argsort()
+    # x_array = x_array[x_idx]
+    # y_array = y_array[x_idx]
+    #
+    # cs_interp = CubicSpline(x_array, y_array)
+    # interp_y = cs_interp(reference_x)
+
+    return reference_x, interp_y
 
 
 def get_mean_and_sem(list_of_arrays, n=3):
