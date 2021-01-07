@@ -53,3 +53,33 @@ def get_mean_and_sem(list_of_arrays, n=3):
         array_sem[: array_lengths[array_indices[-n]]],
         array_indices[-n:],
     )
+
+
+def curve_max(x, y, x_min=None, x_max=None):
+    if x_min is not None:
+        y = y[x > x_min]
+        x = x[x > x_min]
+    if x_max is not None:
+        y = y[x < x_max]
+        x = x[x < x_max]
+
+    y_max = y.max()
+    idx = y.argmax()
+    x_max = x[idx]
+
+    return x_max, y_max, idx
+
+
+def curve_min(x, y, x_min=None, x_max=None):
+    if x_min is not None:
+        y = y[x > x_min]
+        x = x[x > x_min]
+    if x_max is not None:
+        y = y[x < x_max]
+        x = x[x < x_max]
+
+    y_min = y.min()
+    idx = y.argmin()
+    x_min = x[idx]
+
+    return x_min, y_min, idx
