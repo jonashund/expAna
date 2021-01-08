@@ -268,12 +268,12 @@ def import_one_curve_as_arrays(data_dir, filename):
     return dataframe["x_vals"].to_numpy(), dataframe["y_vals"].to_numpy()
 
 
-def export_analysis(analysis_dict, out_dir=".", out_filename="analysis_dict.pickle"):
+def export_analysis(analysis, out_dir=".", out_filename="analysis.pickle"):
     with open(
         os.path.join(out_dir, out_filename),
         "wb",
     ) as myfile:
-        dill.dump(analysis_dict, myfile)
+        dill.dump(analysis, myfile)
 
 
 def import_analysis(data_dir, filename):
@@ -281,6 +281,6 @@ def import_analysis(data_dir, filename):
         os.path.join(data_dir, filename),
         "rb",
     ) as myfile:
-        analysis_dict = dill.load(myfile)
+        analysis = dill.load(myfile)
 
-    return analysis_dict
+    return analysis
