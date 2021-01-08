@@ -1,11 +1,13 @@
 import os
 import dill
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
-
 import expAna
 
 from natsort import natsorted
+
+# from scipy.signal import savgol_filter
 
 
 def force(
@@ -37,9 +39,9 @@ def force(
     analysis.compute_data_force(displ_shift)
 
     expAna.data_trans.export_analysis(
-        analysis.dict,
+        analysis,
         out_dir=vis_export_dir,
-        out_filename=f"analysis_dict_{analysis.export_prefix}.pickle",
+        out_filename=f"analysis_{analysis.export_prefix}.pickle",
     )
 
     ####################################################################################
@@ -90,9 +92,9 @@ def vol_strain(
     ####################################################################################
 
     expAna.data_trans.export_analysis(
-        analysis.dict,
+        analysis,
         out_dir=vis_export_dir,
-        out_filename=f"analysis_dict_{analysis.analysis.export_prefix}.pickle",
+        out_filename=f"analysis_{analysis.export_prefix}.pickle",
     )
 
     ####################################################################################
@@ -142,9 +144,9 @@ def stress(
     ####################################################################################
 
     expAna.data_trans.export_analysis(
-        analysis.dict,
+        analysis,
         out_dir=vis_export_dir,
-        out_filename=f"analysis_dict_{analysis.export_prefix}.pickle",
+        out_filename=f"analysis_{analysis.export_prefix}.pickle",
     )
 
     ####################################################################################
@@ -194,9 +196,9 @@ def poissons_ratio(
     ####################################################################################
 
     expAna.data_trans.export_analysis(
-        analysis.dict,
+        analysis,
         out_dir=vis_export_dir,
-        out_filename=f"analysis_dict_{analysis.analysis.export_prefix}.pickle",
+        out_filename=f"analysis_{analysis.export_prefix}.pickle",
     )
 
     ####################################################################################
@@ -531,6 +533,15 @@ class Analysis(object):
                     .gauge_results["poissons_ratio"]
                     .to_numpy()
                 )
+                # poissons_ratios.append(
+                #     savgol_filter(
+                #         self.project.experiments[experiment_name]
+                #         .gauge_results["poissons_ratio"]
+                #         .to_numpy(),
+                #         51,
+                #         3,
+                #     )
+                # )
 
             # interpolate every curve to an x-axis with equally spaced points
             # set spacing dependent on maximum x-value found in all x arrays
@@ -838,7 +849,9 @@ class Analysis(object):
             x_min (default=None)            lower bound of the considered interval
             x_max (default=None)            upper bound of the considered interval
         """
-        out_dict = {}
+
+        df_columns = [f"{self.compare_key}", "x_max", "y_max", "y_sem", "idx"]
+        out_data = []
         if compare_value is None:
             compare_values = self.compare_values
         else:
@@ -851,29 +864,31 @@ class Analysis(object):
                 x_min=x_min,
                 x_max=x_max,
             )
-
-            out_dict.update(
-                {
-                    compare_value: {
-                        "x_max": mean_x_max,
-                        "y_max": mean_y_max,
-                        "y_sem": self.dict[compare_value]["y_sem"][idx_max],
-                        "idx": idx_max,
-                    }
-                }
+            out_data.append(
+                [
+                    compare_value,
+                    mean_x_max,
+                    mean_y_max,
+                    self.dict[compare_value]["y_sem"][idx_max],
+                    idx_max,
+                ]
             )
-        return out_dict
+
+        out_df = pd.DataFrame(out_data, columns=df_columns)
+        return out_df
 
     def get_min_mean(self, compare_value=None, x_min=None, x_max=None):
         """
-        Method to get the min value of the mean curve, the index of the min value, and the sem at the min value
+        Method to get the max value of the mean curve, the index of the max value, and the sem at the max value
         The method takes three optional arguments:
             compare_value (default=None)    one of analysis.compare_values
                                             if None all compare_values are considered
             x_min (default=None)            lower bound of the considered interval
-            x_min (default=None)            upper bound of the considered interval
+            x_max (default=None)            upper bound of the considered interval
         """
-        out_dict = {}
+
+        df_columns = [f"{self.compare_key}", "x_max", "y_max", "y_sem", "idx"]
+        out_data = []
         if compare_value is None:
             compare_values = self.compare_values
         else:
@@ -886,15 +901,15 @@ class Analysis(object):
                 x_min=x_min,
                 x_max=x_max,
             )
-
-            out_dict.update(
-                {
-                    compare_value: {
-                        "x_min": mean_x_min,
-                        "y_min": mean_y_min,
-                        "y_sem": self.dict[compare_value]["y_sem"][idx_min],
-                        "idx": idx_min,
-                    }
-                }
+            out_data.append(
+                [
+                    compare_value,
+                    mean_x_min,
+                    mean_y_min,
+                    self.dict[compare_value]["y_sem"][idx_min],
+                    idx_min,
+                ]
             )
-        return out_dict
+
+        out_df = pd.DataFrame(out_data, columns=df_columns)
+        return out_df
