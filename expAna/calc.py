@@ -72,9 +72,13 @@ def curve_max(x, y, x_min=None, x_max=None):
     if x_min is not None:
         y = y[x > x_min]
         x = x[x > x_min]
+    else:
+        pass
     if x_max is not None:
         y = y[x < x_max]
         x = x[x < x_max]
+    else:
+        pass
 
     y_max = y.max()
     idx = y.argmax()
@@ -87,12 +91,32 @@ def curve_min(x, y, x_min=None, x_max=None):
     if x_min is not None:
         y = y[x > x_min]
         x = x[x > x_min]
+    else:
+        pass
     if x_max is not None:
         y = y[x < x_max]
         x = x[x < x_max]
+    else:
+        pass
 
     y_min = y.min()
     idx = y.argmin()
     x_min = x[idx]
 
     return x_min, y_min, idx
+
+
+def quick_stats(vals):
+    # faster
+    mean = sum(vals) / len(vals)
+    s = 0
+    for val in vals:
+        s += (val - mean) ** 2
+    std_dev = np.sqrt(s / len(vals))
+    sem = std_dev / np.sqrt(len(vals))
+
+    return mean, std_dev, sem
+    # shorter
+    # arr = np.array(vals)
+
+    # return arr.mean(), arr.std(), arr.std() / np.sqrt(len(arr))
