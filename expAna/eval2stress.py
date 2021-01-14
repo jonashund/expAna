@@ -88,7 +88,12 @@ def main(
         true_strain[:, :, :, :][experiment.mask[:, :, :, 0] == 0] = np.nan
 
         strain_gauge = expAna.gui.RectangleCoordinates(
-            input_image=true_strain[int(0.8 * experiment.image_count), :, :, x_idx]
+            input_image_x_strain=true_strain[
+                int(0.8 * experiment.image_count), :, :, x_idx
+            ],
+            input_image_y_strain=true_strain[
+                int(0.8 * experiment.image_count), :, :, y_idx
+            ],
         )
         strain_gauge.__gui__()
 

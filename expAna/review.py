@@ -72,7 +72,7 @@ def stress(
             pass
 
         if set_failure:
-            fail_location = expAna.gui.FailureLocator()
+            fail_location = expAna.gui.FailureLocatorStress()
             fail_location.__gui__(experiment)
             # export truncated data
             with open(

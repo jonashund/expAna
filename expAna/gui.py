@@ -55,9 +55,10 @@ class TensileDirection(object):
 
 
 class RectangleCoordinates(object):
-    def __init__(self, input_image):
-        self.image = input_image
-        self.coordinates = [0, 0, self.image.shape[1], self.image.shape[0]]
+    def __init__(self, input_image_x_strain, input_image_y_strain):
+        self.image_x = input_image_x_strain
+        self.image_y = input_image_y_strain
+        self.coordinates = [0, 0, self.image_x.shape[1], self.image_x.shape[0]]
 
     def toggle_selector(event):
         print(f"Key pressed {event.key}.")
@@ -96,25 +97,26 @@ class RectangleCoordinates(object):
         # set_gui_backend()
         plt.style.use("classic")
         plt.ioff()
-        fig_1 = plt.figure(figsize=(10, 8))
+        fig_1 = plt.figure(figsize=(12, 10))
 
         custom_cmap = copy.copy(matplotlib.cm.get_cmap("RdYlBu_r"))
         custom_cmap.set_bad(color="grey")
 
-        # fig_1.subplots_adjust(0.05, 0.05, 0.98, 0.98, 0.1)
-        axes_1 = plt.subplot2grid((12, 4), (0, 0), rowspan=12, colspan=4)
-        image_1 = axes_1.imshow(self.image, interpolation="none", cmap=custom_cmap)
+        axes_1 = plt.subplot2grid((2, 1), (0, 0))
+        axes_2 = plt.subplot2grid((2, 1), (1, 0))
+        image_x = axes_1.imshow(self.image_x, interpolation="none", cmap=custom_cmap)
+        image_y = axes_2.imshow(self.image_y, interpolation="none", cmap=custom_cmap)
 
         axes_1.set_title(
-            """Use the whole image (default) or select rectangular part
-                        of image for mean strain calculation.
-                                Confirm with `enter`.
+            """Select rectangular part of visualised axial strain data for mean strain calculation.
+                Confirm with `enter`.
             """
         )
 
-        fig_1.colorbar(
-            image_1, ax=axes_1, fraction=0.046, pad=0.04, orientation="horizontal"
-        )
+        cbar_x = fig_1.colorbar(image_x, ax=axes_1)
+        cbar_x.set_label("log. axial strain")
+        cbar_y = fig_1.colorbar(image_y, ax=axes_2)
+        cbar_y.set_label("log. transverse strain")
 
         selector = RectangleSelector(
             axes_1,
@@ -136,7 +138,7 @@ class RectangleCoordinates(object):
         plt.show(block=True)
 
 
-class FailureLocator(object):
+class FailureLocatorStress(object):
     def __gui__(self, experiment):
         def line_picker(line, mouseevent):
             """
