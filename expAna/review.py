@@ -99,6 +99,7 @@ def stress(
 def force(
     select=None,
     experiment_list=None,
+    ignore_list=None,
     displ_shift=None,
     set_failure=False,
 ):
@@ -148,6 +149,14 @@ def force(
         else:
             pass
 
+        if ignore_list is not None:
+            if str(experiment.name) in ignore_list:
+                pass
+            else:
+                continue
+        else:
+            pass
+
         # search for expAna data
         try:
             with open(
@@ -176,7 +185,7 @@ def force(
             pass
 
         if set_failure:
-            fail_location = expAna.gui.FailureLocator()
+            fail_location = expAna.gui.FailureLocatorForce()
             fail_location.__gui__(experiment)
             # export truncated data
             with open(
@@ -196,4 +205,4 @@ def force(
         ) as myfile:
             experiment = dill.load(myfile)
 
-        experiment.plot_force_disp(out_dir=vis_export_dir)
+        experiment.plot_force_displ(out_dir=vis_export_dir)

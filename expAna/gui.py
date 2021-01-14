@@ -222,3 +222,89 @@ class FailureLocatorStress(object):
         fig_1.canvas.mpl_connect("key_press_event", confirmation)
 
         plt.show()
+
+
+class FailureLocatorForce(object):
+    def __gui__(self, experiment):
+        def line_picker(line, mouseevent):
+            """
+            find the points within a certain distance from the mouseclick in
+            data coords and attach some extra attributes, pickx and picky
+            which are the data points that were picked
+            """
+            if mouseevent.xdata is None:
+                return False, dict()
+            xdata = line.get_xdata()
+            ydata = line.get_ydata()
+            maxd = 0.05
+            d = np.sqrt(
+                (xdata - mouseevent.xdata) ** 2.0 + (ydata - mouseevent.ydata) ** 2.0
+            )
+
+            ind = np.nonzero(np.less_equal(d, maxd))
+            if len(ind):
+                pickx = np.take(xdata, ind)
+                picky = np.take(ydata, ind)
+                props = dict(ind=ind, pickx=pickx, picky=picky)
+                return True, props
+            else:
+                return False, dict()
+
+        def onpick2(event):
+            print("selected [[displacement(s)]][[force(s)]]:", event.pickx, event.picky)
+
+            experiment.fail_displ = event.pickx
+            experiment.fail_force = event.picky
+
+        def confirmation(event):
+            if event.key in ["enter"]:
+                if experiment.fail_displ.size > 0:
+                    fail_idx = experiment.data_instron[
+                        experiment.data_instron["displacement_in_mm"]
+                        == experiment.fail_displ[0][0]
+                    ].index[0]
+
+                    print(experiment.fail_displ)
+                    print(experiment.fail_displ[0])
+                    print(experiment.fail_displ[0][0])
+
+                    experiment.data_instron = experiment.data_instron[:fail_idx]
+                else:
+                    print(
+                        """
+                    No valid point selected. Assuming no failure of specimen.
+                    """
+                    )
+                plt.close()
+
+        fig_1, axes_1 = plt.subplots(figsize=[12, 8])
+        # axes styling
+        axes_1.xaxis.set_minor_locator(mtick.AutoMinorLocator(2))
+        # axes_1.xaxis.set_major_formatter(mtick.PercentFormatter(1.0))
+        axes_1.yaxis.set_minor_locator(mtick.AutoMinorLocator(2))
+        axes_1.grid(color="#929591", linewidth=0.33, zorder=0)
+
+        axes_1.set_xlim(0, 1.1 * experiment.data_instron["displacement_in_mm"].max())
+        axes_1.set_ylim(-0.1, 1.1 * experiment.data_instron["force_in_kN"].max())
+
+        axes_1.set_xlabel(r"displacement $u$ [mm]")
+        axes_1.set_ylabel(r"reaction force $F$ [kN]")
+        axes_1.set_title(
+            """
+            Pick point of material failure (left mouse button).
+            Confirm with `enter`.
+            """
+        )
+
+        lineplot = axes_1.plot(
+            experiment.data_instron["displacement_in_mm"],
+            experiment.data_instron["force_in_kN"],
+            label=f"{experiment.name}",
+            linewidth=1.5,
+            picker=line_picker,
+        )
+        fig_1.tight_layout()
+        fig_1.canvas.mpl_connect("pick_event", onpick2)
+        fig_1.canvas.mpl_connect("key_press_event", confirmation)
+
+        plt.show()
