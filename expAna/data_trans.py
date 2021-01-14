@@ -198,7 +198,7 @@ class Experiment(object):
 
         plt.close()
 
-    def plot_force_disp(
+    def plot_force_displ(
         self,
         out_dir=os.path.join(
             os.path.abspath(os.path.dirname(__file__)), "..", "visualisation"
@@ -225,7 +225,7 @@ class Experiment(object):
         plt.savefig(
             os.path.join(
                 out_dir,
-                self.name + "_force_disp.pgf",
+                self.name + "_force_displ.pgf",
             )
         )
         fig_1.set_size_inches(12, 9)
@@ -234,7 +234,7 @@ class Experiment(object):
         plt.savefig(
             os.path.join(
                 out_dir,
-                self.name + "_force_disp.png",
+                self.name + "_force_displ.png",
             )
         )
 
