@@ -205,4 +205,12 @@ def force(
         ) as myfile:
             experiment = dill.load(myfile)
 
+        if select is not None:
+            if str(experiment.documentation_data[select[0]]) == str(select[1]):
+                pass
+            else:
+                continue
+        else:
+            pass
+
         experiment.plot_force_displ(out_dir=vis_export_dir)
