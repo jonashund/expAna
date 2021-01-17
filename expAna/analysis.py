@@ -387,18 +387,27 @@ class Analysis(object):
                     .to_numpy()
                 )
 
-            # TO DO:
-            # for each experiment
-            # get index of last positive value in "force_in_kN"
-            # cut "displacement_in_mm" and "force_in_kN" at this index
-            # WHY:
-            # do not plot curves after specimen failure
+                if self.specimen_type == 1:
+                    for i, force in enumerate(forces):
+                        idx_fail = np.argwhere(force > 0.1).max()
+                        forces[i] = forces[i][: idx_fail + 2]
+                        forces[i][-2:] = 0.0
+                        displacements[i] = displacements[i][: idx_fail + 2]
+                        displacements[i][-2] = displacements[i][-2] + 1e-3
+                        displacements[i][-1] = displacements[i][-1] + 2e-3
+                else:
+                    for i, force in enumerate(forces):
+                        idx_fail = np.argwhere(force > 0.07).max()
+                        forces[i] = forces[i][: idx_fail + 2]
+                        forces[i][-1] = 0.0
+                        displacements[i] = displacements[i][: idx_fail + 2]
 
             # interpolate every force displacement curve to an x-axis with equally spaced points
             # set spacing dependent on maximum x-value found in all x arrays
 
             max_x = max([max(displacements[i]) for i in range(len(displacements))])
-            interval = max_x / 500
+            interval = max_x / 10000
+            # interval = max_x / 500
             x_mean = np.arange(start=0.0, stop=max_x, step=interval)
             for i, strain in enumerate(displacements):
                 displacements[i], forces[i] = expAna.calc.interpolate_curve(
