@@ -330,6 +330,9 @@ class Analysis(object):
 
         self.project = analysis_project
         self.dict = analysis_dict
+        self.specimen_type = self.project.experiments[
+            list(self.project.experiments.keys())[0]
+        ].documentation_data["specimen_type"]
         self.compare_key = compare
         self.compare_values = compare_values
 
@@ -347,18 +350,22 @@ class Analysis(object):
             "Bayblend T65": "pcAbs_6040",
             "Bayblend T85": "pcAbs_7030",
         }
-        if self.material in list(export_material_dict.keys()):
+        export_specimen_type_dict = {1: "uniax_tension", 2: "sent"}
 
+        if self.material in list(export_material_dict.keys()):
             self.export_material = export_material_dict[self.material]
         else:
-            export_material = self.material.replace("_", " ")
+            self.export_material = self.material.replace("_", " ")
+
+        if self.specimen_type in list(export_specimen_type_dict.keys()):
+            self.export_specimen_type = export_specimen_type_dict[self.specimen_type]
+        else:
+            self.export_specimen_type = str(self.specimen_type).replace("_", " ")
 
         if select is None:
-            self.export_prefix = (
-                f"{self.export_material}_{self.type}_{self.compare_key}"
-            )
+            self.export_prefix = f"{self.export_material}_{self.export_specimen_type}_{self.type}_{self.compare_key}"
         else:
-            self.export_prefix = f"{self.export_material}_{self.type}_{self.select_key}_{self.select_value}_{self.compare_key}"
+            self.export_prefix = f"{self.export_material}_{self.export_specimen_type}_{self.type}_{self.select_key}_{self.select_value}_{self.compare_key}"
 
     def compute_data_force(self, displ_shift):
         for compare_value in self.compare_values:
