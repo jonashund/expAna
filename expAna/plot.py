@@ -301,7 +301,10 @@ def dic_strains(
     experiment_name,
     displacement,
     strain_component,
-    tensile_direction=None,
+    tensile_direction="x",
+    image_height=None,
+    image_width=None,
+    rotate=None,
     key=True,
     key_min=None,
     key_max=None,
@@ -312,7 +315,7 @@ def dic_strains(
     work_dir = os.getcwd()
     vis_export_dir = os.path.join(work_dir, "visualisation")
 
-    if out_format == "eps":
+    if out_format == "eps" or out_format == "pdf":
         set_latex_fonts = {
             # Use LaTeX to write all text
             "text.usetex": True,
@@ -331,7 +334,7 @@ def dic_strains(
     else:
         pass
 
-    figsize = (4, 3)
+    figsize = (4, 4)
     fig_1, axes_1 = plt.subplots(1, 1, figsize=figsize)
 
     name = (
@@ -345,6 +348,9 @@ def dic_strains(
         displacement=displacement,
         strain_component=strain_component,
         tensile_direction=tensile_direction,
+        image_height=image_height,
+        image_width=image_width,
+        rotate=rotate,
         key=key,
         key_min=key_min,
         key_max=key_max,
@@ -354,19 +360,72 @@ def dic_strains(
     )
 
     axes_1.text(
-        0.02,
-        0.98,
+        0.05,
+        0.95,
         r"$u = $ " + f"{displacement:.1f}" + r"~mm",
         verticalalignment="top",
         horizontalalignment="left",
-        transform=axes_1.transAxes,
-        color="white",
+        transform=fig_1.transFigure,
+        color="black",
+        fontsize=12,
+        zorder=12,
+    )
+
+    if rotate == 90:
+        csys_params = {
+            "xy_0": (0.04, 0.2),
+            "xy_1": (0.19, 0.045),
+        }
+    else:
+        csys_params = {
+            "xy_0": (0.2, 0.05),
+            "xy_1": (0.05, 0.2),
+        }
+
+    axes_1.annotate(
+        "",
+        xy=csys_params["xy_0"],
+        xycoords="figure fraction",
+        xytext=csys_params["xy_1"],
+        arrowprops=dict(
+            arrowstyle="<|-|>",
+            color="black",
+            shrinkA=5,
+            shrinkB=5,
+            patchA=None,
+            patchB=None,
+            connectionstyle="angle,angleA=-90,angleB=180,rad=0",
+        ),
+        color="black",
+        fontsize=12,
+        zorder=12,
+    )
+
+    axes_1.text(
+        0.21,
+        0.09,
+        r"$x$",
+        verticalalignment="center",
+        horizontalalignment="left",
+        transform=fig_1.transFigure,
+        color="black",
+        fontsize=12,
+        zorder=12,
+    )
+    axes_1.text(
+        0.09,
+        0.21,
+        r"$y$",
+        verticalalignment="bottom",
+        horizontalalignment="center",
+        transform=fig_1.transFigure,
+        color="black",
         fontsize=12,
         zorder=12,
     )
 
     fig_1.tight_layout()
-    if out_dir == "pdf":
+    if out_format == "pdf":
         plt.savefig(
             os.path.join(vis_export_dir, name + ".pdf"),
             format="pdf",
@@ -444,7 +503,10 @@ def create_dic_vis(
     experiment_name,
     displacement,
     strain_component,
-    tensile_direction=None,
+    tensile_direction="x",
+    image_height=None,
+    image_width=None,
+    rotate=None,
     key=True,
     key_min=None,
     key_max=None,
@@ -535,13 +597,34 @@ def create_dic_vis(
         frame_no=frame_no, istra_acquisition_dir=istra_acquisition_dir
     )
 
+    # rotate image and data
+    if rotate is None:
+        pass
+    elif rotate == 90:
+        image_to_plot = np.rot90(m=image_to_plot, k=-1)
+        strain_to_plot = np.rot90(m=strain_to_plot)
+        coords_to_plot_2 = np.rot90(m=coords_to_plot, k=1, axes=(0, 1))
+        coords_to_plot = np.empty_like(coords_to_plot_2)
+        coords_to_plot[:, :, 0] = coords_to_plot_2[:, :, 1]
+        coords_to_plot[:, :, 1] = coords_to_plot_2[:, :, 0]
+    else:
+        print(
+            "Only rotate=90 supported. Expand this package to support other rotations? :-)"
+        )
+
     # plot using JB's Delauney triangulation (code courtesy of Julian Bauer)
     ###################################
     # Create flat data
 
-    # Identify positions of DIC-grip-points where identification failed
+    # Identify positions of DIC-grid-points where identification failed
     # i.e. where coordinates are near zero
     mask = np.linalg.norm(coords_to_plot, axis=-1) > 1e-12
+
+    if rotate == 90:
+        coords_to_plot[:, :, 0] = (
+            np.full(coords_to_plot[:, :, 0].shape, image_to_plot.shape[1])
+            - coords_to_plot[:, :, 0]
+        )
 
     # Select data loosing grid
     x_coords_flat = coords_to_plot[mask, 0]
@@ -552,21 +635,37 @@ def create_dic_vis(
     max_y = max(y_coords_flat)
     min_y = min(y_coords_flat)
     y_center = (max_y + min_y) / 2.0
-    image_height = 1.25 * (max_y - min_y)
+
+    if image_height == None:
+        image_height = 1.25 * (max_y - min_y)
+    else:
+        image_height = image_height
+        y_center = image_to_plot.shape[0] / 2.0
+
     if image_height > image_to_plot.shape[0]:
         image_height = image_to_plot.shape[0]
+        y_center = image_to_plot.shape[0] / 2.0
     else:
         pass
 
-    image_width = image_height
+    if image_width == None:
+        image_width = image_height
+    else:
+        image_width = image_width
+        x_center = image_to_plot.shape[1] / 2.0
+
     max_x = max(x_coords_flat)
     min_x = min(x_coords_flat)
     x_center = (max_x + min_x) / 2.0
 
     if max_x - min_x > image_width:
         image_width = 1.25 * (max_x - min_x)
+    else:
+        pass
+
     if image_width > image_to_plot.shape[1]:
         image_width = image_to_plot.shape[1]
+        x_center = image_to_plot.shape[1] / 2.0
     else:
         pass
 
@@ -667,6 +766,7 @@ def create_dic_vis(
     else:
         pass
 
+    # image_plot = axes.imshow(image_to_plot, alpha=1, zorder=10, cmap="gray")
     image_plot = axes.imshow(image_masked, alpha=1, zorder=10, cmap="gray")
     # grid_plot = expAna.plot.plot_points(ax=ax, x=x_coords_flat, y=y_coords_flat)
 
@@ -677,8 +777,7 @@ def create_dic_vis(
         bottom=False,  # ticks along the bottom edge are off
         top=False,  # ticks along the top edge are off
         labelbottom=False,
-    )  # labels along the bottom edge are off
-    # add colorbar for strain_plot (vertical, on the right, optionally in range provided, legend title accoding to input)
+    )
 
     axes.tick_params(
         axis="y",
