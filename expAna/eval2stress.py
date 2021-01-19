@@ -105,6 +105,15 @@ def main(
 
         true_strain_mean = np.nanmean(true_strain_gauge, axis=(1, 2))
 
+        if specimen_thickness is None:
+            specimen_thickness = experiment.documentation_data["specimen_thickness"]
+        else:
+            pass
+        if specimen_width is None:
+            specimen_width = experiment.documentation_data["specimen_width"]
+        else:
+            pass
+
         if use_poissons_ratio is True:
             true_stress_in_MPa = expAna.gauge.get_true_stress_2(
                 force_in_N=experiment.reaction_force * 1000.0,
