@@ -6,8 +6,6 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import numpy as np
 import scipy.spatial
-
-
 import expAna
 
 
@@ -311,6 +309,7 @@ def dic_strains(
     key_extend=None,
     max_triang_len=10,
     out_format="pdf",
+    dots_pi=400,
 ):
     work_dir = os.getcwd()
     vis_export_dir = os.path.join(work_dir, "visualisation")
@@ -356,7 +355,6 @@ def dic_strains(
         key_max=key_max,
         key_extend=key_extend,
         max_triang_len=max_triang_len,
-        out_format=out_format,
     )
 
     axes_1.text(
@@ -431,6 +429,7 @@ def dic_strains(
             format="pdf",
             bbox_inches="tight",
             pad_inches=0,
+            dpi=dots_pi,
         )
     elif out_format == "eps":
         plt.savefig(
@@ -438,6 +437,7 @@ def dic_strains(
             format="eps",
             bbox_inches="tight",
             pad_inches=0,
+            dpi=dots_pi,
         )
     elif out_format == "pgf":
         plt.savefig(
@@ -512,7 +512,7 @@ def create_dic_vis(
     key_max=None,
     key_extend=None,
     max_triang_len=10,
-    out_format="eps",
+    raster=True,
     cmap=None,
 ):
     work_dir = os.getcwd()
@@ -697,9 +697,10 @@ def create_dic_vis(
 
     triangles_small = triangles[mask_smaller]
 
-    if not triangles_small.size == 0:
-        plt.triplot(points[:, 0], points[:, 1], triangles_small)
-        plt.plot(points[:, 0], points[:, 1], "o")
+    # Do not plot to reduce filesize!
+    # if not triangles_small.size == 0:
+    #     plt.triplot(points[:, 0], points[:, 1], triangles_small)
+    #     plt.plot(points[:, 0], points[:, 1], "o")
 
     # determine levels for contourplot
     min_strain = min(strain_flat)
@@ -733,12 +734,18 @@ def create_dic_vis(
         triangles_small,
         strain_flat,
         levels,
-        zorder=11,
+        zorder=-1,
         cmap=cmap,
         extend=extend,
     )
     for c in strain_plot.collections:
         c.set_edgecolor("face")
+
+    # raster output to reduce filesize
+    if raster is True:
+        axes.set_rasterization_zorder(0)
+    else:
+        pass
 
     if key is True:
         # add colorbar for strain_plot (vertical, on the right, optionally in range provided, legend title accoding to input)
@@ -766,8 +773,7 @@ def create_dic_vis(
     else:
         pass
 
-    # image_plot = axes.imshow(image_to_plot, alpha=1, zorder=10, cmap="gray")
-    image_plot = axes.imshow(image_masked, alpha=1, zorder=10, cmap="gray")
+    image_plot = axes.imshow(image_masked, alpha=1, zorder=-2, cmap="gray")
     # grid_plot = expAna.plot.plot_points(ax=ax, x=x_coords_flat, y=y_coords_flat)
 
     # remove tick labels
