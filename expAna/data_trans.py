@@ -213,7 +213,7 @@ class Experiment(object):
         fig_1, axes_1 = expAna.plot.style_force_displ(
             x_lim=math.ceil(x_data.max()), y_lim=1.1 * y_data.max()
         )
-
+        fig_1.set_size_inches(5, 2.5)
         axes_1.plot(
             x_data,
             y_data,
