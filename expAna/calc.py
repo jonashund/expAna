@@ -120,3 +120,9 @@ def quick_stats(vals):
     # arr = np.array(vals)
 
     # return arr.mean(), arr.std(), arr.std() / np.sqrt(len(arr))
+
+
+def find_nearest(array, value):
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return array[idx], idx
