@@ -47,8 +47,8 @@ def plt_style():
         "axes.labelsize": 12,
         # Make the legend/label fonts a little smaller
         "legend.fontsize": 12,
-        "xtick.labelsize": 10,
-        "ytick.labelsize": 10,
+        "xtick.labelsize": 12,
+        "ytick.labelsize": 12,
     }
     matplotlib.rcParams.update(set_latex_fonts)
 
@@ -324,8 +324,8 @@ def dic_strains(
             "axes.labelsize": 12,
             # Make the legend/label fonts a little smaller
             "legend.fontsize": 12,
-            "xtick.labelsize": 10,
-            "ytick.labelsize": 10,
+            "xtick.labelsize": 12,
+            "ytick.labelsize": 12,
         }
         matplotlib.rcParams.update(set_latex_fonts)
     elif out_format == "pgf":
@@ -340,7 +340,7 @@ def dic_strains(
         f"{experiment_name}_dic_strain_{strain_component}_displ_{displacement:.1f}_mm"
     )
 
-    expAna.plot.create_dic_vis(
+    displacement_val = expAna.plot.create_dic_vis(
         fig=fig_1,
         axes=axes_1,
         experiment_name=experiment_name,
@@ -360,7 +360,7 @@ def dic_strains(
     axes_1.text(
         0.05,
         0.95,
-        r"$u = $ " + f"{displacement:.1f}" + r"~mm",
+        r"$u = $ " + f"{displacement_val:.1f}" + r"~mm",
         verticalalignment="top",
         horizontalalignment="left",
         transform=fig_1.transFigure,
@@ -572,9 +572,16 @@ def create_dic_vis(
     # remove offset in traverse_displ
     traverse_displ = experiment.traverse_displ - experiment.traverse_displ[0]
 
-    # search frame numbers for given displacements
-    frame_range = np.where(traverse_displ > displacement)[0]
-    frame_no = frame_range[0]
+    # search frame numbers for given displacement
+    # frame_range = np.where(traverse_displ > displacement)[0]
+    # frame_no = frame_range[0]
+
+    displacement_val, frame_no = expAna.calc.find_nearest(traverse_displ, displacement)
+    displacement_val = displacement_val[0]
+
+    print(
+        f"Nearest displacement value to given displacement {displacement} is {displacement_val}. Difference: {abs(displacement_val-displacement)}"
+    )
 
     if strain_component == "x":
         strain_idx = 0
@@ -585,8 +592,6 @@ def create_dic_vis(
 
     # strain in given direction for frame_no
     strain_to_plot = true_strain[frame_no, :, :, strain_idx]
-
-    # manipulate strain_to_plot: contour smoothing
 
     # coordinates of grid points [in px] for frame_no
     # coords_to_plot = experiment.coords[frame_no, ...]
@@ -642,7 +647,11 @@ def create_dic_vis(
         image_height = image_height
         y_center = image_to_plot.shape[0] / 2.0
 
-    if image_height > image_to_plot.shape[0]:
+    if (
+        image_height > image_to_plot.shape[0]
+        or y_center + image_height / 2.0 > image_to_plot.shape[0]
+        or y_center - image_height / 2.0 < 0.0
+    ):
         image_height = image_to_plot.shape[0]
         y_center = image_to_plot.shape[0] / 2.0
     else:
@@ -663,7 +672,11 @@ def create_dic_vis(
     else:
         pass
 
-    if image_width > image_to_plot.shape[1]:
+    if (
+        image_width > image_to_plot.shape[1]
+        or x_center + image_width / 2.0 > image_to_plot.shape[1]
+        or x_center - image_width / 2.0 < 0.0
+    ):
         image_width = image_to_plot.shape[1]
         x_center = image_to_plot.shape[1] / 2.0
     else:
@@ -673,6 +686,14 @@ def create_dic_vis(
         int(y_center - image_height / 2.0) : int(y_center + image_height / 2.0),
         int(x_center - image_width / 2.0) : int(x_center + image_width / 2.0),
     ]
+
+    # sometimes manually determining the image_width and image_height is necessary
+    # print(image_to_plot.shape)
+    # print("x_center", x_center)
+    # print("image_width", image_width)
+    # print("y_center", y_center)
+    # print("image_height", image_width)
+    # print(image_masked.shape)
 
     # coordinate transformation for other values
     x_coords_flat = x_coords_flat - int(x_center - image_width / 2.0)
@@ -793,4 +814,4 @@ def create_dic_vis(
         labelleft=False,
     )
 
-    return fig, axes
+    return displacement_val
