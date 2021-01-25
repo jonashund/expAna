@@ -190,75 +190,86 @@ def main(
             dill.dump(experiment, myfile)
 
 
-if __name__ == "__main__":
-    arg_parser = argparse.ArgumentParser(
-        description="eval2stress offers `gauge` element functionality based on Python. From Istra4D evaluation files the true stress strain and volume strain behaviour is computed over a defined part of the whole DIC image."
-    )
-    arg_parser.add_argument(
-        "-e",
-        "--experiments",
-        nargs="*",
-        default=None,
-        help="experiment folder name(s) located in ../data_istra_acquisition/",
-    )
+def update_true_stress(
+    select=None, experiment_list=None, ignore_list=None, update_reviewed=True
+):
 
-    arg_parser.add_argument(
-        "-i",
-        "--ignore",
-        nargs="*",
-        default=None,
-        help="experiment folder name(s) to ignore",
-    )
+    """
+    function with the purpose to update true stress values after thickness or width have been updated in documentation_data
+    """
 
-    #   - selection criterion (string) value (or part of value) of experiment.documentation_data[<key>]
-    arg_parser.add_argument(
-        "-s",
-        "--select",
-        metavar="experiment.documentation_data[`key`]: <value>",
-        nargs=2,
-        default=None,
-        help="List [key, value] from experiment.documentation_data.",
-    )
+    work_dir = os.getcwd()
+    expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
+    istra_evaluation_dir = os.path.join(work_dir, "data_istra_evaluation")
+    vis_export_dir = os.path.join(work_dir, "visualisation", "istra")
 
-    arg_parser.add_argument(
-        "-eco",
-        default=True,
-        help="Save space through not exporting the local strain fields but only the mean results from the gauge element.",
-    )
-
-    arg_parser.add_argument(
-        "-g",
-        "--geometry",
-        nargs=2,
-        metavar=("specimen_width", "specimen_thickness"),
-        type=float,
-        default=[12.0, 3.0],
-        help="Specimen width and thickness in mm to compute cross section in DIC area.",
-    )
-
-    arg_parser.add_argument(
-        "--use-poissons_ratio",
-        default=True,
-        help="Use the specified Poisson's ratio for the through thickness direction instead of the assumption of equal in-plane and through-thickness Poisson's ratios.",
-    )
-
-    arg_parser.add_argument(
-        "--poissons_ratio",
-        default=None,
-        help="Through-thickness Poisson's ratio.",
-    )
-
-    passed_args = arg_parser.parse_args()
-
-    sys.exit(
-        main(
-            select=passed_args.select,
-            experiment_list=passed_args.experiments,
-            ignore_list=passed_args.ignore,
-            eco_mode=passed_args.eco,
-            specimen_width=passed_args.geometry[0],
-            specimen_thickness=passed_args.geometry[0],
-            use_poissons_ratio=passed_args.use_poissons_ratio,
-            poissons_ratio_through_thickness=passed_args.poissons_ratio,
+    if experiment_list is None:
+        experiment_list = list()
+        print(
+            f"No experiment names passed. Will search for folders named `Test*CORN1` in {istra_evaluation_dir}."
         )
-    )
+        for path, directories, files in os.walk(istra_evaluation_dir):
+            for test_dir in directories:
+                if str(test_dir[:5] == "Test"):
+                    experiment_list.append(test_dir[:-5])
+    else:
+        pass
+
+    if ignore_list is not None:
+        for experiment in ignore_list:
+            experiment_list.remove(experiment)
+
+    experiment_list = natsorted(experiment_list)
+
+    for test_dir in experiment_list:
+        # load documentation data with updated information
+        with open(
+            os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"),
+            "rb",
+        ) as myfile:
+            exp_docu = dill.load(myfile)
+
+        with open(
+            os.path.join(
+                istra_evaluation_dir,
+                test_dir + "CORN1",
+                test_dir + "CORN1_expAna.pickle",
+            ),
+            "rb",
+        ) as myfile:
+            exp_eval = dill.load(myfile)
+
+        if select is not None:
+            if str(exp_docu.documentation_data[select[0]]) == str(select[1]):
+                pass
+            else:
+                continue
+        else:
+            pass
+
+        # replace outdated documentation_data of exp_eval
+        exp_eval.documentation_data = exp_docu.documentation_data
+
+        # with strain gauge data from gauge results recalculate true stress
+        true_stress_in_MPa = expAna.gauge.get_true_stress(
+            force_in_N=exp_eval.gauge_results["reaction_force_in_kN"] * 1000.0,
+            true_strain_perpendicular=exp_eval.gauge_results["true_strain_image_y"],
+            specimen_cross_section_in_mm2=exp_eval.documentation_data["specimen_width"]
+            * exp_eval.documentation_data["specimen_thickness"],
+        )
+        exp_eval.gauge_results.update({"true_stress_in_MPa": true_stress_in_MPa})
+
+        # export updated data
+        test_results_dir = os.path.join(istra_evaluation_dir, exp_eval.name + "CORN1")
+        exp_eval.gauge_results.to_csv(
+            os.path.join(test_results_dir, exp_eval.name + "CORN1_gauge_results.csv")
+        )
+
+        with open(
+            os.path.join(test_results_dir, exp_eval.name + "CORN1_expAna.pickle"),
+            "wb",
+        ) as myfile:
+            dill.dump(exp_eval, myfile)
+
+        exp_eval.plot_true_stress(out_dir=vis_export_dir)
+        exp_eval.plot_volume_strain(out_dir=vis_export_dir)
