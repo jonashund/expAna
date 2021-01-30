@@ -180,7 +180,7 @@ def style_poissons_ratio(width=None, height=None, x_lim=None, y_lim=0.5):
         fig_1, axes_1 = create_styled_figure()
 
     axes_1.set_xlabel(r"log. strain $\varepsilon$ [-]")
-    axes_1.set_ylabel(r"poissons_ratio $\varepsilon_{xx}/\varepsilon_{yy}$ [-]")
+    axes_1.set_ylabel(r"Poisson's ratio $\nu$ [-]")
 
     if x_lim:
         axes_1.set_xlim(0, x_lim)
