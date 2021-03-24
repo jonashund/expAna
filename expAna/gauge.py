@@ -43,6 +43,8 @@ def get_true_strain(def_grad):
 
     true_strain_yy = 1.0 / 2.0 * np.log(def_grad_dydy ** 2 + def_grad_dxdy ** 2)
 
+    # this is not a correct solution to calculate the shear strain
+    # it just avoids errors and runtime warnings
     if (def_grad_dydx == 0.0).any() or (def_grad_dxdy == 0.0).any():
         true_strain_xy = 0.0
     else:
