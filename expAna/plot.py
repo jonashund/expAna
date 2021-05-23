@@ -9,6 +9,8 @@ import pandas as pd
 import scipy.spatial
 import expAna
 
+from skimage.exposure import rescale_intensity
+
 
 def plt_style():
     """
@@ -59,7 +61,7 @@ def plt_style():
     matplotlib.rcParams.update({"pgf.texsystem": "xelatex"})
     matplotlib.rcParams.update({"pgf.rcfonts": False})
 
-    set_preamble = {"pgf.preamble": r"\usepackage{amsmath} \usepackage{xfrac}"}
+    set_preamble = {"pgf.preamble": r"\usepackage{mathtools} \usepackage{xfrac}"}
     matplotlib.rcParams.update(set_preamble)
 
     # set more rcParams
@@ -794,6 +796,9 @@ def create_dic_vis(
         clrbar.ax.set_ylabel(lgnd_title, labelpad=10)
     else:
         pass
+
+    v_min, v_max = np.percentile(image_masked, (10, 100))
+    image_masked = rescale_intensity(image_masked, in_range=(v_min, v_max))
 
     image_plot = axes.imshow(image_masked, alpha=1, zorder=-2, cmap="gray")
     # grid_plot = expAna.plot.plot_points(ax=ax, x=x_coords_flat, y=y_coords_flat)
