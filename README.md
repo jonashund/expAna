@@ -74,11 +74,11 @@ Clone from [gitlab](https://git.scc.kit.edu/) into a local repository and instal
     -   `cd ./muDIC`
     -   `pip install -r requirements.txt`
 3.  [`expDoc`](https://git.scc.kit.edu/ifm/labor/exputil/expDoc):
-    -   `git clone git@git.scc.kit.edu:ifm/labor/exputil/expDoc.git`
+    -   `git clone git@github.com:jonashund/expDoc.git`
     -   `cd ./expDoc`
     -   `pip install -e .`
 4.  [`expAna`](https://git.scc.kit.edu/ifm/labor/exputil/expAna):
-    -   `git clone git@git.scc.kit.edu:ifm/labor/exputil/expAna.git`
+    -   `git clone git@github.com:jonashund/expAna.git`
     -   `cd ./expAna`
     -   `pip install -e .`
 

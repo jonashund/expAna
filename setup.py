@@ -22,6 +22,7 @@ setuptools.setup(
         "dill",
         "xlrd",
         "noise",
+        "openpyxl",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
