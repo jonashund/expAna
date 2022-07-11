@@ -4,42 +4,40 @@ Process raw DIC images or evaluation data exported from Istra4D to gain true str
 
 ## Requirements
 
--   Python (Version 3.x, e.g. via [pyenv](https://github.com/pyenv/pyenv) or [Conda](https://docs.conda.io/en/latest/))
+-   create a copy on a computer that runs bash (`.sh`) scripts as well as
 
-    -   creating and subsequently setting/activating an environment is recommended
+    -   LaTeX 2e
+    -   Python (Version 3.x, e.g. via [pyenv](https://github.com/pyenv/pyenv) or [Conda](https://docs.conda.io/en/latest/))
+        -   creating and subsequently setting/activating an environment is recommended
 
     #### **TLDR**: [Managing environments with Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)
 
     -   create an environment based on version X.X of Python and packages 1,2 and three:\
-        `conda create --name <my_env_name> python=X.X package1 package2`
+          `conda create --name <my_env_name> python=X.X package1 package2`
     -   **remark:** Python and packages are optional\
-        `conda create --name <my_env_name>`
+          `conda create --name <my_env_name>`
     -   activate environment:\
-        `conda activate <my_env_name>`
+          `conda activate <my_env_name>`
     -   deactivate environment:\
-        `conda deactivate`
+          `conda deactivate`
     -   remove an environment:\
-        `conda remove --name <my_env_name> --all`
+          `conda remove --name <my_env_name> --all`
 
 ## Installation
 
 ### Create the environment
 
-**1. manually using conda and pip (tested on CentOS):** 
+**1. manually using conda (on any OS running conda):**
 
--   based on current Python version with ipython and numpy:\
-    `conda create --name <my_env_name> ipython numpy`
--   activate created environment:\
-    `conda activate <my_env_name>`
--   install scipy v1.2.1 (requirement of muDIC_ifm):\
-    `pip install scipy==1.2.1`
+-   create environment:
+    `conda create --name <my_env_name> python=3.7 scipy=1.2.1 numpy ipython`
 
-**2. using conda and environmental.yml (tested on CentOS):**
+**1. using conda and environment.yml (tested on CentOS):**
 
 -   execute in directory with `environmental.yml` (after cloning [`expDoc`](https://git.scc.kit.edu/ifm/labor/exputil/expDoc) or [`expAna`](https://git.scc.kit.edu/ifm/labor/exputil/expAna) )\
     `conda env create -f environmental.yml`
 
-**3. using pyenv virtualenv (on macOS):**
+**1. using pyenv virtualenv (on macOS):**
 
 -   install `pyenv virtualenv` via homebrew
 -   install `miniconda-latest`:\
@@ -56,10 +54,12 @@ Process raw DIC images or evaluation data exported from Istra4D to gain true str
     `conda install ipython`
 -   install packages listed below, the local environment has to be set in each directory unless it's made the global environment (temporarily)
 
-**4. manually using conda (on macOS):**
+**1. manually using conda and pip (tested on CentOS):** 
 
--   create environment:
-    `conda create --name <my_env_name> python=3.7 scipy=1.2.1 numpy ipython`
+-   based on current Python version with ipython and numpy:\
+    `conda create --name <my_env_name> ipython numpy`
+-   activate created environment:\
+    `conda activate <my_env_name>`
 
 ### Cloning the repositories and installing
 
@@ -69,10 +69,10 @@ Clone from [gitlab](https://git.scc.kit.edu/) into a local repository and instal
     -   `git clone git@git.scc.kit.edu:ifm/labor/istra2py.git`
     -   `cd ./istra2py`
     -   `pip install -e .`
-2.  [`muDIC_ifm`](https://git.scc.kit.edu/ifm/labor/exputil/mudic_ifm)
-    -   `git clone git@git.scc.kit.edu:ifm/labor/exputil/mudic_ifm.git`
-    -   `cd ./muDIC_ifm`
-    -   `pip install -e .`
+2.  [`muDIC`](https://git.scc.kit.edu/ifm/labor/exputil/mudic_ifm)
+    -   `git clone git@github.com:PolymerGuy/muDIC.git`
+    -   `cd ./muDIC`
+    -   `pip install -r requirements.txt`
 3.  [`expDoc`](https://git.scc.kit.edu/ifm/labor/exputil/expDoc):
     -   `git clone git@git.scc.kit.edu:ifm/labor/exputil/expDoc.git`
     -   `cd ./expDoc`
@@ -115,7 +115,7 @@ Clone from [gitlab](https://git.scc.kit.edu/) into a local repository and instal
 
 ### Data import
 
--   from the laboratory laptop running _Istra4D_ transfer the respective data into the `data_istra_<foo>` directories
+-   from the laboratory laptop running _Istra4D_ transfer the respective data into the `data_istra_acquisition` and `data_istra_evaluation` directories
 
 ### Obtaining true stress strain curves
 
@@ -133,18 +133,18 @@ Clone from [gitlab](https://git.scc.kit.edu/) into a local repository and instal
 -   read an convert images: `expAna.acquis2tif.main()`
 -   digital image correlation with `muDIC`: `expAna.dic_with_muDIC.main()`
 -   true stress strain behaviour from DIC results: `expAna.muDIC2stress.main()`
--   TO DO: expand the `muDIC` part of the analysis functions to also accept `experiment_list`, `ignore_list` and `select` parameters
+-   **TO DO**: expand the `muDIC` part of the analysis functions to also accept `experiment_list`, `ignore_list` and `select` parameters
 
-### Basic visualisation
+### Quick visualisation
 
--   plot stress strain curves: `expAna.vis.basic.stress()`
--   plot force displacement curves: `expAna.vis.basic.force()`
--   pass on `set_failure=True` to remove corrupted parts of the stress strain curves via a GUI
+-   plot stress strain curves: `expAna.review.stress()` or `expAna.review.stress(dic_system="muDIC")` (in case of usage with muDIC)
+-   plot force displacement curves: `expAna.review.force()`  or `expAna.review.force(dic_system="muDIC")` (in case of usage with muDIC)
+-   pass argument `set_failure=True` to remove corrupted parts of the stress strain curves via a GUI
 -   experiments to consider can be selected via `experiment_list=["TestN","TestM","TestX"]` or through a selection criterion based on a `documentation_data` dictionary key value pair passed on as a list via `select=[<key>, <value>]`
 
 ### DIC visualisation
 
--   from experiments with _Istra4D_ evaluation files available plots with DIC strain field can be produced with the function   
+-   from experiments with _Istra4D_ evaluation files available, plots with DIC strain field can be produced with the function   
 
   `expAna.plot.dic_strains(experiment_name="TestX", displacement=1,strain_component="x")`
 -   mandatory parameters:
