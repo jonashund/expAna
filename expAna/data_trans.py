@@ -131,28 +131,14 @@ class Experiment(object):
         )
 
         axes_1.plot(
-            x_data,
-            y_data,
-            label=f"{self.name}",
-            linewidth=1.0,
-            zorder=1,
+            x_data, y_data, label=f"{self.name}", linewidth=1.0, zorder=1,
         )
         fig_1.tight_layout()
-        plt.savefig(
-            os.path.join(
-                out_dir,
-                self.name + "_stress_strain.pgf",
-            )
-        )
+        plt.savefig(os.path.join(out_dir, self.name + "_stress_strain.pdf",))
         fig_1.set_size_inches(12, 9)
         fig_1.suptitle(f"{self.name}", fontsize=12)
         fig_1.tight_layout()
-        plt.savefig(
-            os.path.join(
-                out_dir,
-                self.name + "_stress_strain.png",
-            )
-        )
+        plt.savefig(os.path.join(out_dir, self.name + "_stress_strain.png",))
 
         plt.close()
 
@@ -173,28 +159,14 @@ class Experiment(object):
         )
 
         axes_1.plot(
-            x_data,
-            y_data,
-            label=f"{self.name}",
-            linewidth=1.0,
-            zorder=1,
+            x_data, y_data, label=f"{self.name}", linewidth=1.0, zorder=1,
         )
         fig_1.tight_layout()
-        plt.savefig(
-            os.path.join(
-                out_dir,
-                self.name + "_vol_strain.pgf",
-            )
-        )
+        plt.savefig(os.path.join(out_dir, self.name + "_vol_strain.pdf",))
         fig_1.set_size_inches(12, 9)
         fig_1.suptitle(f"{self.name}", fontsize=12)
         fig_1.tight_layout()
-        plt.savefig(
-            os.path.join(
-                out_dir,
-                self.name + "_vol_strain.png",
-            )
-        )
+        plt.savefig(os.path.join(out_dir, self.name + "_vol_strain.png",))
 
         plt.close()
 
@@ -215,28 +187,14 @@ class Experiment(object):
         )
         fig_1.set_size_inches(5, 2.5)
         axes_1.plot(
-            x_data,
-            y_data,
-            label=f"{self.name}",
-            linewidth=1.0,
-            zorder=1,
+            x_data, y_data, label=f"{self.name}", linewidth=1.0, zorder=1,
         )
         fig_1.tight_layout()
-        plt.savefig(
-            os.path.join(
-                out_dir,
-                self.name + "_force_displ.pgf",
-            )
-        )
+        plt.savefig(os.path.join(out_dir, self.name + "_force_displ.pdf",))
         fig_1.set_size_inches(12, 9)
         fig_1.suptitle(f"{self.name}", fontsize=12)
         fig_1.tight_layout()
-        plt.savefig(
-            os.path.join(
-                out_dir,
-                self.name + "_force_displ.png",
-            )
-        )
+        plt.savefig(os.path.join(out_dir, self.name + "_force_displ.png",))
 
         plt.close()
 
@@ -250,37 +208,25 @@ def export_one_curve_as_df(x_vals, y_vals, out_dir=".", out_filename="curve.pick
         columns=["x_vals", "y_vals"],
     )
 
-    with open(
-        os.path.join(out_dir, out_filename),
-        "wb",
-    ) as myfile:
+    with open(os.path.join(out_dir, out_filename), "wb",) as myfile:
         dill.dump(dataframe, myfile)
 
 
 def import_one_curve_as_arrays(data_dir, filename):
 
-    with open(
-        os.path.join(data_dir, filename),
-        "rb",
-    ) as myfile:
+    with open(os.path.join(data_dir, filename), "rb",) as myfile:
         dataframe = dill.load(myfile)
 
     return dataframe["x_vals"].to_numpy(), dataframe["y_vals"].to_numpy()
 
 
 def export_analysis(analysis, out_dir=".", out_filename="analysis.pickle"):
-    with open(
-        os.path.join(out_dir, out_filename),
-        "wb",
-    ) as myfile:
+    with open(os.path.join(out_dir, out_filename), "wb",) as myfile:
         dill.dump(analysis, myfile)
 
 
 def import_analysis(data_dir, filename):
-    with open(
-        os.path.join(data_dir, filename),
-        "rb",
-    ) as myfile:
+    with open(os.path.join(data_dir, filename), "rb",) as myfile:
         analysis = dill.load(myfile)
 
     return analysis
