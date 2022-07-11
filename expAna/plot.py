@@ -403,21 +403,21 @@ def dic_strains(
     )
 
     axes_1.text(
-        0.21,
-        0.09,
+        0.23,
+        0.12,
         r"$x$",
         verticalalignment="center",
-        horizontalalignment="left",
+        horizontalalignment="center",
         transform=fig_1.transFigure,
         color="black",
         fontsize=12,
         zorder=12,
     )
     axes_1.text(
-        0.09,
-        0.21,
+        0.12,
+        0.23,
         r"$y$",
-        verticalalignment="bottom",
+        verticalalignment="center",
         horizontalalignment="center",
         transform=fig_1.transFigure,
         color="black",
@@ -726,6 +726,8 @@ def create_dic_vis(
     # determine levels for contourplot
     min_strain = min(strain_flat)
     max_strain = max(strain_flat)
+    print(min_strain)
+    print(max_strain)
     # from given min/max values
     if key_min is not None and key_max is None:
         levels = np.linspace(key_min, max_strain, 1000)
