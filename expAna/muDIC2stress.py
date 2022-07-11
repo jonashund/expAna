@@ -35,8 +35,7 @@ def main(experiment_list=None):
         ) as myfile:
             true_strain = np.load(myfile)
         with open(
-            os.path.join(dic_results_dir, test_dir, test_dir + "_expAna.pickle"),
-            "rb",
+            os.path.join(dic_results_dir, test_dir, test_dir + "_expAna.pickle"), "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
@@ -52,11 +51,14 @@ def main(experiment_list=None):
             y_idx = 0
 
         true_strain_x = true_strain[0, x_idx, x_idx, :, :, :]
+        true_strain_y = true_strain[0, y_idx, y_idx, :, :, :]
         experiment.muDIC_image_count = true_strain.shape[-1]
+
         plot_frame = int(0.8 * experiment.muDIC_image_count)
 
         mask = expAna.gui.RectangleCoordinates(
-            input_image=true_strain_x[:, :, plot_frame].T
+            input_image_x_strain=true_strain_x[:, :, plot_frame].T,
+            input_image_y_strain=true_strain_y[:, :, plot_frame].T,
         )
         mask.__gui__()
 
@@ -133,8 +135,7 @@ def main(experiment_list=None):
         )
 
         with open(
-            os.path.join(test_results_dir, experiment.name + "_expAna.pickle"),
-            "wb",
+            os.path.join(test_results_dir, experiment.name + "_expAna.pickle"), "wb",
         ) as myfile:
             dill.dump(experiment, myfile)
 
