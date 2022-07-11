@@ -136,8 +136,8 @@ def style_true_stress(width=None, height=None, x_lim=None, y_lim=None):
     else:
         fig_1, axes_1 = create_styled_figure()
 
-    axes_1.set_xlabel(r"log. strain $\varepsilon$ [-]")
-    axes_1.set_ylabel(r"true stress $\sigma$ [MPa]")
+    axes_1.set_xlabel(r"Log. strain $\varepsilon$ [-]")
+    axes_1.set_ylabel(r"True stress $\sigma$ [MPa]")
 
     if x_lim:
         axes_1.set_xlim(0, x_lim)
@@ -159,8 +159,8 @@ def style_vol_strain(width=None, height=None, x_lim=None, y_lim=None):
     else:
         fig_1, axes_1 = create_styled_figure()
 
-    axes_1.set_xlabel(r"log. strain $\varepsilon$ [-]")
-    axes_1.set_ylabel(r"volume strain $\varepsilon_{ii}$")
+    axes_1.set_xlabel(r"Log. strain $\varepsilon$ [-]")
+    axes_1.set_ylabel(r"Volume strain $\varepsilon_{ii}$")
 
     if x_lim:
         axes_1.set_xlim(0, x_lim)
@@ -182,7 +182,7 @@ def style_poissons_ratio(width=None, height=None, x_lim=None, y_lim=0.5):
     else:
         fig_1, axes_1 = create_styled_figure()
 
-    axes_1.set_xlabel(r"log. strain $\varepsilon$ [-]")
+    axes_1.set_xlabel(r"Log. strain $\varepsilon$ [-]")
     axes_1.set_ylabel(r"Poisson's ratio $\nu$ [-]")
 
     if x_lim:
@@ -205,8 +205,8 @@ def style_force_displ(width=None, height=None, x_lim=None, y_lim=None):
     else:
         fig_1, axes_1 = create_styled_figure()
 
-    axes_1.set_xlabel(r"displacement $u$ [mm]")
-    axes_1.set_ylabel(r"reaction force $F$ [kN]")
+    axes_1.set_xlabel(r"Displacement $u$ [mm]")
+    axes_1.set_ylabel(r"Reaction force $F$ [kN]")
 
     if x_lim:
         axes_1.set_xlim(0, x_lim)
@@ -443,9 +443,7 @@ def dic_strains(
             dpi=dots_pi,
         )
     elif out_format == "pgf":
-        plt.savefig(
-            os.path.join(vis_export_dir, name + ".pgf"),
-        )
+        plt.savefig(os.path.join(vis_export_dir, name + ".pgf"),)
     else:
         plt.show()
 
@@ -525,8 +523,7 @@ def create_dic_vis(
 
     try:
         with open(
-            os.path.join(expDoc_data_dir, experiment_name + "_expDoc.pickle"),
-            "rb",
+            os.path.join(expDoc_data_dir, experiment_name + "_expDoc.pickle"), "rb",
         ) as myfile:
             experiment = dill.load(myfile)
     except:
@@ -813,11 +810,7 @@ def create_dic_vis(
     )
 
     axes.tick_params(
-        axis="y",
-        which="both",
-        left=False,
-        right=False,
-        labelleft=False,
+        axis="y", which="both", left=False, right=False, labelleft=False,
     )
 
     return displacement_val
