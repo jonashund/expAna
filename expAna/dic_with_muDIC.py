@@ -56,7 +56,7 @@ def main(project_name="project", experiment_list=None):
                 os.path.join(current_project.export2tif_dir, exp_name), file_type=".tif"
             )
             # apply filter to image_stack
-            image_stack.set_filter(muDIC.filters.lowpass_gaussian, sigma=1.0)
+            image_stack.set_filter(muDIC.filtering.lowpass_gaussian, sigma=1.0)
 
             # define inputs for DIC
             inputs = muDIC.DICInput(
@@ -93,7 +93,8 @@ def main(project_name="project", experiment_list=None):
 
             # save experiment data
             with open(
-                os.path.join(test_results_dir, experiment.name + "_expAna.pickle"), "wb",
+                os.path.join(test_results_dir, experiment.name + "_expAna.pickle"),
+                "wb",
             ) as myfile:
                 dill.dump(experiment, myfile)
 
