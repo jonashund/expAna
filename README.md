@@ -12,9 +12,9 @@ Process raw DIC images or evaluation data exported from Istra4D to gain true str
 
     #### **TLDR**: [Managing environments with Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)
 
-    -   create an environment based on version X.X of Python and packages 1,2 and three:\
+    -   create an environment based on version X.X of Python and packages 1 and 2:\
           `conda create --name <my_env_name> python=X.X package1 package2`
-    -   **remark:** Python and packages are optional\
+    -   **remark:** specifying the Python version and packages is optional\
           `conda create --name <my_env_name>`
     -   activate environment:\
           `conda activate <my_env_name>`
