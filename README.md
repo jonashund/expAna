@@ -1,13 +1,14 @@
 # expAna
 
-Process raw DIC images or evaluation data exported from Istra4D to gain true stress strain curves.
+Process raw DIC images or evaluation data from Istra4D (Version 4.3.0.1) to analyse experimental results.
+Use DIC results from [µDIC](https://github.com/PolymerGuy/muDIC) or Istra4D to compute and visualise stress-strain, volume strain, force-displacement, transversal strain responses.
 
 ## Requirements
 
 -   create a copy on a computer that runs bash (`.sh`) scripts as well as
 
     -   LaTeX 2e
-    -   Python (Version 3.x, e.g. via [pyenv](https://github.com/pyenv/pyenv) or [Conda](https://docs.conda.io/en/latest/))
+    -   Python (Version 3.x, installation e.g. via [Conda](https://docs.conda.io/en/latest/)) or [pyenv](https://github.com/pyenv/pyenv)
         -   creating and subsequently setting/activating an environment is recommended
 
     #### **TLDR**: [Managing environments with Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)
@@ -34,7 +35,7 @@ Process raw DIC images or evaluation data exported from Istra4D to gain true str
 
 **1. using conda and environment.yml (tested on CentOS):**
 
--   execute in directory with `environmental.yml` (after cloning [`expDoc`](https://git.scc.kit.edu/ifm/labor/exputil/expDoc) or [`expAna`](https://git.scc.kit.edu/ifm/labor/exputil/expAna) )\
+-   execute in directory with `environmental.yml` (after cloning [`expDoc`](https://github.com/jonashund/expDoc) or [`expAna`](https://github.com/jonashund/expAna) )\
     `conda env create -f environmental.yml`
 
 **1. using pyenv virtualenv (on macOS):**
@@ -63,21 +64,21 @@ Process raw DIC images or evaluation data exported from Istra4D to gain true str
 
 ### Cloning the repositories and installing
 
-Clone from [gitlab](https://git.scc.kit.edu/) into a local repository and install in the following order from within the corresponding repository:
+Clone from [github](https://github.com/) into a local repository and install in the following order from within the corresponding repository:
 
-1.  [`istra2py`](https://git.scc.kit.edu/ifm/labor/istra2py)
+1.  [`istra2py`](https://github.com/jonashund/istra2py)
     -   `git clone git@git.scc.kit.edu:ifm/labor/istra2py.git`
     -   `cd ./istra2py`
     -   `pip install -e .`
-2.  [`muDIC`](https://git.scc.kit.edu/ifm/labor/exputil/mudic_ifm)
+2.  [`muDIC`](https://github.com/jonashund/muDIC)
     -   `git clone git@github.com:PolymerGuy/muDIC.git`
     -   `cd ./muDIC`
     -   `pip install -r requirements.txt`
-3.  [`expDoc`](https://git.scc.kit.edu/ifm/labor/exputil/expDoc):
+3.  [`expDoc`](https://github.com/jonashund/expDoc):
     -   `git clone git@github.com:jonashund/expDoc.git`
     -   `cd ./expDoc`
     -   `pip install -e .`
-4.  [`expAna`](https://git.scc.kit.edu/ifm/labor/exputil/expAna):
+4.  [`expAna`](https://github.com/jonashund/expAna):
     -   `git clone git@github.com:jonashund/expAna.git`
     -   `cd ./expAna`
     -   `pip install -e .`
