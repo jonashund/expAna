@@ -114,9 +114,9 @@ class RectangleCoordinates(object):
         )
 
         cbar_x = fig_1.colorbar(image_x, ax=axes_1)
-        cbar_x.set_label("log. axial strain")
+        cbar_x.set_label("Log. axial strain")
         cbar_y = fig_1.colorbar(image_y, ax=axes_2)
-        cbar_y.set_label("log. transverse strain")
+        cbar_y.set_label("Log. transverse strain")
 
         selector = RectangleSelector(
             axes_1,
@@ -201,8 +201,8 @@ class FailureLocatorStress(object):
         axes_1.set_xlim(0, 1.1 * experiment.gauge_results["true_strain_image_x"].max())
         axes_1.set_ylim(0, 1.1 * experiment.gauge_results["true_stress_in_MPa"].max())
 
-        axes_1.set_xlabel(r"log. strain $\varepsilon$ [-]")
-        axes_1.set_ylabel(r"true stress $\sigma$ [MPa]")
+        axes_1.set_xlabel(r"Log. strain $\varepsilon$ [-]")
+        axes_1.set_ylabel(r"True stress $\sigma$ [MPa]")
         axes_1.set_title(
             """
             Pick point of material failure (left mouse button).
@@ -287,8 +287,8 @@ class FailureLocatorForce(object):
         axes_1.set_xlim(0, 1.1 * experiment.data_instron["displacement_in_mm"].max())
         axes_1.set_ylim(-0.1, 1.1 * experiment.data_instron["force_in_kN"].max())
 
-        axes_1.set_xlabel(r"displacement $u$ [mm]")
-        axes_1.set_ylabel(r"reaction force $F$ [kN]")
+        axes_1.set_xlabel(r"Displacement $u$ [mm]")
+        axes_1.set_ylabel(r"Reaction force $F$ [kN]")
         axes_1.set_title(
             """
             Pick point of material failure (left mouse button).
