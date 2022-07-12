@@ -52,11 +52,7 @@ def force(
 
 
 def vol_strain(
-    compare,
-    select=None,
-    experiment_list=None,
-    ignore_list=None,
-    dic_system="istra",
+    compare, select=None, experiment_list=None, ignore_list=None, dic_system="istra",
 ):
     work_dir = os.getcwd()
     if dic_system == "istra":
@@ -105,11 +101,7 @@ def vol_strain(
 
 
 def stress(
-    compare,
-    select=None,
-    experiment_list=None,
-    ignore_list=None,
-    dic_system="istra",
+    compare, select=None, experiment_list=None, ignore_list=None, dic_system="istra",
 ):
     work_dir = os.getcwd()
     if dic_system == "istra":
@@ -157,11 +149,7 @@ def stress(
 
 
 def poissons_ratio(
-    compare,
-    select=None,
-    experiment_list=None,
-    ignore_list=None,
-    dic_system="istra",
+    compare, select=None, experiment_list=None, ignore_list=None, dic_system="istra",
 ):
     work_dir = os.getcwd()
     if dic_system == "istra":
@@ -273,8 +261,7 @@ class Analysis(object):
                 # search for expAna data
                 try:
                     with open(
-                        os.path.join(vis_export_dir, test_dir + "_expAna.pickle"),
-                        "rb",
+                        os.path.join(vis_export_dir, test_dir + "_expAna.pickle"), "rb",
                     ) as myfile:
                         experiment = dill.load(myfile)
                 except:
@@ -437,9 +424,7 @@ class Analysis(object):
                 {"y_max": np.array(forces, dtype=object)[y_indices][-1].max()}
             )
 
-    def compute_data_stress(
-        self,
-    ):
+    def compute_data_stress(self,):
         for compare_value in self.compare_values:
             true_strains = []
             true_stresses = []
@@ -482,9 +467,7 @@ class Analysis(object):
                 {"y_max": np.array(true_stresses, dtype=object)[y_indices][-1].max()}
             )
 
-    def compute_data_vol_strain(
-        self,
-    ):
+    def compute_data_vol_strain(self,):
         for compare_value in self.compare_values:
             true_strains = []
             vol_strains = []
@@ -512,11 +495,7 @@ class Analysis(object):
                     strain, vol_strains[i], interval
                 )
             # compute the mean curve as long as at least three values are available
-            (
-                y_mean,
-                y_sem,
-                y_indices,
-            ) = expAna.calc.get_mean_and_sem(vol_strains)
+            (y_mean, y_sem, y_indices,) = expAna.calc.get_mean_and_sem(vol_strains)
 
             x_mean = x_mean[: len(y_mean)]
 
@@ -531,9 +510,7 @@ class Analysis(object):
                 {"y_max": np.array(vol_strains, dtype=object)[y_indices][-1].max()}
             )
 
-    def compute_data_poissons_ratio(
-        self,
-    ):
+    def compute_data_poissons_ratio(self,):
         for compare_value in self.compare_values:
             true_strains = []
             poissons_ratios = []
@@ -571,11 +548,7 @@ class Analysis(object):
                 )
 
             # compute the mean curve as long as at least three values are available
-            (
-                y_mean,
-                y_sem,
-                y_indices,
-            ) = expAna.calc.get_mean_and_sem(poissons_ratios)
+            (y_mean, y_sem, y_indices,) = expAna.calc.get_mean_and_sem(poissons_ratios)
 
             x_mean = x_mean[: len(y_mean)]
 
@@ -618,10 +591,7 @@ class Analysis(object):
                 y_lim = 1.5 * self.dict[compare_value]["y_max"]
 
             fig_1, axes_1 = fig_props["fig_style"](
-                x_lim=x_lim,
-                y_lim=y_lim,
-                width=6,
-                height=4,
+                x_lim=x_lim, y_lim=y_lim, width=6, height=4,
             )
 
             expAna.plot.add_curves_same_value(
@@ -643,14 +613,12 @@ class Analysis(object):
             fig_1.tight_layout()
             plt.savefig(
                 os.path.join(
-                    vis_export_dir,
-                    f"{self.export_prefix}_{export_value}.pgf",
+                    vis_export_dir, f"{self.export_prefix}_{export_value}.pdf",
                 )
             )
             plt.savefig(
                 os.path.join(
-                    vis_export_dir,
-                    f"{self.export_prefix}_{export_value}_small.png",
+                    vis_export_dir, f"{self.export_prefix}_{export_value}_small.png",
                 )
             )
 
@@ -661,8 +629,7 @@ class Analysis(object):
             fig_1.tight_layout()
             plt.savefig(
                 os.path.join(
-                    vis_export_dir,
-                    f"{self.export_prefix}_{export_value}_large.png",
+                    vis_export_dir, f"{self.export_prefix}_{export_value}_large.png",
                 )
             )
             plt.close()
@@ -689,10 +656,7 @@ class Analysis(object):
                 y_lim = 1.5 * self.dict[compare_value]["y_max"]
 
             fig_2, axes_2 = fig_props["fig_style"](
-                x_lim=x_lim,
-                y_lim=y_lim,
-                width=6,
-                height=4,
+                x_lim=x_lim, y_lim=y_lim, width=6, height=4,
             )
 
             expAna.plot.add_mean_and_sem(
@@ -710,7 +674,7 @@ class Analysis(object):
             plt.savefig(
                 os.path.join(
                     vis_export_dir,
-                    f"{self.export_prefix}_{export_value}_with_error.pgf",
+                    f"{self.export_prefix}_{export_value}_with_error.pdf",
                 )
             )
             plt.savefig(
@@ -745,10 +709,7 @@ class Analysis(object):
                 for compare_value in self.compare_values
             )
         fig_3, axes_3 = fig_props["fig_style"](
-            x_lim=x_lim,
-            y_lim=1.5 * y_max,
-            width=6,
-            height=4,
+            x_lim=x_lim, y_lim=1.5 * y_max, width=6, height=4,
         )
 
         for compare_value in self.compare_values:
@@ -770,22 +731,16 @@ class Analysis(object):
 
         fig_3.tight_layout()
         plt.savefig(
-            os.path.join(vis_export_dir, f"{self.export_prefix}_comparison.pgf")
+            os.path.join(vis_export_dir, f"{self.export_prefix}_comparison.pdf")
         )
         plt.savefig(
-            os.path.join(
-                vis_export_dir,
-                f"{self.export_prefix}_comparison_small.png",
-            )
+            os.path.join(vis_export_dir, f"{self.export_prefix}_comparison_small.png",)
         )
         fig_3.set_size_inches(12, 9)
         fig_3.suptitle(f"{self.material}, comparison: {self.title_key}", fontsize=12)
         fig_3.tight_layout()
         plt.savefig(
-            os.path.join(
-                vis_export_dir,
-                f"{self.export_prefix}_comparison_large.png",
-            )
+            os.path.join(vis_export_dir, f"{self.export_prefix}_comparison_large.png",)
         )
         plt.close()
 
@@ -793,10 +748,7 @@ class Analysis(object):
         # comparison plot with mean and std curve
 
         fig_4, axes_4 = fig_props["fig_style"](
-            x_lim=x_lim,
-            y_lim=1.5 * y_max,
-            width=6,
-            height=4,
+            x_lim=x_lim, y_lim=1.5 * y_max, width=6, height=4,
         )
 
         for compare_value in self.compare_values:
@@ -814,14 +766,12 @@ class Analysis(object):
         fig_4.tight_layout()
         plt.savefig(
             os.path.join(
-                vis_export_dir,
-                f"{self.export_prefix}_comparison_with_error.pgf",
+                vis_export_dir, f"{self.export_prefix}_comparison_with_error.pdf",
             )
         )
         plt.savefig(
             os.path.join(
-                vis_export_dir,
-                f"{self.export_prefix}_comparison_with_error_small.png",
+                vis_export_dir, f"{self.export_prefix}_comparison_with_error_small.png",
             )
         )
         fig_4.set_size_inches(12, 9)
@@ -829,15 +779,12 @@ class Analysis(object):
         fig_4.tight_layout()
         plt.savefig(
             os.path.join(
-                vis_export_dir,
-                f"{self.export_prefix}_comparison_with_error_large.png",
+                vis_export_dir, f"{self.export_prefix}_comparison_with_error_large.png",
             )
         )
         plt.close()
 
-    def get_type_props(
-        self,
-    ):
+    def get_type_props(self,):
         type_props = {
             "force": {"fig_style": expAna.plot.style_force_displ},
             "stress": {
@@ -845,10 +792,7 @@ class Analysis(object):
                 "y_lim": 100,
                 "fig_style": expAna.plot.style_true_stress,
             },
-            "vol_strain": {
-                "x_lim": 1.0,
-                "fig_style": expAna.plot.style_vol_strain,
-            },
+            "vol_strain": {"x_lim": 1.0, "fig_style": expAna.plot.style_vol_strain,},
             "poissons_ratio": {
                 "x_lim": 1.0,
                 "fig_style": expAna.plot.style_poissons_ratio,
