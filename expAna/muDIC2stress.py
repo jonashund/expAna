@@ -9,7 +9,7 @@ import expAna
 from natsort import natsorted
 
 
-def main(experiment_list=None):
+def main(experiment_list=None, ignore_list=None, select=None):
     work_dir = os.getcwd()
 
     dic_results_dir = os.path.join(work_dir, "data_muDIC")
@@ -28,6 +28,12 @@ def main(experiment_list=None):
 
     experiment_list = natsorted(experiment_list)
 
+    if ignore_list is not None:
+        for experiment in ignore_list:
+            experiment_list.remove(experiment)
+    else:
+        pass
+
     for test_dir in experiment_list:
         with open(
             os.path.join(dic_results_dir, test_dir, test_dir + "_true_strain.npy"),
@@ -38,6 +44,14 @@ def main(experiment_list=None):
             os.path.join(dic_results_dir, test_dir, test_dir + "_expAna.pickle"), "rb",
         ) as myfile:
             experiment = dill.load(myfile)
+
+        if select is not None:
+            if str(experiment.documentation_data[select[0]]) == str(select[1]):
+                pass
+            else:
+                continue
+        else:
+            pass
 
         direction_selector = expAna.gui.TensileDirection(experiment.ref_image)
         direction_selector.__gui__()

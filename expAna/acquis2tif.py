@@ -8,7 +8,7 @@ from natsort import natsorted
 import expAna
 
 
-def main(experiment_list=None):
+def main(experiment_list=None, ignore_list=None, select=None):
     work_dir = os.getcwd()
 
     expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
@@ -17,7 +17,7 @@ def main(experiment_list=None):
 
     os.makedirs(export2tif_dir, exist_ok=True)
 
-    if experiment_list == None:
+    if experiment_list is None:
         experiment_list = list()
         print(
             f"No experiments passed. Will search for folders named `Test*` in {istra_acquisition_dir}."
@@ -30,6 +30,12 @@ def main(experiment_list=None):
         pass
 
     experiment_list = natsorted(experiment_list)
+
+    if ignore_list is not None:
+        for experiment in ignore_list:
+            experiment_list.remove(experiment)
+    else:
+        pass
 
     current_project = expAna.data_trans.Project(
         "project",
@@ -57,6 +63,14 @@ def main(experiment_list=None):
             current_project.istra_acquisition_dir, current_project.export2tif_dir,
         )
         current_project.add_experiment(experiment)
+
+        if select is not None:
+            if str(experiment.documentation_data[select[0]]) == str(select[1]):
+                pass
+            else:
+                continue
+        else:
+            pass
 
     # export project
     with open(
