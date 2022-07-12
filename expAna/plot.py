@@ -12,17 +12,14 @@ import expAna
 from skimage.exposure import rescale_intensity
 
 
-def plt_style():
+def plt_style(font="computer_modern"):
     """
     Set custom style parameters for plots.
     """
 
-    matplotlib.use("pgf")  # use the pgf backend
-
     # Include user defined 'phd.mplstyle' located in
     # print(matplotlib.get_configdir())
-    #   * MacBook Air: ./Users/jonas/.matplotlib/stylelib
-    #   * ifmpc84: /home/jonas/.config/matplotlib/stylelib
+
     # The style file can also be located in any directory.
     # For invoking it the path has to be specified then.
     # For details see
@@ -41,28 +38,28 @@ def plt_style():
     # https://matplotlib.org/tutorials/introductory/customizing.html
 
     # Set rcParams for LaTeX
-    set_latex_fonts = {
+
+    latex_preamble_dict = {
+        "palatino": r"\usepackage[T1]{fontenc} \usepackage{mathtools} \usepackage{xfrac} \usepackage{newpxtext,newpxmath} \newcommand*{\units}[1]{\mbox{[\ifx&#1&$\hbox{-}$\else#1\fi]}}",
+        "computer_modern": r"\usepackage[T1]{fontenc} \usepackage{mathtools} \usepackage{xfrac} \newcommand*{\units}[1]{\mbox{[\ifx&#1&$\hbox{-}$\else#1\fi]}}",
+        "libertine": r"\usepackage{mathtools} \usepackage{xfrac} \usepackage{libertine} \usepackage[libertine]{newtxmath} \usepackage[T1]{fontenc} \newcommand*{\units}[1]{\mbox{[\ifx&#1&$\hbox{-}$\else#1\fi]}}",
+        "utopia": r"\usepackage{mathtools} \usepackage{xfrac} \usepackage{libertine} \usepackage[utopia]{newtxmath} \usepackage[T1]{fontenc} \newcommand*{\units}[1]{\mbox{[\ifx&#1&$\hbox{-}$\else#1\fi]}}",
+        "beamer": r"\usepackage{mathtools} \usepackage{xfrac} \usepackage{helvet} \usepackage[utopia]{newtxmath} \usepackage[T1]{fontenc} \newcommand*{\units}[1]{\mbox{[\ifx&#1&$\hbox{-}$\else#1\fi]}}",
+    }
+
+    phd_rcParams = {
         # Use LaTeX to write all text
         "text.usetex": True,
-        "font.family": "serif",
+        "text.latex.preamble": latex_preamble_dict[font],
         # Use xxpt font in plots, to match xxpt font in document
         "font.size": 12,
         "axes.labelsize": 12,
         # Make the legend/label fonts a little smaller
         "legend.fontsize": 12,
-        "xtick.labelsize": 12,
-        "ytick.labelsize": 12,
+        "xtick.labelsize": 10,
+        "ytick.labelsize": 10,
     }
-    matplotlib.rcParams.update(set_latex_fonts)
-
-    # Set rcParams for pgf backend.
-    # For details see
-    # https://matplotlib.org/3.1.1/tutorials/text/pgf.html
-    matplotlib.rcParams.update({"pgf.texsystem": "xelatex"})
-    matplotlib.rcParams.update({"pgf.rcfonts": False})
-
-    set_preamble = {"pgf.preamble": r"\usepackage{mathtools} \usepackage{xfrac}"}
-    matplotlib.rcParams.update(set_preamble)
+    matplotlib.rcParams.update(phd_rcParams)
 
     # set more rcParams
     matplotlib.rcParams.update({"patch.linewidth": 1})
