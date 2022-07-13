@@ -203,9 +203,13 @@ class Analysis(object):
         self.type = type
 
     def setup(
-        self, exp_data_dir, compare, select=None, experiment_list=None, ignore_list=None
+        self,
+        exp_data_dir,
+        compare,
+        select=None,
+        experiment_list=None,
+        ignore_list=None,
     ):
-
         if experiment_list is None:
             experiment_list = list()
             print(
@@ -562,7 +566,7 @@ class Analysis(object):
                 {"y_max": np.array(poissons_ratios, dtype=object)[y_indices][-1].max()}
             )
 
-    def plot_data(self, vis_export_dir, x_lim=None):
+    def plot_data(self, vis_export_dir, x_lim=None, export_curves=False):
         fig_props = self.get_type_props()
 
         if self.type == "force":
@@ -578,12 +582,15 @@ class Analysis(object):
             else:
                 export_value = str(compare_value)
 
-            expAna.data_trans.export_one_curve_as_df(
-                x_vals=self.dict[compare_value]["x_mean"],
-                y_vals=self.dict[compare_value]["y_mean"],
-                out_dir=vis_export_dir,
-                out_filename=f"curve_avg_{self.export_prefix}_{export_value}.pickle",
-            )
+            if export_curves:
+                expAna.data_trans.export_one_curve_as_df(
+                    x_vals=self.dict[compare_value]["x_mean"],
+                    y_vals=self.dict[compare_value]["y_mean"],
+                    out_dir=vis_export_dir,
+                    out_filename=f"curve_avg_{self.export_prefix}_{export_value}.pickle",
+                )
+            else:
+                pass
 
             if self.type == "poissons_ratio":
                 y_lim = 0.5
@@ -614,23 +621,14 @@ class Analysis(object):
             plt.savefig(
                 os.path.join(
                     vis_export_dir, f"{self.export_prefix}_{export_value}.pdf",
-                )
+                ),
+                dpi=600,
             )
             plt.savefig(
                 os.path.join(
-                    vis_export_dir, f"{self.export_prefix}_{export_value}_small.png",
-                )
-            )
-
-            fig_1.set_size_inches(12, 9)
-            fig_1.suptitle(
-                f"{self.material}, {self.title_key}: {compare_value}", fontsize=12
-            )
-            fig_1.tight_layout()
-            plt.savefig(
-                os.path.join(
-                    vis_export_dir, f"{self.export_prefix}_{export_value}_large.png",
-                )
+                    vis_export_dir, f"{self.export_prefix}_{export_value}.png",
+                ),
+                dpi=600,
             )
             plt.close()
 
@@ -643,12 +641,15 @@ class Analysis(object):
             else:
                 export_value = str(compare_value)
 
-            expAna.data_trans.export_one_curve_as_df(
-                x_vals=self.dict[compare_value]["x_mean"],
-                y_vals=self.dict[compare_value]["y_sem"],
-                out_dir=vis_export_dir,
-                out_filename=f"curve_sem_{self.export_prefix}_{export_value}.pickle",
-            )
+            if export_curves:
+                expAna.data_trans.export_one_curve_as_df(
+                    x_vals=self.dict[compare_value]["x_mean"],
+                    y_vals=self.dict[compare_value]["y_sem"],
+                    out_dir=vis_export_dir,
+                    out_filename=f"curve_sem_{self.export_prefix}_{export_value}.pickle",
+                )
+            else:
+                pass
 
             if self.type == "poissons_ratio":
                 y_lim = 10.0
@@ -675,26 +676,17 @@ class Analysis(object):
                 os.path.join(
                     vis_export_dir,
                     f"{self.export_prefix}_{export_value}_with_error.pdf",
-                )
+                ),
+                dpi=600,
             )
             plt.savefig(
                 os.path.join(
                     vis_export_dir,
-                    f"{self.export_prefix}_{export_value}_with_error_small.png",
-                )
+                    f"{self.export_prefix}_{export_value}_with_error.png",
+                ),
+                dpi=600,
             )
 
-            fig_2.set_size_inches(12, 9)
-            fig_2.suptitle(
-                f"{self.material}, {self.title_key}: {compare_value}", fontsize=12
-            )
-            fig_2.tight_layout()
-            plt.savefig(
-                os.path.join(
-                    vis_export_dir,
-                    f"{self.export_prefix}_{export_value}_with_error_large.png",
-                )
-            )
             plt.close()
 
         ################################################################################
@@ -731,16 +723,12 @@ class Analysis(object):
 
         fig_3.tight_layout()
         plt.savefig(
-            os.path.join(vis_export_dir, f"{self.export_prefix}_comparison.pdf")
+            os.path.join(vis_export_dir, f"{self.export_prefix}_comparison.pdf"),
+            dpi=600,
         )
         plt.savefig(
-            os.path.join(vis_export_dir, f"{self.export_prefix}_comparison_small.png",)
-        )
-        fig_3.set_size_inches(12, 9)
-        fig_3.suptitle(f"{self.material}, comparison: {self.title_key}", fontsize=12)
-        fig_3.tight_layout()
-        plt.savefig(
-            os.path.join(vis_export_dir, f"{self.export_prefix}_comparison_large.png",)
+            os.path.join(vis_export_dir, f"{self.export_prefix}_comparison.png",),
+            dpi=600,
         )
         plt.close()
 
@@ -767,20 +755,14 @@ class Analysis(object):
         plt.savefig(
             os.path.join(
                 vis_export_dir, f"{self.export_prefix}_comparison_with_error.pdf",
-            )
+            ),
+            dpi=600,
         )
         plt.savefig(
             os.path.join(
-                vis_export_dir, f"{self.export_prefix}_comparison_with_error_small.png",
-            )
-        )
-        fig_4.set_size_inches(12, 9)
-        fig_4.suptitle(f"{self.material}, comparison: {self.title_key}", fontsize=12)
-        fig_4.tight_layout()
-        plt.savefig(
-            os.path.join(
-                vis_export_dir, f"{self.export_prefix}_comparison_with_error_large.png",
-            )
+                vis_export_dir, f"{self.export_prefix}_comparison_with_error.png",
+            ),
+            dpi=600,
         )
         plt.close()
 

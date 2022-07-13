@@ -236,10 +236,15 @@ def create_styled_figure(width=5, height=3.75):
 def add_curves_same_value(fig, axes, x_mean, y_mean, xs=[], ys=[], value=None):
 
     current_color = next(axes._get_lines.prop_cycler)["color"]
+    if type(value) == str:
+        label_value = value.capitalize()
+    else:
+        label_value = str(value)
+
     axes.plot(
         x_mean,
         y_mean,
-        label=f"{value} (mean)",
+        label=f"{label_value} (mean)",
         linewidth=2,
         zorder=10,
         color=current_color,
@@ -254,7 +259,7 @@ def add_curves_same_value(fig, axes, x_mean, y_mean, xs=[], ys=[], value=None):
                 dashes=(7, 7),
                 zorder=1,
                 color=current_color,
-                label=f"{value} (raw data)",
+                label=f"{label_value} (raw data)",
                 # alpha=0.33,
             )
         else:
@@ -274,11 +279,16 @@ def add_curves_same_value(fig, axes, x_mean, y_mean, xs=[], ys=[], value=None):
 
 def add_mean_and_sem(fig, axes, x_mean, y_mean, y_error, value=None):
 
+    if type(value) == str:
+        label_value = value.capitalize()
+    else:
+        label_value = str(value)
+
     current_color = next(axes._get_lines.prop_cycler)["color"]
     axes.plot(
         x_mean,
         y_mean,
-        label=f"{value} (mean)",
+        label=f"{label_value} (mean)",
         linewidth=2,
         zorder=10,
         color=current_color,
@@ -723,8 +733,7 @@ def create_dic_vis(
     # determine levels for contourplot
     min_strain = min(strain_flat)
     max_strain = max(strain_flat)
-    print(min_strain)
-    print(max_strain)
+
     # from given min/max values
     if key_min is not None and key_max is None:
         levels = np.linspace(key_min, max_strain, 1000)

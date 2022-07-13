@@ -220,7 +220,10 @@ def import_one_curve_as_arrays(data_dir, filename):
     return dataframe["x_vals"].to_numpy(), dataframe["y_vals"].to_numpy()
 
 
-def export_analysis(analysis, out_dir=".", out_filename="analysis.pickle"):
+def export_analysis(analysis, out_dir=None, out_filename="analysis.pickle"):
+    if out_dir is None:
+        out_dir = os.path.join(os.getcwd(), "data_expAna")
+    os.makedirs(out_dir, exist_ok=True)
     with open(os.path.join(out_dir, out_filename), "wb",) as myfile:
         dill.dump(analysis, myfile)
 

@@ -19,6 +19,8 @@ def main(
     specimen_thickness=3.0,
     use_poissons_ratio=False,
     poissons_ratio_through_thickness=0.35,
+    tensile_direction=None,
+    avg_coords=None,
 ):
     work_dir = os.getcwd()
     expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
@@ -47,8 +49,7 @@ def main(
         # load or create experiment object
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"),
-                "rb",
+                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"), "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -71,9 +72,12 @@ def main(
 
         experiment.read_istra_evaluation(istra_acquisition_dir, istra_evaluation_dir)
 
-        direction_selector = expAna.gui.TensileDirection(experiment.ref_image)
-        direction_selector.__gui__()
-        experiment.tensile_direction = direction_selector.direction
+        if tensile_direction is None:
+            direction_selector = expAna.gui.TensileDirection(experiment.ref_image)
+            direction_selector.__gui__()
+            experiment.tensile_direction = direction_selector.direction
+        else:
+            experiment.tensile_direction = tensile_direction
 
         if experiment.tensile_direction == "x":
             x_idx = 0
@@ -87,17 +91,20 @@ def main(
         true_strain = expAna.gauge.get_true_strain(experiment.def_grad)
         true_strain[:, :, :, :][experiment.mask[:, :, :, 0] == 0] = np.nan
 
-        strain_gauge = expAna.gui.RectangleCoordinates(
-            input_image_x_strain=true_strain[
-                int(0.8 * experiment.image_count), :, :, x_idx
-            ],
-            input_image_y_strain=true_strain[
-                int(0.8 * experiment.image_count), :, :, y_idx
-            ],
-        )
-        strain_gauge.__gui__()
+        if avg_coords is None:
+            strain_gauge = expAna.gui.RectangleCoordinates(
+                input_image_x_strain=true_strain[
+                    int(0.8 * experiment.image_count), :, :, x_idx
+                ],
+                input_image_y_strain=true_strain[
+                    int(0.8 * experiment.image_count), :, :, y_idx
+                ],
+            )
+            strain_gauge.__gui__()
 
-        [x_min, y_min, x_max, y_max] = [int(i) for i in strain_gauge.coordinates]
+            [x_min, y_min, x_max, y_max] = [int(i) for i in strain_gauge.coordinates]
+        else:
+            [x_min, y_min, x_max, y_max] = avg_coords
 
         # image coordinates assume x-axis horizontal (i.e. columns)
         # and y-axis vertical (i.e. rows)
@@ -224,8 +231,7 @@ def update_true_stress(
     for test_dir in experiment_list:
         # load documentation data with updated information
         with open(
-            os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"),
-            "rb",
+            os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"), "rb",
         ) as myfile:
             exp_docu = dill.load(myfile)
 
@@ -266,8 +272,7 @@ def update_true_stress(
         )
 
         with open(
-            os.path.join(test_results_dir, exp_eval.name + "CORN1_expAna.pickle"),
-            "wb",
+            os.path.join(test_results_dir, exp_eval.name + "CORN1_expAna.pickle"), "wb",
         ) as myfile:
             dill.dump(exp_eval, myfile)
 
