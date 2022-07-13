@@ -407,3 +407,6 @@ TSWLatexianTemp*
 
 # macOS system files
 .DS_Store
+
+# project specific
+./trash

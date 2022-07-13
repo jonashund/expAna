@@ -1,0 +1,54 @@
+\documentclass[12pt,a4paper,oneside]{article}
+
+%---------------PACKAGES--------------------------
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{psfrag}
+
+\usepackage{latexsym,amsmath,amsfonts,amssymb,xfrac}
+
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{tabularx}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes,positioning}
+\usepackage{tikz-cd}
+% \usepackage{pgfplots}
+% \pgfplotsset{compat=newest}
+
+\pagestyle{empty}
+\usepackage[textwidth=18cm, left=1.5cm, top= 1.cm, bottom=1.cm]{geometry}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\arraystretch}{1.5}
+\newcolumntype{A}{ >{\raggedright} m{4cm} }
+\newcolumntype{B}{ >{\raggedleft\arraybackslash} m{4cm} }
+
+\newcolumntype{C}[1]{ >{\raggedright} m{#1} }
+\newcolumntype{D}[1]{ >{\raggedleft\arraybackslash} m{#1} }
+
+\newcolumntype{E}[1]{ >{\centering} m{#1} }
+
+\graphicspath{{./specimen_geometries/}}
+
+\newcommand{\sentSpecimen}{
+	\begin{center}
+		\input{./specimen_geometries/sent_specimen_geometry.tikz}
+	\end{center}
+}
+\newcommand{\simpleTensionSpecimen}{
+	\begin{center}
+		\input{./specimen_geometries/tensile_specimen_geometry.tikz}
+	\end{center}
+}
+\newcommand\plotFile[1]{
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\textwidth]{../data_expDoc/visualisation/#1_force_displ.pdf}
+	\end{figure}
+}
+
+\def\plotsInPlace{1} % If Python plotting script has not been executed set to 0
