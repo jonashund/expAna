@@ -7,12 +7,11 @@ setuptools.setup(
     name="expAna",
     version="0.0.1",
     author="Jonas Hund",
-    author_email="jonas.hund@kit.edu",
-    description="Analyse your experimental data acquired in the IFM laboratory.",
-    url="https://git.scc.kit.edu/ifm/labor/exputil/expAna",
+    author_email="jonas.hund@gmx.de",
+    description="Analyse your experimental data acquired with the IFM lab equipment.",
+    url="https://github.com/jonashund/expAna",
     packages=["expAna"],
     package_dir={"expAna": "expAna"},
-    # entry_points={"console_scripts": ["acquis2tif = expAna.console_scripts:acquis2tif_cmd"]},
     install_requires=[
         "istra2py",
         "expDoc",
@@ -24,6 +23,7 @@ setuptools.setup(
         "noise",
         "openpyxl",
     ],
+    extras_require={"test": ["pytest",]},
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
