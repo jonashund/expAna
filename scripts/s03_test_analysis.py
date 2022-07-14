@@ -1,5 +1,4 @@
 import os
-import expDoc
 import expAna
 import pathlib
 

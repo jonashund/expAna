@@ -28,7 +28,7 @@ def plt_style(font="computer_modern"):
         plt.style.use("phd")
     except:
         # in case someone different than me will ever use this
-        plt.style.use("seaborn_dark_palette")
+        plt.style.use("default")
 
     # Overwrite default settings in rcParams if necessary.
     # For matplotlibrc.template file see
