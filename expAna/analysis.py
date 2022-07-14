@@ -39,16 +39,14 @@ def force(
     analysis.compute_data_force(displ_shift)
 
     expAna.data_trans.export_analysis(
-        analysis,
-        out_dir=vis_export_dir,
-        out_filename=f"analysis_{analysis.export_prefix}.pickle",
+        analysis, out_filename=f"analysis_{analysis.export_prefix}.pickle",
     )
 
     ####################################################################################
     # PLOT
     ####################################################################################
 
-    analysis.plot_data(vis_export_dir=vis_export_dir, x_lim=x_lim)
+    analysis.plot_data(x_lim=x_lim)
 
 
 def vol_strain(
@@ -56,10 +54,8 @@ def vol_strain(
 ):
     work_dir = os.getcwd()
     if dic_system == "istra":
-        exp_data_dir = os.path.join(work_dir, "data_istra_evaluation")
         vis_export_dir = os.path.join(work_dir, "expAna_plots", "istra")
     elif dic_system == "muDIC":
-        exp_data_dir = os.path.join(work_dir, "data_muDIC")
         vis_export_dir = os.path.join(work_dir, "expAna_plots", "muDIC")
     else:
         raise InputError(
@@ -70,7 +66,6 @@ def vol_strain(
 
     analysis = expAna.analysis.Analysis(type="vol_strain")
     analysis.setup(
-        exp_data_dir=exp_data_dir,
         compare=compare,
         select=select,
         experiment_list=experiment_list,
@@ -88,16 +83,14 @@ def vol_strain(
     ####################################################################################
 
     expAna.data_trans.export_analysis(
-        analysis,
-        out_dir=vis_export_dir,
-        out_filename=f"analysis_{analysis.export_prefix}.pickle",
+        analysis, out_filename=f"analysis_{analysis.export_prefix}.pickle",
     )
 
     ####################################################################################
     # PLOT
     ####################################################################################
 
-    analysis.plot_data(vis_export_dir)
+    analysis.plot_data()
 
 
 def stress(
@@ -105,10 +98,8 @@ def stress(
 ):
     work_dir = os.getcwd()
     if dic_system == "istra":
-        exp_data_dir = os.path.join(work_dir, "data_istra_evaluation")
         vis_export_dir = os.path.join(work_dir, "expAna_plots", "istra")
     elif dic_system == "muDIC":
-        exp_data_dir = os.path.join(work_dir, "data_muDIC")
         vis_export_dir = os.path.join(work_dir, "expAna_plots", "muDIC")
     else:
         raise InputError(
@@ -119,7 +110,6 @@ def stress(
 
     analysis = expAna.analysis.Analysis(type="stress")
     analysis.setup(
-        exp_data_dir=exp_data_dir,
         compare=compare,
         select=select,
         experiment_list=experiment_list,
@@ -136,16 +126,14 @@ def stress(
     ####################################################################################
 
     expAna.data_trans.export_analysis(
-        analysis,
-        out_dir=vis_export_dir,
-        out_filename=f"analysis_{analysis.export_prefix}.pickle",
+        analysis, out_filename=f"analysis_{analysis.export_prefix}.pickle",
     )
 
     ####################################################################################
     # PLOT
     ####################################################################################
 
-    analysis.plot_data(vis_export_dir)
+    analysis.plot_data()
 
 
 def poissons_ratio(
@@ -153,10 +141,8 @@ def poissons_ratio(
 ):
     work_dir = os.getcwd()
     if dic_system == "istra":
-        exp_data_dir = os.path.join(work_dir, "data_istra_evaluation")
         vis_export_dir = os.path.join(work_dir, "expAna_plots", "istra")
     elif dic_system == "muDIC":
-        exp_data_dir = os.path.join(work_dir, "data_muDIC")
         vis_export_dir = os.path.join(work_dir, "expAna_plots", "muDIC")
     else:
         raise InputError(
@@ -167,7 +153,6 @@ def poissons_ratio(
 
     analysis = expAna.analysis.Analysis(type="poissons_ratio")
     analysis.setup(
-        exp_data_dir=exp_data_dir,
         compare=compare,
         select=select,
         experiment_list=experiment_list,
@@ -184,16 +169,14 @@ def poissons_ratio(
     ####################################################################################
 
     expAna.data_trans.export_analysis(
-        analysis,
-        out_dir=vis_export_dir,
-        out_filename=f"analysis_{analysis.export_prefix}.pickle",
+        analysis, out_filename=f"analysis_{analysis.export_prefix}.pickle",
     )
 
     ####################################################################################
     # PLOT
     ####################################################################################
 
-    analysis.plot_data(vis_export_dir=vis_export_dir)
+    analysis.plot_data()
 
     ####################################################################################
 
@@ -253,7 +236,7 @@ class Analysis(object):
         for test_dir in experiment_list:
             work_dir = os.getcwd()
             expAna_docu_dir = os.path.join(work_dir, "expAna_docu", "python")
-            expAna_data_dir = os.path.join(work_dir, "expAna_data",)
+            expAna_data_dir = os.path.join(work_dir, "expAna_data")
             vis_export_dir = os.path.join(work_dir, "expAna_plots")
             if self.type == "force":
                 try:
@@ -571,8 +554,15 @@ class Analysis(object):
                 {"y_max": np.array(poissons_ratios, dtype=object)[y_indices][-1].max()}
             )
 
-    def plot_data(self, vis_export_dir, x_lim=None, export_curves=False):
+    def plot_data(self, vis_export_dir=None, x_lim=None, export_curves=False):
         fig_props = self.get_type_props()
+
+        if vis_export_dir is None:
+            vis_export_dir = os.path.join(os.getcwd(), "expAna_plots")
+        else:
+            pass
+
+        os.makedirs(vis_export_dir, exist_ok=True)
 
         if self.type == "force":
             x_lim = x_lim
