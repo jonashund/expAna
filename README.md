@@ -205,8 +205,3 @@ _
     -   **example # 0:** calculate and visualise the mean behaviour for every `<value>` found for the provided `<key>` and also visualise the mean curves in a comparison plot: `expAna.analysis.stress(compare="<key")` or `expAna.analysis.force(compare="<key")`
     -   **example # 1:** compare the experiments of the project regarding the different values for the key "specimen_orientation": `expAna.analysis.stress(compare="specimen_orientation")`
     -   **example # 2:** select all experiments that were carried out at a "crosshead_speed" of 0.1 and compare them regarding "specimen_orientation": `expAna.analysis.stress(select=["crosshead_speed", "0.1"],compare="specimen_orientation")`
-
-## TO DO:
-
--   add version number of _Istra4D_
--   add test data and tests
