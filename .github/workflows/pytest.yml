@@ -36,17 +36,14 @@ jobs:
         pip install pytest
         python setup.py install
     - name: Install muDIC
+      working-directory: muDIC
       run: pip install -r requirements.txt
-      with:
-        path: muDIC
     - name: Install istra2py
+      working-directory: istra2py
       run: pip install -e .
-      with:
-        path: istra2py
     - name: Install expAna
+      working-directory: main
       run: pip install -e .'[test]'
-      with:
-        path: main
     - name: Test with pytest against installed package
       run: |
         pytest -vv
