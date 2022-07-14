@@ -23,7 +23,7 @@ setuptools.setup(
         "openpyxl",
         "pandas",
         "scipy",
-        "skimage",
+        "scikit-image",
     ],
     extras_require={"test": ["pytest",]},
     classifiers=[
