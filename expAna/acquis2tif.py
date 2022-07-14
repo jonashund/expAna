@@ -12,7 +12,7 @@ def main(experiment_list=None, ignore_list=None, select=None):
     work_dir = os.getcwd()
 
     expAna_docu_dir = os.path.join(work_dir, "expAna_docu", "python")
-    expAna_data_dir = os.path.join(work_dir, "expAna_data", "python")
+    expAna_data_dir = os.path.join(work_dir, "expAna_data")
     export2tif_dir = os.path.join(work_dir, "data_export2tif")
     istra_acquisition_dir = os.path.join(work_dir, "data_istra_acquisition")
 
