@@ -21,6 +21,9 @@ setuptools.setup(
         "xlrd",
         "noise",
         "openpyxl",
+        "pandas",
+        "scipy",
+        "skimage",
     ],
     extras_require={"test": ["pytest",]},
     classifiers=[
