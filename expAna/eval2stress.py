@@ -23,9 +23,12 @@ def main(
     avg_coords=None,
 ):
     work_dir = os.getcwd()
-    expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
+    expAna_docu_dir = os.path.join(work_dir, "expAna_docu", "python")
+    expAna_data_dir = os.path.join(work_dir, "expAna_data")
     istra_acquisition_dir = os.path.join(work_dir, "data_istra_acquisition")
     istra_evaluation_dir = os.path.join(work_dir, "data_istra_evaluation")
+
+    os.makedirs(expAna_data_dir, exist_ok=True)
 
     if experiment_list is None:
         experiment_list = list()
@@ -49,7 +52,7 @@ def main(
         # load or create experiment object
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"), "rb",
+                os.path.join(expAna_docu_dir, test_dir + "_docu.pickle"), "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -182,16 +185,17 @@ def main(
             ],
         )
         # export dataframe with results as .csv
-        test_results_dir = os.path.join(istra_evaluation_dir, experiment.name + "CORN1")
+
+        # test_results_dir = os.path.join(istra_evaluation_dir, experiment.name + "CORN1")
         experiment.gauge_results.to_csv(
-            os.path.join(test_results_dir, experiment.name + "CORN1_gauge_results.csv")
+            os.path.join(expAna_data_dir, experiment.name + "CORN1_gauge_results.csv")
         )
 
         # export experiment data
         if eco_mode is True:
             experiment.slenderise()
         with open(
-            os.path.join(test_results_dir, experiment.name + "CORN1_expAna.pickle"),
+            os.path.join(expAna_data_dir, experiment.name + "CORN1_expAna.pickle"),
             "wb",
         ) as myfile:
             dill.dump(experiment, myfile)
@@ -206,9 +210,10 @@ def update_true_stress(
     """
 
     work_dir = os.getcwd()
-    expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
+    expAna_docu_dir = os.path.join(work_dir, "expAna_docu", "python")
+    expAna_data_dir = os.path.join(work_dir, "expAna_data")
     istra_evaluation_dir = os.path.join(work_dir, "data_istra_evaluation")
-    vis_export_dir = os.path.join(work_dir, "visualisation", "istra")
+    vis_export_dir = os.path.join(work_dir, "expAna_plots", "istra")
 
     if experiment_list is None:
         experiment_list = list()
@@ -231,22 +236,17 @@ def update_true_stress(
     for test_dir in experiment_list:
         # load documentation data with updated information
         with open(
-            os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"), "rb",
+            os.path.join(expAna_docu_dir, test_dir + "_docu.pickle"), "rb",
         ) as myfile:
-            exp_docu = dill.load(myfile)
+            expAna_docu = dill.load(myfile)
 
         with open(
-            os.path.join(
-                istra_evaluation_dir,
-                test_dir + "CORN1",
-                test_dir + "CORN1_expAna.pickle",
-            ),
-            "rb",
+            os.path.join(expAna_data_dir, test_dir + "CORN1_expAna.pickle",), "rb",
         ) as myfile:
             exp_eval = dill.load(myfile)
 
         if select is not None:
-            if str(exp_docu.documentation_data[select[0]]) == str(select[1]):
+            if str(expAna_docu.documentation_data[select[0]]) == str(select[1]):
                 pass
             else:
                 continue
@@ -254,7 +254,7 @@ def update_true_stress(
             pass
 
         # replace outdated documentation_data of exp_eval
-        exp_eval.documentation_data = exp_docu.documentation_data
+        exp_eval.documentation_data = expAna_docu.documentation_data
 
         # with strain gauge data from gauge results recalculate true stress
         true_stress_in_MPa = expAna.gauge.get_true_stress(
@@ -266,13 +266,13 @@ def update_true_stress(
         exp_eval.gauge_results.update({"true_stress_in_MPa": true_stress_in_MPa})
 
         # export updated data
-        test_results_dir = os.path.join(istra_evaluation_dir, exp_eval.name + "CORN1")
+        # test_results_dir = os.path.join(istra_evaluation_dir, exp_eval.name + "CORN1")
         exp_eval.gauge_results.to_csv(
-            os.path.join(test_results_dir, exp_eval.name + "CORN1_gauge_results.csv")
+            os.path.join(expAna_data_dir, exp_eval.name + "CORN1_gauge_results.csv")
         )
 
         with open(
-            os.path.join(test_results_dir, exp_eval.name + "CORN1_expAna.pickle"), "wb",
+            os.path.join(expAna_data_dir, exp_eval.name + "CORN1_expAna.pickle"), "wb",
         ) as myfile:
             dill.dump(exp_eval, myfile)
 

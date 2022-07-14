@@ -18,12 +18,18 @@ class Project(object):
         istra_acquisition_dir=None,
         export2tif_dir=None,
         dic_results_dir=None,
+        expAna_data_dir=None,
+        expAna_docu_dir=None,
+        expAna_plots_dir=None,
     ):
         self.name = name
         self.experiments = {}
         self.export2tif_dir = export2tif_dir
         self.istra_acquisition_dir = istra_acquisition_dir
         self.dic_results_dir = dic_results_dir
+        self.expAna_docu_dir = expAna_docu_dir
+        self.expAna_data_dir = expAna_data_dir
+        self.expAna_plots_dir = expAna_plots_dir
 
     def add_experiment(self, test):
         if isinstance(test, (Experiment)):
@@ -117,7 +123,7 @@ class Experiment(object):
     def plot_true_stress(
         self,
         out_dir=os.path.join(
-            os.path.abspath(os.path.dirname(__file__)), "..", "visualisation"
+            os.path.abspath(os.path.dirname(__file__)), "..", "expAna_plots"
         ),
     ):
 
@@ -145,7 +151,7 @@ class Experiment(object):
     def plot_volume_strain(
         self,
         out_dir=os.path.join(
-            os.path.abspath(os.path.dirname(__file__)), "..", "visualisation"
+            os.path.abspath(os.path.dirname(__file__)), "..", "expAna_plots"
         ),
     ):
 
@@ -173,7 +179,7 @@ class Experiment(object):
     def plot_force_displ(
         self,
         out_dir=os.path.join(
-            os.path.abspath(os.path.dirname(__file__)), "..", "visualisation"
+            os.path.abspath(os.path.dirname(__file__)), "..", "expAna_plots"
         ),
     ):
 
@@ -222,7 +228,7 @@ def import_one_curve_as_arrays(data_dir, filename):
 
 def export_analysis(analysis, out_dir=None, out_filename="analysis.pickle"):
     if out_dir is None:
-        out_dir = os.path.join(os.getcwd(), "data_expAna")
+        out_dir = os.path.join(os.getcwd(), "expAna_data")
     os.makedirs(out_dir, exist_ok=True)
     with open(os.path.join(out_dir, out_filename), "wb",) as myfile:
         dill.dump(analysis, myfile)

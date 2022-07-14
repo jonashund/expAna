@@ -20,7 +20,7 @@ def force(
 ):
     work_dir = os.getcwd()
     instron_data_dir = os.path.join(work_dir, "data_instron")
-    vis_export_dir = os.path.join(work_dir, "visualisation")
+    vis_export_dir = os.path.join(work_dir, "expAna_plots")
 
     os.makedirs(vis_export_dir, exist_ok=True)
 
@@ -57,10 +57,10 @@ def vol_strain(
     work_dir = os.getcwd()
     if dic_system == "istra":
         exp_data_dir = os.path.join(work_dir, "data_istra_evaluation")
-        vis_export_dir = os.path.join(work_dir, "visualisation", "istra")
+        vis_export_dir = os.path.join(work_dir, "expAna_plots", "istra")
     elif dic_system == "muDIC":
         exp_data_dir = os.path.join(work_dir, "data_muDIC")
-        vis_export_dir = os.path.join(work_dir, "visualisation", "muDIC")
+        vis_export_dir = os.path.join(work_dir, "expAna_plots", "muDIC")
     else:
         raise InputError(
             "-dic", f"`{dic_system}` is not a valid value for argument `dic_system`"
@@ -106,10 +106,10 @@ def stress(
     work_dir = os.getcwd()
     if dic_system == "istra":
         exp_data_dir = os.path.join(work_dir, "data_istra_evaluation")
-        vis_export_dir = os.path.join(work_dir, "visualisation", "istra")
+        vis_export_dir = os.path.join(work_dir, "expAna_plots", "istra")
     elif dic_system == "muDIC":
         exp_data_dir = os.path.join(work_dir, "data_muDIC")
-        vis_export_dir = os.path.join(work_dir, "visualisation", "muDIC")
+        vis_export_dir = os.path.join(work_dir, "expAna_plots", "muDIC")
     else:
         raise InputError(
             "-dic", f"`{dic_system}` is not a valid value for argument `dic_system`"
@@ -154,10 +154,10 @@ def poissons_ratio(
     work_dir = os.getcwd()
     if dic_system == "istra":
         exp_data_dir = os.path.join(work_dir, "data_istra_evaluation")
-        vis_export_dir = os.path.join(work_dir, "visualisation", "istra")
+        vis_export_dir = os.path.join(work_dir, "expAna_plots", "istra")
     elif dic_system == "muDIC":
         exp_data_dir = os.path.join(work_dir, "data_muDIC")
-        vis_export_dir = os.path.join(work_dir, "visualisation", "muDIC")
+        vis_export_dir = os.path.join(work_dir, "expAna_plots", "muDIC")
     else:
         raise InputError(
             "-dic", f"`{dic_system}` is not a valid value for argument `dic_system`"
@@ -204,21 +204,26 @@ class Analysis(object):
 
     def setup(
         self,
-        exp_data_dir,
         compare,
+        expAna_data_dir=None,
         select=None,
         experiment_list=None,
         ignore_list=None,
     ):
+        if expAna_data_dir is None:
+            expAna_data_dir = os.path.join(os.getcwd(), "expAna_data")
+        else:
+            pass
+
         if experiment_list is None:
             experiment_list = list()
             print(
-                f"No experiments passed. Will search for folders named `Test*` in {exp_data_dir}."
+                f"No experiments passed. Will search for expAna files named `Test*CORN1_expAna.pickle` in {expAna_data_dir}."
             )
-            for path, directories, files in os.walk(exp_data_dir):
-                for test_dir in directories:
-                    if str(test_dir[:5] == "Test"):
-                        experiment_list.append(test_dir)
+            for path, directories, files in os.walk(expAna_data_dir):
+                for expAna_file in files:
+                    if "CORN1_expAna.pickle" in expAna_file:
+                        experiment_list.append(expAna_file[:-14])
         else:
             pass
 
@@ -246,14 +251,14 @@ class Analysis(object):
 
         # load the experiments
         for test_dir in experiment_list:
+            work_dir = os.getcwd()
+            expAna_docu_dir = os.path.join(work_dir, "expAna_docu", "python")
+            expAna_data_dir = os.path.join(work_dir, "expAna_data",)
+            vis_export_dir = os.path.join(work_dir, "expAna_plots")
             if self.type == "force":
-                work_dir = os.getcwd()
-                expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
-                vis_export_dir = os.path.join(work_dir, "visualisation")
                 try:
                     with open(
-                        os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"),
-                        "rb",
+                        os.path.join(expAna_docu_dir, test_dir + "_docu.pickle"), "rb",
                     ) as myfile:
                         experiment = dill.load(myfile)
                 except:
@@ -265,7 +270,8 @@ class Analysis(object):
                 # search for expAna data
                 try:
                     with open(
-                        os.path.join(vis_export_dir, test_dir + "_expAna.pickle"), "rb",
+                        os.path.join(expAna_data_dir, test_dir + "_expAna.pickle"),
+                        "rb",
                     ) as myfile:
                         experiment = dill.load(myfile)
                 except:
@@ -273,8 +279,7 @@ class Analysis(object):
 
             else:
                 with open(
-                    os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"),
-                    "rb",
+                    os.path.join(expAna_data_dir, test_dir + "_expAna.pickle"), "rb",
                 ) as myfile:
                     experiment = dill.load(myfile)
 

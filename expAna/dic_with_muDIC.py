@@ -14,20 +14,23 @@ from expAna.misc import print_remarks_muDIC
 def main(project_name="project", experiment_list=None, ignore_list=None, select=None):
     work_dir = os.getcwd()
 
+    expAna_data_dir = os.path.join(work_dir, "expAna_data")
     export2tif_dir = os.path.join(work_dir, "data_export2tif")
     dic_results_dir = os.path.join(work_dir, "data_muDIC")
+
+    os.makedirs(expAna_data_dir, exist_ok=True)
     os.makedirs(dic_results_dir, exist_ok=True)
 
-    # open project file located in export2tif_dir
+    # open project file located in expAna_data_dir
     with open(
-        os.path.join(export2tif_dir, project_name + "_expAna.pickle"), "rb",
+        os.path.join(expAna_data_dir, project_name + "_expAna.pickle"), "rb",
     ) as myfile:
         current_project = dill.load(myfile)
 
     if experiment_list is None:
         experiment_names_list = list()
         print(
-            f"No experiments passed. Performing DIC analysis for all experiments in project_expAna.pickle located in {export2tif_dir}."
+            f"No experiments passed. Performing DIC analysis for all experiments in project_expAna.pickle located in {expAna_data_dir}."
         )
         for experiment_name in current_project.experiments.keys():
             experiment_names_list.append(experiment_name)
