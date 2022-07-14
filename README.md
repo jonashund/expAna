@@ -29,42 +29,13 @@ Experiment documentation and analysis tool:
 
 ## Installation
 
-### Create the environment
+### Install Python dependencies
 
-**1. manually using conda (on any OS running conda):**
+**1. using conda and environment.yml:**
 
--   create environment:
-    `conda create --name <my_env_name> python=3.7 scipy=1.2.1 numpy ipython`
-
-**1. using conda and environment.yml (tested on CentOS):**
-
--   execute in directory with `environmental.yml` (after cloning [`expDoc`](https://github.com/jonashund/expDoc) or [`expAna`](https://github.com/jonashund/expAna) )\
-    `conda env create -f environmental.yml`
-
-**1. using pyenv virtualenv (on macOS):**
-
--   install `pyenv virtualenv` via homebrew
--   install `miniconda-latest`:\
-    `pyenv install miniconda-latest`
--   create a new virtualenv based on `miniconda-latest`:\
-    `pyenv virtualenv miniconda-latest <my_env_name>`
--   in a directory (with one of the packages below) set the local environment:\
-    `pyenv local <my_env_name>`
--   downgrade to Python v3.7 in the environment:\
-    `conda install python=3.7`
--   install scipy v1.2.1 (requirement of muDIC_ifm):\
-    `conda install scipy=1.2.1`
--   install ipython:\
-    `conda install ipython`
--   install packages listed below, the local environment has to be set in each directory unless it's made the global environment (temporarily)
-
-**1. manually using conda and pip (tested on CentOS):** 
-
--   based on current Python version with ipython and numpy:\
-    `conda create --name <my_env_name> ipython numpy`
--   activate created environment:\
-    `conda activate <my_env_name>`
-
+-   execute in directory with `environment.yml` (after cloning [`expAna`](https://github.com/jonashund/expAna) )\
+    `conda env create -f environment.yml`
+    
 ### Cloning the repositories and installing
 
 Clone from [github](https://github.com/) into a local repository and install in the following order from within the corresponding repository:
