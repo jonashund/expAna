@@ -11,10 +11,12 @@ import expAna
 def main(experiment_list=None, ignore_list=None, select=None):
     work_dir = os.getcwd()
 
-    expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
+    expAna_docu_dir = os.path.join(work_dir, "expAna_docu", "python")
+    expAna_data_dir = os.path.join(work_dir, "expAna_data", "python")
     export2tif_dir = os.path.join(work_dir, "data_export2tif")
     istra_acquisition_dir = os.path.join(work_dir, "data_istra_acquisition")
 
+    os.makedirs(expAna_data_dir, exist_ok=True)
     os.makedirs(export2tif_dir, exist_ok=True)
 
     if experiment_list is None:
@@ -41,11 +43,13 @@ def main(experiment_list=None, ignore_list=None, select=None):
         "project",
         istra_acquisition_dir=istra_acquisition_dir,
         export2tif_dir=export2tif_dir,
+        expAna_data_dir=expAna_data_dir,
+        expAna_docu_dir=expAna_docu_dir,
     )
     for test_dir in experiment_list:
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"), "rb",
+                os.path.join(expAna_docu_dir, test_dir + "_docu.pickle"), "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -74,7 +78,7 @@ def main(experiment_list=None, ignore_list=None, select=None):
 
     # export project
     with open(
-        os.path.join(export2tif_dir, current_project.name + "_expAna.pickle"), "wb",
+        os.path.join(expAna_data_dir, current_project.name + "_expAna.pickle"), "wb",
     ) as myfile:
         dill.dump(current_project, myfile)
 
