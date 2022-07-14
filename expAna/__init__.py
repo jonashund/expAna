@@ -3,6 +3,7 @@ from . import acquis2tif
 from . import calc
 from . import data_trans
 from . import dic_with_muDIC
+from . import docu
 from . import eval2stress
 from . import gauge
 from . import gui
