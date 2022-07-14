@@ -322,7 +322,7 @@ def dic_strains(
     dots_pi=400,
 ):
     work_dir = os.getcwd()
-    vis_export_dir = os.path.join(work_dir, "visualisation")
+    vis_export_dir = os.path.join(work_dir, "expAna_plots",)
 
     if out_format == "eps" or out_format == "pdf":
         set_latex_fonts = {
@@ -524,13 +524,13 @@ def create_dic_vis(
     cmap=None,
 ):
     work_dir = os.getcwd()
-    expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
+    expAna_docu_dir = os.path.join(work_dir, "expAna_docu", "python")
     istra_acquisition_dir = os.path.join(work_dir, "data_istra_acquisition")
     istra_evaluation_dir = os.path.join(work_dir, "data_istra_evaluation")
 
     try:
         with open(
-            os.path.join(expDoc_data_dir, experiment_name + "_expDoc.pickle"), "rb",
+            os.path.join(expAna_docu_dir, experiment_name + "_docu.pickle"), "rb",
         ) as myfile:
             experiment = dill.load(myfile)
     except:

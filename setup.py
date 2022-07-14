@@ -14,7 +14,6 @@ setuptools.setup(
     package_dir={"expAna": "expAna"},
     install_requires=[
         "istra2py",
-        "expDoc",
         "muDIC",
         "numpy",
         "matplotlib",

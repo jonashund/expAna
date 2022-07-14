@@ -11,7 +11,7 @@ from natsort import natsorted
 
 def main(experiment_list=None, ignore_list=None, select=None):
     work_dir = os.getcwd()
-
+    expAna_data_dir = os.path.join(work_dir, "expAna_data")
     dic_results_dir = os.path.join(work_dir, "data_muDIC")
 
     if experiment_list is None:
@@ -41,7 +41,7 @@ def main(experiment_list=None, ignore_list=None, select=None):
         ) as myfile:
             true_strain = np.load(myfile)
         with open(
-            os.path.join(dic_results_dir, test_dir, test_dir + "_expAna.pickle"), "rb",
+            os.path.join(expAna_data_dir, test_dir + "_expAna.pickle"), "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
@@ -145,11 +145,11 @@ def main(experiment_list=None, ignore_list=None, select=None):
         # export dataframe with results as .csv
         test_results_dir = os.path.join(dic_results_dir, experiment.name)
         experiment.gauge_results.to_csv(
-            os.path.join(test_results_dir, experiment.name + "_gauge_results.csv")
+            os.path.join(expAna_data_dir, experiment.name + "_gauge_results.csv")
         )
 
         with open(
-            os.path.join(test_results_dir, experiment.name + "_expAna.pickle"), "wb",
+            os.path.join(expAna_data_dir, experiment.name + "_expAna.pickle"), "wb",
         ) as myfile:
             dill.dump(experiment, myfile)
 

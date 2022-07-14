@@ -1,14 +1,19 @@
 import os
 import pathlib
-import expDoc
+import shutil
 import expAna
 
 project_name = "test_core"
 
+# copy tex directory for documentation
+from_dir = pathlib.Path(os.path.dirname(__file__), "..", "docu_templates", "tex")
+to_dir = pathlib.Path(os.path.dirname(__file__), "..", "data", "test_core", "tex")
+shutil.copytree(from_dir, to_dir)
+
 # Run expDoc for documentation purposes from the ./tex directory
-expDoc_dir = pathlib.Path(os.path.dirname(__file__), "..", "data", "test_core", "tex")
-os.chdir(expDoc_dir)
-expDoc.main.main(project_name)
+docu_dir = pathlib.Path(os.path.dirname(__file__), "..", "data", "test_core", "tex")
+os.chdir(docu_dir)
+expAna.docu.main(project_name)
 os.chdir("..")
 
 # Stress computation
