@@ -31,9 +31,7 @@ Experiment documentation and analysis tool:
 
 ### Install Python dependencies
 
-**1. using conda and environment.yml:**
-
--   execute in directory with `environment.yml` (after cloning [`expAna`](https://github.com/jonashund/expAna) )\
+-   Create environment from `environment.yml` (after cloning [`expAna`](https://github.com/jonashund/expAna) )\
     `conda env create -f environment.yml`
     
 ### Cloning the repositories and installing
