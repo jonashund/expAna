@@ -20,11 +20,13 @@ def stress(
     work_dir = os.getcwd()
 
     if dic_system == "istra":
+        expAna_data_dir = os.path.join(work_dir, "expAna_data")
         exp_data_dir = os.path.join(work_dir, "data_istra_evaluation")
-        vis_export_dir = os.path.join(work_dir, "visualisation", "istra")
+        vis_export_dir = os.path.join(work_dir, "expAna_plots", "istra")
     elif dic_system == "muDIC":
+        expAna_data_dir = os.path.join(work_dir, "expAna_data")
         exp_data_dir = os.path.join(work_dir, "data_muDIC")
-        vis_export_dir = os.path.join(work_dir, "visualisation", "muDIC")
+        vis_export_dir = os.path.join(work_dir, "expAna_plots", "muDIC")
     else:
         raise InputError(
             "-dic", f"`{dic_system}` is not a valid value for argument `-dic`"
@@ -50,11 +52,10 @@ def stress(
 
     experiment_list = natsorted(experiment_list)
 
-    # prepare plotting to file, avoid switching matplotlib backends (buggy)
+    # prepare plotting to file
     for test_dir in experiment_list:
         with open(
-            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"),
-            "rb",
+            os.path.join(expAna_data_dir, test_dir + "_expAna.pickle"), "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
@@ -76,19 +77,15 @@ def stress(
             fail_location.__gui__(experiment)
             # export truncated data
             with open(
-                os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"),
-                "wb",
+                os.path.join(expAna_data_dir, test_dir + "_expAna.pickle"), "wb",
             ) as myfile:
                 dill.dump(experiment, myfile)
         else:
             pass
 
-        # expAna.plot.set_plt_backend()
-
     for test_dir in experiment_list:
         with open(
-            os.path.join(exp_data_dir, test_dir, test_dir + "_expAna.pickle"),
-            "rb",
+            os.path.join(expAna_data_dir, test_dir + "_expAna.pickle"), "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
@@ -104,9 +101,11 @@ def force(
     set_failure=False,
 ):
     work_dir = os.getcwd()
-    expDoc_data_dir = os.path.join(work_dir, "data_expDoc", "python")
+    expAna_docu_dir = os.path.join(work_dir, "expAna_docu", "python")
+    expAna_data_dir = os.path.join(work_dir, "expAna_data")
     instron_data_dir = os.path.join(work_dir, "data_instron")
-    vis_export_dir = os.path.join(work_dir, "visualisation")
+    vis_export_dir = os.path.join(work_dir, "expAna_plots")
+
     os.makedirs(vis_export_dir, exist_ok=True)
 
     if experiment_list is None:
@@ -127,8 +126,7 @@ def force(
         # search for input data created with expDoc
         try:
             with open(
-                os.path.join(expDoc_data_dir, test_dir + "_expDoc.pickle"),
-                "rb",
+                os.path.join(expAna_docu_dir, test_dir + "_docu.pickle"), "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
@@ -160,14 +158,12 @@ def force(
         # search for expAna data
         try:
             with open(
-                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"),
-                "rb",
+                os.path.join(expAna_data_dir, test_dir + "_expAna.pickle"), "rb",
             ) as myfile:
                 experiment = dill.load(myfile)
         except:
             with open(
-                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"),
-                "wb",
+                os.path.join(expAna_data_dir, test_dir + "_expAna.pickle"), "wb",
             ) as myfile:
                 dill.dump(experiment, myfile)
 
@@ -177,8 +173,7 @@ def force(
             )
             # export truncated data
             with open(
-                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"),
-                "wb",
+                os.path.join(expAna_data_dir, test_dir + "_expAna.pickle"), "wb",
             ) as myfile:
                 dill.dump(experiment, myfile)
         else:
@@ -189,19 +184,15 @@ def force(
             fail_location.__gui__(experiment)
             # export truncated data
             with open(
-                os.path.join(vis_export_dir, test_dir + "_expAna.pickle"),
-                "wb",
+                os.path.join(expAna_data_dir, test_dir + "_expAna.pickle"), "wb",
             ) as myfile:
                 dill.dump(experiment, myfile)
         else:
             pass
 
-        # expAna.plot.set_plt_backend()
-
     for test_dir in experiment_list:
         with open(
-            os.path.join(vis_export_dir, test_dir + "_expAna.pickle"),
-            "rb",
+            os.path.join(expAna_data_dir, test_dir + "_expAna.pickle"), "rb",
         ) as myfile:
             experiment = dill.load(myfile)
 
