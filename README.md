@@ -39,7 +39,7 @@ Experiment documentation and analysis tool:
 Clone from [github](https://github.com/) into a local repository and install in the following order from within the corresponding repository:
 
 1.  [`istra2py`](https://github.com/jonashund/istra2py)
-    -   `git clone git@git.scc.kit.edu:ifm/labor/istra2py.git`
+    -   `git clone git@github.com:jonashund/istra2py.git`
     -   `cd ./istra2py`
     -   `pip install -e .`
 2.  [`muDIC`](https://github.com/jonashund/muDIC)
