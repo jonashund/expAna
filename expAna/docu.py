@@ -7,7 +7,7 @@ import pandas as pd
 import expAna
 
 
-def main(project_name, verbose=False):
+def main(project_name, verbose=False, skip_tex=False):
     excel2tex_and_py(project_name)
     doc_plot(project_name)
 
@@ -30,10 +30,13 @@ def main(project_name, verbose=False):
       ls *.$i | xargs rm --
     done
     """
-    if verbose:
-        subprocess.call(bash_commands, shell=True)
+    if not skip_tex:
+        if verbose:
+            subprocess.call(bash_commands, shell=True)
+        else:
+            subprocess.check_output(bash_commands, shell=True)
     else:
-        subprocess.check_output(bash_commands, shell=True)
+        pass
 
 
 def doc_plot(project_name):

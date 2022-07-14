@@ -13,7 +13,7 @@ shutil.copytree(from_dir, to_dir)
 # Run expDoc for documentation purposes from the ./tex directory
 docu_dir = pathlib.Path(os.path.dirname(__file__), "..", "data", "test_core", "tex")
 os.chdir(docu_dir)
-expAna.docu.main(project_name)
+expAna.docu.main(project_name, skip_tex=True)
 os.chdir("..")
 
 # Stress computation
