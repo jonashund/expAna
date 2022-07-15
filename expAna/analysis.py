@@ -231,6 +231,7 @@ class Analysis(object):
                 experiment_list.remove(experiment)
 
         experiment_list = natsorted(experiment_list)
+        print(experiment_list)
 
         analysis_dict = {}
 
