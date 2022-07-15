@@ -225,7 +225,6 @@ class Analysis(object):
                         experiment_list.append(expAna_file[:-14])
         else:
             pass
-        print(experiment_list)
 
         if ignore_list is not None:
             for experiment in ignore_list:
