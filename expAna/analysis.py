@@ -225,13 +225,13 @@ class Analysis(object):
                         experiment_list.append(expAna_file[:-14])
         else:
             pass
+        print(experiment_list)
 
         if ignore_list is not None:
             for experiment in ignore_list:
                 experiment_list.remove(experiment)
 
         experiment_list = natsorted(experiment_list)
-        print(experiment_list)
 
         analysis_dict = {}
 
