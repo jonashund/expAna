@@ -1,0 +1,49 @@
+name: Pytest
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9]
+
+    steps:
+    - name: Checkout expAna repository
+      uses: actions/checkout@v3
+      with:
+        path: main
+    - name: Checkout istra2py repository
+      uses: actions/checkout@v3
+      with:
+        repository: jonashund/istra2py
+        path: istra2py
+    - name: Checkout muDIC repository
+      uses: actions/checkout@v3
+      with:
+        repository: PolymerGuy/muDIC
+        path: muDIC
+      
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Upgrade Pip and install Pytest
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+    - name: Install muDIC
+      working-directory: muDIC
+      run: pip install -r requirements.txt
+    - name: Install istra2py
+      working-directory: istra2py
+      run: pip install -e .
+    - name: Install expAna
+      working-directory: main
+      run: pip install -e .
+    - name: Test with pytest against installed package
+      working-directory: main
+      run: |
+        pytest -vv

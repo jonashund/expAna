@@ -1,5 +1,4 @@
 import os
-import expDoc
 import expAna
 import pathlib
 
@@ -18,7 +17,7 @@ my_analysis.setup(
 my_analysis.compute_data_stress()
 # Visualise the results in a basic plot
 os.makedirs("./expAna_plots", exist_ok=True)
-my_analysis.plot_data(vis_export_dir="./expAna_plots")
+my_analysis.plot_data(skip_tex=True)
 # Export the results to a .pickle file
 expAna.data_trans.export_analysis(
     my_analysis, out_filename=f"analysis_{my_analysis.export_prefix}.pickle",

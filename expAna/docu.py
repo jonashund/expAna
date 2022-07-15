@@ -7,36 +7,39 @@ import pandas as pd
 import expAna
 
 
-def main(project_name, verbose=False):
+def main(project_name, verbose=False, skip_tex=False):
     excel2tex_and_py(project_name)
-    doc_plot(project_name)
+    doc_plot(project_name, skip_tex=skip_tex)
 
-    bash_commands = """
-    for texfile in ../expAna_docu/latex/Test*.tex
-      do 
-        path_and_filename=`echo "$texfile" | cut -d'.' -f 1-3`
-        filename=`echo "$path_and_filename" | rev | cut -d'/' -f 1 | rev`
-        
-        echo "processing $path_and_filename.tex"
-        
-        cp ${path_and_filename}.tex ./current_test.tex
-        pdflatex test_report.tex;
-        mv test_report.pdf ../expAna_docu/${filename}.pdf
-        rm ./current_test.tex
-      done
+    if not skip_tex:
+        bash_commands = """
+        for texfile in ../expAna_docu/latex/Test*.tex
+        do 
+            path_and_filename=`echo "$texfile" | cut -d'.' -f 1-3`
+            filename=`echo "$path_and_filename" | rev | cut -d'/' -f 1 | rev`
+            
+            echo "processing $path_and_filename.tex"
+            
+            cp ${path_and_filename}.tex ./current_test.tex
+            pdflatex test_report.tex;
+            mv test_report.pdf ../expAna_docu/${filename}.pdf
+            rm ./current_test.tex
+        done
 
-    for i in toc aux bbl blg dvi ps log
-    do
-      ls *.$i | xargs rm --
-    done
-    """
-    if verbose:
-        subprocess.call(bash_commands, shell=True)
+        for i in toc aux bbl blg dvi ps log
+        do
+        ls *.$i | xargs rm --
+        done
+        """
+        if verbose:
+            subprocess.call(bash_commands, shell=True)
+        else:
+            subprocess.check_output(bash_commands, shell=True)
     else:
-        subprocess.check_output(bash_commands, shell=True)
+        pass
 
 
-def doc_plot(project_name):
+def doc_plot(project_name, skip_tex=False):
 
     work_dir = os.getcwd()
     expDoc_dir_python = os.path.join(work_dir, "..", "expAna_docu", "python")
@@ -86,7 +89,7 @@ def doc_plot(project_name):
                 experiment.data_instron, "displacement_in_mm"
             )
 
-            experiment.plot_force_displ(out_dir=vis_export_dir)
+            experiment.plot_force_displ(out_dir=vis_export_dir, skip_tex=skip_tex)
 
             with open(
                 os.path.join(expDoc_dir_python, experiment.name + "_docu.pickle"), "wb",

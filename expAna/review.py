@@ -1,6 +1,4 @@
 import os
-import sys
-import argparse
 import dill
 
 import expAna
@@ -16,6 +14,7 @@ def stress(
     keep_offset=True,
     set_failure=False,
     dic_system="istra",
+    skip_tex=False,
 ):
     work_dir = os.getcwd()
 
@@ -89,8 +88,8 @@ def stress(
         ) as myfile:
             experiment = dill.load(myfile)
 
-        experiment.plot_true_stress(out_dir=vis_export_dir)
-        experiment.plot_volume_strain(out_dir=vis_export_dir)
+        experiment.plot_true_stress(out_dir=vis_export_dir, skip_tex=skip_tex)
+        experiment.plot_volume_strain(out_dir=vis_export_dir, skip_tex=skip_tex)
 
 
 def force(
@@ -99,6 +98,7 @@ def force(
     ignore_list=None,
     displ_shift=None,
     set_failure=False,
+    skip_tex=False,
 ):
     work_dir = os.getcwd()
     expAna_docu_dir = os.path.join(work_dir, "expAna_docu", "python")
@@ -204,4 +204,5 @@ def force(
         else:
             pass
 
-        experiment.plot_force_displ(out_dir=vis_export_dir)
+        experiment.plot_force_displ(out_dir=vis_export_dir, skip_tex=skip_tex)
+

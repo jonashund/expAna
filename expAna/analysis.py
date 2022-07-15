@@ -17,6 +17,7 @@ def force(
     ignore_list=None,
     x_lim=4.0,
     displ_shift=None,
+    skip_tex=False,
 ):
     work_dir = os.getcwd()
     instron_data_dir = os.path.join(work_dir, "data_instron")
@@ -46,11 +47,16 @@ def force(
     # PLOT
     ####################################################################################
 
-    analysis.plot_data(x_lim=x_lim)
+    analysis.plot_data(x_lim=x_lim, skip_tex=skip_tex)
 
 
 def vol_strain(
-    compare, select=None, experiment_list=None, ignore_list=None, dic_system="istra",
+    compare,
+    select=None,
+    experiment_list=None,
+    ignore_list=None,
+    dic_system="istra",
+    skip_tex=False,
 ):
     work_dir = os.getcwd()
     if dic_system == "istra":
@@ -90,11 +96,16 @@ def vol_strain(
     # PLOT
     ####################################################################################
 
-    analysis.plot_data()
+    analysis.plot_data(skip_tex=skip_tex)
 
 
 def stress(
-    compare, select=None, experiment_list=None, ignore_list=None, dic_system="istra",
+    compare,
+    select=None,
+    experiment_list=None,
+    ignore_list=None,
+    dic_system="istra",
+    skip_tex=False,
 ):
     work_dir = os.getcwd()
     if dic_system == "istra":
@@ -133,11 +144,16 @@ def stress(
     # PLOT
     ####################################################################################
 
-    analysis.plot_data()
+    analysis.plot_data(skip_tex=skip_tex)
 
 
 def poissons_ratio(
-    compare, select=None, experiment_list=None, ignore_list=None, dic_system="istra",
+    compare,
+    select=None,
+    experiment_list=None,
+    ignore_list=None,
+    dic_system="istra",
+    skip_tex=False,
 ):
     work_dir = os.getcwd()
     if dic_system == "istra":
@@ -176,7 +192,7 @@ def poissons_ratio(
     # PLOT
     ####################################################################################
 
-    analysis.plot_data()
+    analysis.plot_data(skip_tex=skip_tex)
 
     ####################################################################################
 
@@ -554,7 +570,9 @@ class Analysis(object):
                 {"y_max": np.array(poissons_ratios, dtype=object)[y_indices][-1].max()}
             )
 
-    def plot_data(self, vis_export_dir=None, x_lim=None, export_curves=False):
+    def plot_data(
+        self, vis_export_dir=None, x_lim=None, export_curves=False, skip_tex=False
+    ):
         fig_props = self.get_type_props()
 
         if vis_export_dir is None:
@@ -593,7 +611,7 @@ class Analysis(object):
                 y_lim = 1.5 * self.dict[compare_value]["y_max"]
 
             fig_1, axes_1 = fig_props["fig_style"](
-                x_lim=x_lim, y_lim=y_lim, width=6, height=4,
+                x_lim=x_lim, y_lim=y_lim, width=6, height=4, skip_tex=skip_tex
             )
 
             expAna.plot.add_curves_same_value(
@@ -652,7 +670,7 @@ class Analysis(object):
                 y_lim = 1.5 * self.dict[compare_value]["y_max"]
 
             fig_2, axes_2 = fig_props["fig_style"](
-                x_lim=x_lim, y_lim=y_lim, width=6, height=4,
+                x_lim=x_lim, y_lim=y_lim, width=6, height=4, skip_tex=skip_tex
             )
 
             expAna.plot.add_mean_and_sem(
@@ -696,7 +714,7 @@ class Analysis(object):
                 for compare_value in self.compare_values
             )
         fig_3, axes_3 = fig_props["fig_style"](
-            x_lim=x_lim, y_lim=1.5 * y_max, width=6, height=4,
+            x_lim=x_lim, y_lim=1.5 * y_max, width=6, height=4, skip_tex=skip_tex,
         )
 
         for compare_value in self.compare_values:
@@ -731,7 +749,7 @@ class Analysis(object):
         # comparison plot with mean and std curve
 
         fig_4, axes_4 = fig_props["fig_style"](
-            x_lim=x_lim, y_lim=1.5 * y_max, width=6, height=4,
+            x_lim=x_lim, y_lim=1.5 * y_max, width=6, height=4, skip_tex=skip_tex,
         )
 
         for compare_value in self.compare_values:
