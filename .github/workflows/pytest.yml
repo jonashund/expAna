@@ -40,7 +40,6 @@ jobs:
       working-directory: istra2py
       run: pip install -e .
     - name: Install expAna
-      working-directory: main
       run: pip install -e .'[test]'
     - name: Test with pytest against installed package
       working-directory: main
