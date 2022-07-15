@@ -12,54 +12,55 @@ import expAna
 from skimage.exposure import rescale_intensity
 
 
-def plt_style(font="computer_modern"):
+def plt_style(font="computer_modern", skip_tex=False):
     """
     Set custom style parameters for plots.
     """
 
-    # Include user defined 'phd.mplstyle' located in
-    # print(matplotlib.get_configdir())
+    if not skip_tex:  # latex not available in github actions
+        # Include user defined 'phd.mplstyle' located in
+        # print(matplotlib.get_configdir())
 
-    # The style file can also be located in any directory.
-    # For invoking it the path has to be specified then.
-    # For details see
-    # https://matplotlib.org/tutorials/introductory/customizing.html
-    try:
-        plt.style.use("phd")
-    except:
-        # in case someone different than me will ever use this
-        plt.style.use("default")
+        # The style file can also be located in any directory.
+        # For invoking it the path has to be specified then.
+        # For details see
+        # https://matplotlib.org/tutorials/introductory/customizing.html
+        try:
+            plt.style.use("phd")
+        except:
+            # in case someone different than me will ever use this
+            plt.style.use("default")
 
-    # Overwrite default settings in rcParams if necessary.
-    # For matplotlibrc.template file see
-    # <python_installation_dir>/site-packages/matplotlib/mpl-data/matplotlibrc
+        # Overwrite default settings in rcParams if necessary.
+        # For matplotlibrc.template file see
+        # <python_installation_dir>/site-packages/matplotlib/mpl-data/matplotlibrc
 
-    # For details on customising see
-    # https://matplotlib.org/tutorials/introductory/customizing.html
+        # For details on customising see
+        # https://matplotlib.org/tutorials/introductory/customizing.html
 
-    # Set rcParams for LaTeX
-
-    latex_preamble_dict = {
-        "palatino": r"\usepackage[T1]{fontenc} \usepackage{mathtools} \usepackage{xfrac} \usepackage{newpxtext,newpxmath} \newcommand*{\units}[1]{\mbox{[\ifx&#1&$\hbox{-}$\else#1\fi]}}",
-        "computer_modern": r"\usepackage[T1]{fontenc} \usepackage{mathtools} \usepackage{xfrac} \newcommand*{\units}[1]{\mbox{[\ifx&#1&$\hbox{-}$\else#1\fi]}}",
-        "libertine": r"\usepackage{mathtools} \usepackage{xfrac} \usepackage{libertine} \usepackage[libertine]{newtxmath} \usepackage[T1]{fontenc} \newcommand*{\units}[1]{\mbox{[\ifx&#1&$\hbox{-}$\else#1\fi]}}",
-        "utopia": r"\usepackage{mathtools} \usepackage{xfrac} \usepackage{libertine} \usepackage[utopia]{newtxmath} \usepackage[T1]{fontenc} \newcommand*{\units}[1]{\mbox{[\ifx&#1&$\hbox{-}$\else#1\fi]}}",
-        "beamer": r"\usepackage{mathtools} \usepackage{xfrac} \usepackage{helvet} \usepackage[utopia]{newtxmath} \usepackage[T1]{fontenc} \newcommand*{\units}[1]{\mbox{[\ifx&#1&$\hbox{-}$\else#1\fi]}}",
-    }
-
-    phd_rcParams = {
-        # Use LaTeX to write all text
-        "text.usetex": True,
-        "text.latex.preamble": latex_preamble_dict[font],
-        # Use xxpt font in plots, to match xxpt font in document
-        "font.size": 12,
-        "axes.labelsize": 12,
-        # Make the legend/label fonts a little smaller
-        "legend.fontsize": 12,
-        "xtick.labelsize": 10,
-        "ytick.labelsize": 10,
-    }
-    matplotlib.rcParams.update(phd_rcParams)
+        # Set rcParams for LaTeX
+        latex_preamble_dict = {
+            "palatino": r"\usepackage[T1]{fontenc} \usepackage{mathtools} \usepackage{xfrac} \usepackage{newpxtext,newpxmath} \newcommand*{\units}[1]{\mbox{[\ifx&#1&$\hbox{-}$\else#1\fi]}}",
+            "computer_modern": r"\usepackage[T1]{fontenc} \usepackage{mathtools} \usepackage{xfrac} \newcommand*{\units}[1]{\mbox{[\ifx&#1&$\hbox{-}$\else#1\fi]}}",
+            "libertine": r"\usepackage{mathtools} \usepackage{xfrac} \usepackage{libertine} \usepackage[libertine]{newtxmath} \usepackage[T1]{fontenc} \newcommand*{\units}[1]{\mbox{[\ifx&#1&$\hbox{-}$\else#1\fi]}}",
+            "utopia": r"\usepackage{mathtools} \usepackage{xfrac} \usepackage{libertine} \usepackage[utopia]{newtxmath} \usepackage[T1]{fontenc} \newcommand*{\units}[1]{\mbox{[\ifx&#1&$\hbox{-}$\else#1\fi]}}",
+            "beamer": r"\usepackage{mathtools} \usepackage{xfrac} \usepackage{helvet} \usepackage[utopia]{newtxmath} \usepackage[T1]{fontenc} \newcommand*{\units}[1]{\mbox{[\ifx&#1&$\hbox{-}$\else#1\fi]}}",
+        }
+        phd_rcParams = {
+            # Use LaTeX to write all text
+            "text.usetex": True,
+            "text.latex.preamble": latex_preamble_dict[font],
+            # Use xxpt font in plots, to match xxpt font in document
+            "font.size": 12,
+            "axes.labelsize": 12,
+            # Make the legend/label fonts a little smaller
+            "legend.fontsize": 12,
+            "xtick.labelsize": 10,
+            "ytick.labelsize": 10,
+        }
+        matplotlib.rcParams.update(phd_rcParams)
+    else:
+        pass
 
     # set more rcParams
     matplotlib.rcParams.update({"patch.linewidth": 1})
@@ -126,12 +127,14 @@ def remove_offsets(experiment, row_threshold=None):
     )
 
 
-def style_true_stress(width=None, height=None, x_lim=None, y_lim=None):
+def style_true_stress(width=None, height=None, x_lim=None, y_lim=None, skip_tex=False):
 
     if width and height:
-        fig_1, axes_1 = create_styled_figure(width=width, height=height)
+        fig_1, axes_1 = create_styled_figure(
+            width=width, height=height, skip_tex=skip_tex
+        )
     else:
-        fig_1, axes_1 = create_styled_figure()
+        fig_1, axes_1 = create_styled_figure(skip_tex=skip_tex)
 
     axes_1.set_xlabel(r"Log. strain $\varepsilon$ [-]")
     axes_1.set_ylabel(r"True stress $\sigma$ [MPa]")
@@ -149,12 +152,14 @@ def style_true_stress(width=None, height=None, x_lim=None, y_lim=None):
     return fig_1, axes_1
 
 
-def style_vol_strain(width=None, height=None, x_lim=None, y_lim=None):
+def style_vol_strain(width=None, height=None, x_lim=None, y_lim=None, skip_tex=False):
 
     if width and height:
-        fig_1, axes_1 = create_styled_figure(width=width, height=height)
+        fig_1, axes_1 = create_styled_figure(
+            width=width, height=height, skip_tex=skip_tex
+        )
     else:
-        fig_1, axes_1 = create_styled_figure()
+        fig_1, axes_1 = create_styled_figure(skip_tex=skip_tex)
 
     axes_1.set_xlabel(r"Log. strain $\varepsilon$ [-]")
     axes_1.set_ylabel(r"Volume strain $\varepsilon_{ii}$")
@@ -172,12 +177,16 @@ def style_vol_strain(width=None, height=None, x_lim=None, y_lim=None):
     return fig_1, axes_1
 
 
-def style_poissons_ratio(width=None, height=None, x_lim=None, y_lim=0.5):
+def style_poissons_ratio(
+    width=None, height=None, x_lim=None, y_lim=0.5, skip_tex=False
+):
 
     if width and height:
-        fig_1, axes_1 = create_styled_figure(width=width, height=height)
+        fig_1, axes_1 = create_styled_figure(
+            width=width, height=height, skip_tex=skip_tex
+        )
     else:
-        fig_1, axes_1 = create_styled_figure()
+        fig_1, axes_1 = create_styled_figure(skip_tex=skip_tex)
 
     axes_1.set_xlabel(r"Log. strain $\varepsilon$ [-]")
     axes_1.set_ylabel(r"Poisson's ratio $\nu$ [-]")
@@ -195,12 +204,14 @@ def style_poissons_ratio(width=None, height=None, x_lim=None, y_lim=0.5):
     return fig_1, axes_1
 
 
-def style_force_displ(width=None, height=None, x_lim=None, y_lim=None):
+def style_force_displ(width=None, height=None, x_lim=None, y_lim=None, skip_tex=False):
 
     if width and height:
-        fig_1, axes_1 = create_styled_figure(width=width, height=height)
+        fig_1, axes_1 = create_styled_figure(
+            width=width, height=height, skip_tex=skip_tex
+        )
     else:
-        fig_1, axes_1 = create_styled_figure()
+        fig_1, axes_1 = create_styled_figure(skip_tex=skip_tex)
 
     axes_1.set_xlabel(r"Displacement $u$ [mm]")
     axes_1.set_ylabel(r"Reaction force $F$ [kN]")
@@ -218,8 +229,8 @@ def style_force_displ(width=None, height=None, x_lim=None, y_lim=None):
     return fig_1, axes_1
 
 
-def create_styled_figure(width=5, height=3.75):
-    plt_style()
+def create_styled_figure(width=5, height=3.75, skip_tex=False):
+    plt_style(skip_tex=skip_tex)
 
     fig, axes = plt.subplots(figsize=[width, height])
     axes.xaxis.set_minor_locator(mtick.AutoMinorLocator(2))
@@ -320,26 +331,29 @@ def dic_strains(
     max_triang_len=10,
     out_format="pdf",
     dots_pi=400,
+    skip_tex=False,
 ):
     work_dir = os.getcwd()
     vis_export_dir = os.path.join(work_dir, "expAna_plots",)
-
-    if out_format == "eps" or out_format == "pdf":
-        set_latex_fonts = {
-            # Use LaTeX to write all text
-            "text.usetex": True,
-            "font.family": "serif",
-            # Use xxpt font in plots, to match xxpt font in document
-            "font.size": 12,
-            "axes.labelsize": 12,
-            # Make the legend/label fonts a little smaller
-            "legend.fontsize": 12,
-            "xtick.labelsize": 12,
-            "ytick.labelsize": 12,
-        }
-        matplotlib.rcParams.update(set_latex_fonts)
-    elif out_format == "pgf":
-        expAna.plot.plt_style()
+    if not skip_tex:
+        if out_format == "eps" or out_format == "pdf":
+            set_latex_fonts = {
+                # Use LaTeX to write all text
+                "text.usetex": True,
+                "font.family": "serif",
+                # Use xxpt font in plots, to match xxpt font in document
+                "font.size": 12,
+                "axes.labelsize": 12,
+                # Make the legend/label fonts a little smaller
+                "legend.fontsize": 12,
+                "xtick.labelsize": 12,
+                "ytick.labelsize": 12,
+            }
+            matplotlib.rcParams.update(set_latex_fonts)
+        elif out_format == "pgf":
+            expAna.plot.plt_style()
+        else:
+            pass
     else:
         pass
 

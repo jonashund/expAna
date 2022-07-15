@@ -125,6 +125,7 @@ class Experiment(object):
         out_dir=os.path.join(
             os.path.abspath(os.path.dirname(__file__)), "..", "expAna_plots"
         ),
+        skip_tex=False,
     ):
 
         os.makedirs(out_dir, exist_ok=True)
@@ -133,7 +134,7 @@ class Experiment(object):
         y_data = self.gauge_results["true_stress_in_MPa"]
 
         fig_1, axes_1 = expAna.plot.style_true_stress(
-            x_lim=1.0, y_lim=1.1 * y_data.max()
+            x_lim=1.0, y_lim=1.1 * y_data.max(), skip_tex=skip_tex
         )
 
         axes_1.plot(
@@ -153,6 +154,7 @@ class Experiment(object):
         out_dir=os.path.join(
             os.path.abspath(os.path.dirname(__file__)), "..", "expAna_plots"
         ),
+        skip_tex=False,
     ):
 
         os.makedirs(out_dir, exist_ok=True)
@@ -161,7 +163,7 @@ class Experiment(object):
         y_data = self.gauge_results["volume_strain"]
 
         fig_1, axes_1 = expAna.plot.style_vol_strain(
-            x_lim=1.0, y_lim=1.1 * y_data.max()
+            x_lim=1.0, y_lim=1.1 * y_data.max(), skip_tex=skip_tex
         )
 
         axes_1.plot(
@@ -181,6 +183,7 @@ class Experiment(object):
         out_dir=os.path.join(
             os.path.abspath(os.path.dirname(__file__)), "..", "expAna_plots"
         ),
+        skip_tex=False,
     ):
 
         os.makedirs(out_dir, exist_ok=True)
@@ -189,7 +192,7 @@ class Experiment(object):
         y_data = self.data_instron["force_in_kN"]
 
         fig_1, axes_1 = expAna.plot.style_force_displ(
-            x_lim=math.ceil(x_data.max()), y_lim=1.1 * y_data.max()
+            x_lim=math.ceil(x_data.max()), y_lim=1.1 * y_data.max(), skip_tex=skip_tex
         )
         fig_1.set_size_inches(5, 2.5)
         axes_1.plot(
