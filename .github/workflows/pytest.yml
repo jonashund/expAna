@@ -43,6 +43,12 @@ jobs:
     - name: Install expAna
       working-directory: main
       run: pip install -e .'[test]'
+    - name: list files
+      working-directory: main
+      run: |
+        cd data/data_analysis
+        ls -a
     - name: Test with pytest against installed package
+      working-directory: main
       run: |
         pytest -vv
