@@ -42,6 +42,5 @@ jobs:
     - name: Install expAna
       run: pip install -e .'[test]'
     - name: Test with pytest against installed package
-      working-directory: main
       run: |
         pytest -vv
