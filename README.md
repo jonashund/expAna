@@ -217,7 +217,7 @@ Analysis objects of the results are based on the `*.pickle` files located in the
     -   **Example # 2:** select all experiments that were carried out at a "crosshead_speed" of 0.1 and compare them regarding "specimen_orientation": `expAna.analysis.stress(select=["crosshead_speed", "0.1"],compare="specimen_orientation")`
 
 -   Compute the data based on the analysis type, for `"stress"` use: `<analysis_object>.compute_data_stress()`
--   Visualise the results: `<analysis_object>.plot_data()
+-   Visualise the results: `<analysis_object>.plot_data()`
 -   Export the results:
 ```python
 expAna.data_trans.export_analysis(
