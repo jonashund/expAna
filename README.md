@@ -68,13 +68,13 @@ Clone from [github](https://github.com/) into a local repository and install in 
     -   `data_export2tif` _created by expAna.acquis2tif_
         -   `Test1`
         -   `Test2`
-    -   `data_muDIC` _created by dic_with_muDIC_
+    -   `data_muDIC` _created by dic\_with\_muDIC_
         -   `Test1`
         -   `Test2`
     -   `expAna_docu` _created by expAna.docu_
     -   `expAna_plots` _created by expAna.docu_
         -   `istra` _created by expAna.review.stress()_
-        -   `muDIC` _created by expAna.review.stress(dic_system="muDIC")
+        -   `muDIC` _created by expAna.review.stress(dic\_system="muDIC")_
 _
 
 ### Data acquisition and experiment documentation
