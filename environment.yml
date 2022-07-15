@@ -75,7 +75,6 @@ dependencies:
     - kiwisolver==1.4.3
     - llvmlite==0.38.1
     - matplotlib==3.5.2
-    - mudic==0.2.1
     - natsort==8.1.0
     - networkx==2.6.3
     - noise==1.2.2

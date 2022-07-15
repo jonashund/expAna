@@ -28,12 +28,7 @@ Experiment documentation and analysis tool:
           `conda remove --name <my_env_name> --all`
 
 ## Installation
-
-### Install Python dependencies
-
--   Create environment from `environment.yml` (after cloning [`expAna`](https://github.com/jonashund/expAna) )\
-    `conda env create -f environment.yml`
-    
+   
 ### Cloning the repositories and installing
 
 Clone from [github](https://github.com/) into a local repository and install in the following order from within the corresponding repository:
@@ -50,6 +45,11 @@ Clone from [github](https://github.com/) into a local repository and install in 
     -   `git clone git@github.com:jonashund/expAna.git`
     -   `cd ./expAna`
     -   `pip install -e .`
+
+### Install Python dependencies
+
+-   Create environment from `environment.yml` (after cloning [`expAna`](https://github.com/jonashund/expAna) )\
+    `conda env create -f environment.yml`
 
 ## Usage
 
