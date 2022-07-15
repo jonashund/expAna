@@ -48,12 +48,9 @@ class Test_init:
 
 @pytest.mark.parametrize(
     "script",
-    [
-        pathlib.Path(os.path.dirname(__file__), "..", "scripts", "s01_test_core.py"),
-        pathlib.Path(
-            os.path.dirname(__file__), "..", "scripts", "s03_test_analysis.py"
-        ),
-    ],
+    sorted(
+        pathlib.Path(os.path.dirname(__file__), "..", "scripts").resolve().glob("*.py")
+    ),
 )
 def test_script_execution(script):
     print(script)
