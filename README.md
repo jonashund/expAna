@@ -8,11 +8,12 @@ Experiment documentation and analysis tool:
 
 ## Requirements
 
--   create a copy on a computer that runs bash (`.sh`) scripts as well as
-
-    -   LaTeX 2e
+-   Mandatory:
     -   Python (Version 3.x, installation e.g. via [Conda](https://docs.conda.io/en/latest/)) or [pyenv](https://github.com/pyenv/pyenv)
         -   creating and subsequently setting/activating an environment is recommended
+-   Optional (for full functionality):
+    -   capability to run bash (`.sh`) scripts
+    -   LaTeX 2e
 
     #### **TLDR**: [Managing environments with Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)
 
@@ -28,16 +29,30 @@ Experiment documentation and analysis tool:
           `conda remove --name <my_env_name> --all`
 
 ## Installation
+
+### Creating a Python environment to work with
+```bash
+conda create -n expAna python=3.9 ipython scipy numpy pandas flake8 black
+conda activate expAna
+```
+
+Alternatively create an environment using the `environment.yml` in the expAna repository after cloning:
+
+```bash
+conda env create -f environment.yml
+conda activate expAna
+```
+
    
 ### Cloning the repositories and installing
 
-Clone from [github](https://github.com/) into a local repository and install in the following order from within the corresponding repository:
+Clone from [github](https://github.com/) into a local repository, activate the newly created conda environment, and install in the following order from within the corresponding directories:
 
 1.  [`istra2py`](https://github.com/jonashund/istra2py)
     -   `git clone git@github.com:jonashund/istra2py.git`
     -   `cd ./istra2py`
     -   `pip install -e .`
-2.  [`muDIC`](https://github.com/jonashund/muDIC)
+2.  [`muDIC`](https://github.com/PolymerGuy/muDIC)
     -   `git clone git@github.com:PolymerGuy/muDIC.git`
     -   `cd ./muDIC`
     -   `pip install -r requirements.txt`
@@ -46,14 +61,17 @@ Clone from [github](https://github.com/) into a local repository and install in 
     -   `cd ./expAna`
     -   `pip install -e .`
 
-### Install Python dependencies
+## Running the tests
+```bash
+python -m pytest
+```
 
--   Create environment from `environment.yml` (after cloning [`expAna`](https://github.com/jonashund/expAna) )\
-    `conda env create -f environment.yml`
+## Example data and scripts
+Example data and scripts can be found in the (expAna_demo)[https://github.com/jonashund/expAna_demo] repository.
 
-## Usage
+## Documentation
 
-### Folder structure:
+### Folder structure
 
 -   `project_directory`
     -   `data_instron` _instron project directory_
