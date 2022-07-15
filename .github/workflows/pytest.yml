@@ -13,7 +13,8 @@ jobs:
     steps:
     - name: Checkout expAna repository
       uses: actions/checkout@v3
-
+      with:
+        path: main
     - name: Checkout istra2py repository
       uses: actions/checkout@v3
       with:
