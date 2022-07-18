@@ -186,9 +186,9 @@ ipython
     -   `strain_component` (string): possible values are "x", "y" an "xy" describing the strain relative to the tensile direction (given in image coordinate system) such that "x" means the tensile direction
 -   Optional parameters:
     -   `tensile_direction` (string): "x" or "y"; tensile direction in terms of image coordinate system (x: horizontal, y: vertical); if not specified GUI to enter direction via arrow key opens
-    -   'key' (bool): `True`(default) or `False`; colorbar or no colorbar right to plot of image
-    -   'key_min' (float): minimum value for colorbar, default: `None`
-    -   'key_max' (float): maximum value for colorbar, default: `None`
+    -   `key` (bool): `True`(default) or `False`; colorbar or no colorbar right to plot of image
+    -   `key_min` (float): minimum value for colorbar, default: `None`
+    -   `key_max` (float): maximum value for colorbar, default: `None`
     -   `key_extend` (string): "min", "max", "both", "neither", default: `None`
     -   `max_triang_len` (integer): threshold of triangle length to be included in plot of Delaunay triangulation, default: 10
     -   `out_format` (string): "pdf" (default), "eps" or "pgf"
