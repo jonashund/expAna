@@ -172,8 +172,8 @@ ipython
 
 ### Quick visualisation and review of the results
 
--   Plot true stress _vs._ log. strain: `expAna.review.stress()` or `expAna.review.stress(dic_system="muDIC")` (in case of usage with muDIC)
--   Plot reaction force _vs._ machine displacement curves: `expAna.review.force()`  or `expAna.review.force(dic_system="muDIC")` (in case of usage with muDIC)
+-   Plot true stress _vs._ log. strain: `expAna.review.stress()` or `expAna.review.stress(dic_system="muDIC")` (in case of usage with `muDIC`)
+-   Plot reaction force _vs._ machine displacement curves: `expAna.review.force()`  or `expAna.review.force(dic_system="muDIC")` (in case of usage with `muDIC`)
 -   Pass argument `set_failure=True` to remove corrupted parts of the stress strain curves via a GUI
 -   Selected experiments to be considered can be specified via `experiment_list=["TestN","TestM","TestX"]` or through a selection criterion based on a `documentation_data` dictionary key value pair passed on as a list via `select=[<key>, <value>]`
 
