@@ -6,6 +6,8 @@ Experiment documentation and analysis tool:
 
 -   Processing of raw DIC images or evaluation of data from Istra4D (Version 4.3.0.1) to analyse experimental results. Uses DIC results from [µDIC](https://github.com/PolymerGuy/muDIC) or Istra4D to compute and visualise stress-strain, volume strain, force-displacement, transversal strain responses.
 
+Analysis and visualisation of the experimental results in [this PhD thesis](https://publikationen.bibliothek.kit.edu/1000141093/148698121) is based on `expAna`.
+
 ## Getting started
 
 ### Requirements
@@ -31,14 +33,14 @@ Experiment documentation and analysis tool:
           `conda remove --name <my_env_name> --all`
 
 ### Create a Python environment and activate it
-```bash
+```shell
 conda create -n expAna python=3.9 ipython scipy numpy pandas flake8 black
 conda activate expAna
 ```
 
 Alternatively create an environment using the `environment.yml` in the expAna repository after cloning:
 
-```bash
+```shell
 conda env create -f environment.yml
 conda activate expAna
 ```
@@ -50,7 +52,7 @@ Clone from [github](https://github.com/) into a local repository, activate the n
 
 1.  [`istra2py`](https://github.com/jonashund/istra2py)
 
-```bash
+```shell
     git clone git@github.com:jonashund/istra2py.git
     cd ./istra2py
     pip install -e .
@@ -58,7 +60,7 @@ Clone from [github](https://github.com/) into a local repository, activate the n
 ```
 2.  [`muDIC`](https://github.com/PolymerGuy/muDIC)
 
-```bash
+```shell
     git clone git@github.com:PolymerGuy/muDIC.git
     cd ./muDIC
     pip install -r requirements.txt
@@ -67,7 +69,7 @@ Clone from [github](https://github.com/) into a local repository, activate the n
 
 3.  [`expAna`](https://github.com/jonashund/expAna):
 
-```bash
+```shell
     git clone git@github.com:jonashund/expAna.git
     cd ./expAna
     pip install -e .
@@ -75,7 +77,7 @@ Clone from [github](https://github.com/) into a local repository, activate the n
 
 ## Run the tests
 
-```bash
+```shell
 python -m pytest
 ```
 
@@ -111,11 +113,11 @@ See also the [expAna_demo][expAna_demo] repository and see the included demonstr
 _
 
 ### Data acquisition and experiment documentation
--   Document your experiments in a spreadsheet using the `documentation_template.xlsx` located in `expAna/docu_templates`
+-   Document experiments in a spreadsheet using the `documentation_template.xlsx` located in `expAna/docu_templates`
 
 -   Record an image series with the [_LIMESS Q-400_](https://git.scc.kit.edu/ifm/labor/pruefmaschinen/-/tree/master/DIC_Limess) system
     -   Name the recorded files in accordance with the _Instron WaveMatrix_ software
--   Optional: evaluate the acquisitions
+-   Optional: evaluate the acquisition using _Istra4D_
 
 ### Data import
 
@@ -129,7 +131,7 @@ _
 
 -   Open a terminal in the `project_directory/tex` folder
 -   Activate the environment with `expAna` installed in it
-```bash
+```shell
 conda activate expAna
 ipython
 ```
@@ -148,8 +150,8 @@ expAna.docu.main(<project_name>)
 
 ### Obtaining true stress and volume strain response
 
--   In the `project_directory` open a terminal
-```bash
+-   Open a terminal in the `project_directory`:
+```shell
 conda activate expAna
 ipython
 ```
