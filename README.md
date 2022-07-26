@@ -6,7 +6,9 @@ Experiment documentation and analysis tool:
 
 -   Processing of raw DIC images or evaluation of data from Istra4D (Version 4.3.0.1) to analyse experimental results. Uses DIC results from [µDIC](https://github.com/PolymerGuy/muDIC) or Istra4D to compute and visualise stress-strain, volume strain, force-displacement, and transversal strain responses.
 
-Analysis and visualisation of the experimental results in [this PhD thesis](https://publikationen.bibliothek.kit.edu/1000141093/148698121) are based on `expAna`.
+-   Visualisation of DIC strain fields as an overlay on top of the raw image data.
+
+Analysis and visualisation of the experimental results in [this PhD thesis](https://publikationen.bibliothek.kit.edu/1000141093/148698121) are based on `expAna`. For demo data and scripts, see the [expAna_demo][expAna_demo] repository.
 
 ## Getting started
 
