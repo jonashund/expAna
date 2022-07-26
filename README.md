@@ -4,7 +4,7 @@ Experiment documentation and analysis tool:
 
 -   Scripted generation of test reports from experiments conducted at the KIT Institute of Mechanics (IFM) laboratory using the _Instron 1342_ testing machine with _Instron WaveMatrix_ software (Version 1.5.302.0).
 
--   Processing of raw DIC images or evaluation of data from Istra4D (Version 4.3.0.1) to analyse experimental results. Uses DIC results from [µDIC](https://github.com/PolymerGuy/muDIC) or Istra4D to compute and visualise stress-strain, volume strain, force-displacement, transversal strain responses.
+-   Processing of raw DIC images or evaluation of data from Istra4D (Version 4.3.0.1) to analyse experimental results. Uses DIC results from [µDIC](https://github.com/PolymerGuy/muDIC) or Istra4D to compute and visualise stress-strain, volume strain, force-displacement, and transversal strain responses.
 
 Analysis and visualisation of the experimental results in [this PhD thesis](https://publikationen.bibliothek.kit.edu/1000141093/148698121) are based on `expAna`.
 
@@ -77,6 +77,7 @@ Clone from [github](https://github.com/) into a local repository, activate the n
 
 ## Run the tests
 
+Open a terminal in the `expAna` directory and run: 
 ```shell
 python -m pytest
 ```
