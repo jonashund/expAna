@@ -19,7 +19,6 @@ setuptools.setup(
         "matplotlib",
         "dill",
         "xlrd",
-        "noise",
         "openpyxl",
         "pandas",
         "scipy",
