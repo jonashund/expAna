@@ -84,6 +84,13 @@ Open a terminal in the `expAna` directory and run:
 python -m pytest
 ```
 
+## Troubleshooting
+
+On Windows, the `noise` package created problems during installation.
+Despite `muDIC` not requiring the `noise` package, it tries to import it and gives an error stating that the `noise` package is not installed.
+The functionality of `expAna` does not rely on the speckle pattern generator of `muDIC` where the `noise` package is used.
+Therefore, `expAna` functionalities are not affected by this error.
+
 ## Example data and scripts
 Example data and scripts can be found in the [expAna_demo][expAna_demo] repository.
 
